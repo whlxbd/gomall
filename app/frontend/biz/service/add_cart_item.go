@@ -21,8 +21,8 @@ import (
 	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
 	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpccart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/hertz/pkg/app"
+	rpccart "github.com/whlxbd/gomall/rpc_gen/kitex_gen/cart"
 )
 
 type AddCartItemService struct {

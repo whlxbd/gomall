@@ -22,10 +22,10 @@ import (
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/types"
 	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpcorder "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
-	rpcproduct "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+	rpcorder "github.com/whlxbd/gomall/rpc_gen/kitex_gen/order"
+	rpcproduct "github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
 )
 
 type OrderListService struct {

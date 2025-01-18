@@ -21,7 +21,7 @@ import (
 	"net/http"
 
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
-	"github.com/cloudwego/biz-demo/gomall/common/utils"
+	"github.com/whlxbd/gomall/common/utils"
 
 	"github.com/cloudwego/hertz/pkg/app/server/registry"
 	"github.com/cloudwego/hertz/pkg/common/hlog"

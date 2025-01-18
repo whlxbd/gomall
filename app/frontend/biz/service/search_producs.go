@@ -19,9 +19,9 @@ import (
 
 	product "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/product"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	rpcproduct "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+	rpcproduct "github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
 )
 
 type SearchProducsService struct {

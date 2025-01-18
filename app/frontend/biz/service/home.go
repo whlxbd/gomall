@@ -19,10 +19,10 @@ import (
 
 	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
 )
 
 type HomeService struct {

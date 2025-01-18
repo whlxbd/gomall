@@ -20,9 +20,9 @@ import (
 	auth "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/auth"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
 	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpcuser "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
+	rpcuser "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 )
 
 type LoginService struct {
