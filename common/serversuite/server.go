@@ -17,7 +17,6 @@ package serversuite
 import (
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
@@ -28,6 +27,7 @@ import (
 	prometheus "github.com/kitex-contrib/monitor-prometheus"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	registryconsul "github.com/kitex-contrib/registry-consul"
+	"github.com/whlxbd/gomall/common/mtl"
 )
 
 type CommonServerSuite struct {

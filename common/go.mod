@@ -1,4 +1,4 @@
-module github.com/cloudwego/biz-demo/gomall/common
+module github.com/whlxbd/gomall/common
 
 go 1.21
 
