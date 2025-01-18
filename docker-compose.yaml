@@ -1,0 +1,27 @@
+version: '3'
+services:
+  mysql:
+    image: 'mysql:latest'
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=gomall
+      - MYSQL_USER=gomall
+      - MYSQL_PASSWORD=gomall
+      - MYSQL_RANDOM_ROOT_PASSWORD="yes"
+  redis:
+    image: 'redis:latest'
+    ports:
+      - 6379:6379
+  etcd:
+    image: bitnami/etcd:3.5
+    container_name: etcd
+    ports:
+      - 2379:2379
+      - 2380:2380
+    volumes:
+      - ./etcd/data:/bitnami/etcd-data
+    environment:
+      - TZ=Asia/Shanghai
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
