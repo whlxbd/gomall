@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/whlxbd/gomall/app/user/biz/dal"
 	"net"
 	"time"
 
@@ -17,6 +18,8 @@ import (
 
 func main() {
 	opts := kitexInit()
+
+	dal.Init()
 
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
 

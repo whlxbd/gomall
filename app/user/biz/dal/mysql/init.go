@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"github.com/whlxbd/gomall/app/user/biz/model"
 	"github.com/whlxbd/gomall/app/user/conf"
 
 	"gorm.io/driver/mysql"
@@ -22,4 +23,5 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+	DB.AutoMigrate(&model.User{})
 }
