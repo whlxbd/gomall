@@ -39,6 +39,13 @@ func kitexInit() (opts []server.Option) {
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
 
+	// consul
+	r, err := consul.NewConsulRegister(conf.GetConf().Registry.RegistryAddress[0]) // 使用配置中的 Consul 地址
+	if err != nil {
+		klog.Fatal(err)
+	}
+	opts = append(opts, server.WithRegistry(r))
+
 	// klog
 	logger := kitexlogrus.NewLogger()
 	klog.SetLogger(logger)
