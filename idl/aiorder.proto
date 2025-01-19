@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package ai_order;
+package aiorder;
 
-option go_package = "/ai_order";
+option go_package = "/aiorder";
 
 // AI订单服务
 service AIOrderService {
