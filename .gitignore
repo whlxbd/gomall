@@ -1,3 +1,5 @@
 tmp/
 **tmp/
 .idea/
+
+app/*/conf/dev/conf.yaml
