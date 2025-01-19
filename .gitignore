@@ -2,5 +2,11 @@ tmp/
 **tmp/
 .idea/
 
-app/*/conf/dev/conf.yaml
-app/auth/conf/dev/conf.yaml
+.DS_Store
+app/cart/.env
+app/**/nohup.out
+app/**/log/
+app/**/tmp/
+app/**/kitex_gen/
+
+go.work.sum

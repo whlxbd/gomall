@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package aiorder;
+
+option go_package = "/aiorder";
+
+// AI订单服务
+service AIOrderService {
+  // 创建AI模拟订单
+  rpc CreateAIOrder(CreateAIOrderReq) returns (CreateAIOrderResp) {}
+  // 查询AI订单状态
+  rpc GetAIOrder(GetAIOrderReq) returns (GetAIOrderResp) {}
+  // 取消AI订单
+  rpc CancelAIOrder(CancelAIOrderReq) returns (CancelAIOrderResp) {}
+}
+
+// 订单状态枚举
+enum AIOrderStatus {
+  UNKNOWN = 0;
+  PENDING = 1;      // 待处理
+  PROCESSING = 2;   // 处理中
+  COMPLETED = 3;    // 已完成
+  FAILED = 4;       // 失败
+  CANCELLED = 5;    // 已取消
+}
+
+// AI订单信息
+message AIOrder {
+  uint64 order_id = 1;
+  uint32 user_id = 2;
+  string model_name = 3;        // AI模型名称
+  string prompt = 4;            // 提示词
+  AIOrderStatus status = 5;     // 订单状态
+  string result = 6;            // 生成结果
+  int64 create_time = 7;        // 创建时间
+  int64 complete_time = 8;      // 完成时间
+}
+
+message CreateAIOrderReq {
+  uint32 user_id = 1;
+  string model_name = 2;
+  string prompt = 3;
+}
+
+message CreateAIOrderResp {
+  uint64 order_id = 1;
+}
+
+message GetAIOrderReq {
+  uint64 order_id = 1;
+  uint32 user_id = 2;
+}
+
+message GetAIOrderResp {
+  AIOrder order = 1;
+}
+
+message CancelAIOrderReq {
+  uint64 order_id = 1;
+  uint32 user_id = 2;
+}
+
+message CancelAIOrderResp {
+  bool success = 1;
+}
