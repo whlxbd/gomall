@@ -3,3 +3,4 @@ tmp/
 .idea/
 
 app/*/conf/dev/conf.yaml
+app/auth/conf/dev/conf.yaml
