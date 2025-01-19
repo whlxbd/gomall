@@ -8,5 +8,6 @@ app/**/nohup.out
 app/**/log/
 app/**/tmp/
 app/**/kitex_gen/
+app/**/dev/
 
 go.work.sum
