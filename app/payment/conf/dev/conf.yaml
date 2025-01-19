@@ -1,6 +1,6 @@
 kitex:
   service: "payment"
-  address: ":8888"
+  address: ":8085"
   log_level: info
   log_file_name: "log/kitex.log"
   log_max_size: 10
@@ -9,7 +9,7 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:2379
+    - 10.255.254.166:8500
   username: ""
   password: ""
 

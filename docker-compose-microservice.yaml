@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  auth:
+    build:
+      context: .
+      args:
+        NAME: auth
+        PORT: 8081
+    working_dir: /app/auth
+    ports:
+      - "8081:8081"
+
+  cart:
+    build:
+      context: .
+      args:
+        NAME: cart
+        PORT: 8082
+    working_dir: /app/cart
+    ports:
+      - "8082:8082"
+
+  checkout:
+    build:
+      context: .
+      args:
+        NAME: checkout
+        PORT: 8083
+    working_dir: /app/checkout
+    ports:
+      - "8083:8083"
+
+  order:
+    build:
+      context: .
+      args:
+        NAME: order
+        PORT: 8084
+    working_dir: /app/order
+    ports:
+      - "8084:8084"
+
+  payment:
+    build:
+      context: .
+      args:
+        NAME: payment
+        PORT: 8085
+    working_dir: /app/payment
+    ports:
+      - "8085:8085"
+
+  product:
+    build:
+      context: .
+      args:
+        NAME: product
+        PORT: 8086
+    working_dir: /app/product
+    ports:
+      - "8086:8086"
+
+  user:
+    build:
+      context: .
+      args:
+        NAME: user
+        PORT: 8087
+    working_dir: /app/user
+    ports:
+      - "8087:8087"
