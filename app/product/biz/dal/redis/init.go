@@ -1,10 +1,13 @@
 package redis
 
 import (
+	"fmt"
+	"os"
+	"strconv"
+
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/whlxbd/gomall/app/product/conf"
 )
 
 var (
@@ -12,11 +15,15 @@ var (
 )
 
 func Init() {
+	db, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+	if err != nil {
+		panic(err)
+	}
 	RedisClient = redis.NewClient(&redis.Options{
-		Addr:     conf.GetConf().Redis.Address,
-		Username: conf.GetConf().Redis.Username,
-		Password: conf.GetConf().Redis.Password,
-		DB:       conf.GetConf().Redis.DB,
+		Addr:     fmt.Sprintf("%s", os.Getenv("REDIS_ADDR")),
+		Username: fmt.Sprintf("%s", os.Getenv("REDIS_USER")),
+		Password: fmt.Sprintf("%s", os.Getenv("REDIS_PSWD")),
+		DB:       db,
 	})
 	if err := RedisClient.Ping(context.Background()).Err(); err != nil {
 		panic(err)

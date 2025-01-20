@@ -13,17 +13,6 @@ services:
     image: 'redis:latest'
     ports:
       - 6379:6379
-  etcd:
-    image: bitnami/etcd:3.5
-    ports:
-      - 2379:2379
-      - 2380:2380
-    volumes:
-      - ./etcd/data:/bitnami/etcd-data
-    environment:
-      - TZ=Asia/Shanghai
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
   consul:
     image: "hashicorp/consul:latest"
     ports:

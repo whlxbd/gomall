@@ -1,21 +1,27 @@
 package main
 
 import (
+	// "fmt"
 	"net"
 	"time"
+	"os"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/product/conf"
+	"github.com/whlxbd/gomall/app/product/biz/dal"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func main() {
+	_ = godotenv.Load()
+	dal.Init()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
@@ -40,7 +46,7 @@ func kitexInit() (opts []server.Option) {
 	}))
 
 	// consul
-	r, err := consul.NewConsulRegister(conf.GetConf().Registry.RegistryAddress[0]) // 使用配置中的 Consul 地址
+	r, err := consul.NewConsulRegister(os.Getenv("CONSUL_ADDR")) // 使用配置中的 Consul 地址
 	if err != nil {
 		klog.Fatal(err)
 	}
