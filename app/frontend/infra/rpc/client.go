@@ -17,8 +17,9 @@ package rpc
 import (
 	"context"
 	"sync"
+	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
+	// "github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
 	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
 	"github.com/cloudwego/kitex/client"
@@ -49,7 +50,7 @@ var (
 
 func InitClient() {
 	once.Do(func() {
-		registryAddr = conf.GetConf().Hertz.RegistryAddr
+		registryAddr = os.Getenv("REGISTRY_ADDR")
 		commonSuite = client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			RegistryAddr:       registryAddr,
 			CurrentServiceName: frontendutils.ServiceName,

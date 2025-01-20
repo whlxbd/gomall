@@ -9,12 +9,12 @@ kitex:
 
 registry:
   registry_address:
-    - "10.255.254.166:8500"
+    - "%s"
   username: ""
   password: ""
 
 mysql:
-  dsn: "%s:%s@tcp(%s)/product?charset=utf8mb4&parseTime=True&loc=Local"
+  dsn: "%s:%s@tcp(%s)/gomall?charset=utf8mb4&parseTime=True&loc=Local"
 
 redis:
   address: "%s"

@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
 	"github.com/whlxbd/gomall/common/utils"
@@ -40,7 +41,7 @@ func initMetric() route.CtxCallback {
 	Registry.MustRegister(collectors.NewGoCollector())
 	Registry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
 	config := consulapi.DefaultConfig()
-	config.Address = conf.GetConf().Hertz.RegistryAddr
+	config.Address = os.Getenv("REGISTRY_ADDR")
 	consulClient, _ := consulapi.NewClient(config)
 	r := consul.NewConsulRegister(consulClient, consul.WithAdditionInfo(&consul.AdditionInfo{
 		Tags: []string{"service:frontend"},

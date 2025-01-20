@@ -15,6 +15,6 @@ func NewGetProductService(ctx context.Context) *GetProductService {
 // Run create note info
 func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetProductResp, err error) {
 	// Finish your business logic.
-
+	
 	return
 }

@@ -46,7 +46,8 @@ func kitexInit() (opts []server.Option) {
 	}))
 
 	// consul
-	r, err := consul.NewConsulRegister(os.Getenv("CONSUL_ADDR")) // 使用配置中的 Consul 地址
+	conf.GetConf().Registry.RegistryAddress = []string{os.Getenv("REGISTRY_ADDR")}
+	r, err := consul.NewConsulRegister(os.Getenv("REGISTRY_ADDR")) // 使用配置中的 Consul 地址
 	if err != nil {
 		klog.Fatal(err)
 	}

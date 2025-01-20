@@ -8,7 +8,7 @@ services:
       - MYSQL_DATABASE=gomall
       - MYSQL_USER=gomall
       - MYSQL_PASSWORD=gomall
-      - MYSQL_RANDOM_ROOT_PASSWORD="yes"
+      - MYSQL_ROOT_PASSWORD="root
   redis:
     image: 'redis:latest'
     ports:

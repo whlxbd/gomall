@@ -20,6 +20,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/dal"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
@@ -48,6 +49,7 @@ func main() {
 
 	mtl.InitMtl()
 	rpc.InitClient()
+	dal.Init()
 	address := conf.GetConf().Hertz.Address
 
 	p := hertzotelprovider.NewOpenTelemetryProvider(
@@ -116,7 +118,7 @@ func registerMiddleware(h *server.Hertz) {
 		pprof.Register(h)
 	}
 
-	store, err := redis.NewStore(100, "tcp", conf.GetConf().Redis.Address, "", []byte(os.Getenv("SESSION_SECRET")))
+	store, err := redis.NewStore(100, "tcp", os.Getenv("REDIS_ADDR"), "", []byte(os.Getenv("SESSION_SECRET")))
 	if err != nil {
 		panic(err)
 	}
