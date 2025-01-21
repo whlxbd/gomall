@@ -4,10 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"time"
+	"strconv"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
+)
+
+// 商品状态: 1:上架 2:下架 3:删除
+type ProductStatus int32
+
+const (
+	ProductStatusOnSale ProductStatus = 1
+	ProductStatusOffSale ProductStatus = 2
+	ProductStatusDeleted ProductStatus = 3
 )
 
 type Product struct {
@@ -20,7 +30,7 @@ type Product struct {
 	Stock     	int32 `json:"stock"`      	// 库存数量
 	SoldCount 	int32 `json:"sold_count"` 	// 销售数量
 
-	Status      int8 `json:"status"`       // 商品状态(1:上架 2:下架 3:删除)
+	Status      ProductStatus `json:"status"`       // 商品状态(1:上架 2:下架 3:删除)
 	IsHot       bool `json:"is_hot"`       // 是否热销
 	IsNew       bool `json:"is_new"`       // 是否新品
 	IsRecommend bool `json:"is_recommend"` // 是否推荐
@@ -44,14 +54,14 @@ func (p Product) TableName() string {
 }
 
 // 从数据库获取商品
-func (p ProductQuery) GetById(productid int32) (product Product, err error) {
+func (p ProductQuery) GetById(productid uint32) (product Product, err error) {
 	err = p.db.WithContext(p.ctx).Where(&Product{Base: Base{ID: productid}}).First(&product).Error
 	return
 }
 
 // 尝试从缓存获取商品，如果缓存不存在则从数据库获取
-func (p CachedProductQuery) GetById(productid int32) (Product, error) {
-	key := p.prefix + "_product:_" + string(productid)
+func (p CachedProductQuery) GetById(productid uint32) (Product, error) {
+	key := p.prefix + "_product:_" + strconv.FormatUint(uint64(productid), 10)
 
 	// 尝试从缓存获取
 	product, err := p.getFromCache(key)
@@ -110,12 +120,12 @@ func NewProductQuery(ctx context.Context, db *gorm.DB) ProductQuery {
 }
 
 // 创建一个带缓存的商品查询
-func NewCachedProductQuery(productQuery ProductQuery, cacheClient *redis.Client, prefix string) CachedProductQuery {
+func NewCachedProductQuery(productQuery ProductQuery, cacheClient *redis.Client) CachedProductQuery {
 	return CachedProductQuery{productQuery: productQuery, cacheClient: cacheClient, prefix: "gomall"}
 }
 
 // 通过商品ID获取商品
-func GetById(ctx context.Context, db *gorm.DB, productid int32) (product Product, err error) {
+func GetById(ctx context.Context, db *gorm.DB, productid uint32) (product Product, err error) {
 	err = db.WithContext(ctx).Where(&Product{Base: Base{ID: productid}}).First(&product).Error
 	return
 }
@@ -124,4 +134,19 @@ func GetById(ctx context.Context, db *gorm.DB, productid int32) (product Product
 func SearchProduct(db *gorm.DB, ctx context.Context, q string) (product []*Product, err error) {
 	err = db.WithContext(ctx).Model(&Product{}).Find(&product, "name like ? or description like ?", "%"+q+"%", "%"+q+"%").Error
 	return product, err
+}
+
+// 创建商品
+func CreateProduct(db *gorm.DB, ctx context.Context, product *Product) error {
+	return db.WithContext(ctx).Create(product).Error
+}
+
+// 更新商品
+func UpdateProduct(db *gorm.DB, ctx context.Context, product *Product) error {
+	return db.WithContext(ctx).Save(product).Error
+}
+
+// 删除商品
+func DeleteProduct(db *gorm.DB, ctx context.Context, productid uint32) error {
+	return db.WithContext(ctx).Delete(&Product{Base: Base{ID: productid}}).Error
 }
