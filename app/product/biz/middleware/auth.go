@@ -36,7 +36,7 @@ func CheckAdminPermission(ctx context.Context) error {
 
     claims := jwt.MapClaims{}
     _, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-        return []byte(os.Getenv("JWT_SECRET")), nil
+        return []byte(os.Getenv("JWT_SCRETE")), nil
     })
     if err != nil {
         return &AuthError{Message: fmt.Sprintf("parse token failed: %v", err)}

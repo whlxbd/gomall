@@ -31,7 +31,6 @@ func (s ProductStatus) IsValid() error {
 
 }
 
-
 type Product struct {
 	Base
 	Name        string  `json:"name"`        // 商品名称
@@ -56,7 +55,7 @@ type ProductQuery struct {
 }
 
 type CachedProductQuery struct {
-	productQuery ProductQuery  // 商品查询
+	productQuery *ProductQuery  // 商品查询
 	cacheClient  *redis.Client // 缓存客户端
 	prefix       string        // 缓存前缀
 }
@@ -66,58 +65,63 @@ func (p Product) TableName() string {
 }
 
 // 从数据库获取商品
-func (p ProductQuery) GetById(productid uint32) (product Product, err error) {
-	err = p.db.WithContext(p.ctx).Where(&Product{Base: Base{ID: productid}}).First(&product).Error
-	return
+func (p ProductQuery) GetById(productid uint32) (*Product, error) {
+	product := new(Product)
+	err := p.db.WithContext(p.ctx).Where(&Product{Base: Base{ID: productid}}).First(product).Error
+	return product, err
 }
 
 // 尝试从缓存获取商品，如果缓存不存在则从数据库获取
-func (p CachedProductQuery) GetById(productid uint32) (Product, error) {
+func (p CachedProductQuery) GetById(productid uint32) (*Product, error) {
 	key := p.prefix + strconv.FormatUint(uint64(productid), 10)
 
 	// 尝试从缓存获取
 	product, err := p.getFromCache(key)
 	if err == nil {
 		// 更新缓存
-		if err := p.setCache(key, product); err != nil {
-			klog.Error("设置缓存失败", err)
-		}
+		_ = pool.Submit(func () {
+			if err := p.setCache(key, product); err != nil {
+				klog.Error("设置缓存失败", err)
+			}
+		})
 		return product, nil
 	}
 	if err != redis.Nil {
-		return Product{}, err
+		return &Product{}, err
 	}
 
 	// 从数据库获取
 	product, err = p.productQuery.GetById(productid)
 	if err != nil {
-		return Product{}, err
+		return &Product{}, err
 	}
 
 	// 更新缓存
-	if err := p.setCache(key, product); err != nil {
-		klog.Error("设置缓存失败", err)
-	}
+	_ = pool.Submit(func () {
+		if err := p.setCache(key, product); err != nil {
+			klog.Error("设置缓存失败", err)
+		}
+	})
 
 	return product, nil
 }
 
 // 从缓存中获取商品
-func (p CachedProductQuery) getFromCache(key string) (Product, error) {
-	var product Product
+func (p CachedProductQuery) getFromCache(key string) (*Product, error) {
+	product := new(Product)
 	val, err := p.cacheClient.Get(p.productQuery.ctx, key).Result()
 	if err != nil {
-		return Product{}, err
+		return &Product{}, err
 	}
 
 	if err := json.Unmarshal([]byte(val), &product); err != nil {
-		return Product{}, err
+		return &Product{}, err
 	}
 	return product, nil
 }
 
 // 设置商品缓存
-func (p CachedProductQuery) setCache(key string, product Product) error {
+func (p CachedProductQuery) setCache(key string, product *Product) error {
 	encoded, err := json.Marshal(product)
 	if err != nil {
 		return err
@@ -127,18 +131,18 @@ func (p CachedProductQuery) setCache(key string, product Product) error {
 }
 
 // 创建一个商品查询
-func NewProductQuery(ctx context.Context, db *gorm.DB) ProductQuery {
-	return ProductQuery{ctx: ctx, db: db}
+func NewProductQuery(ctx context.Context, db *gorm.DB) *ProductQuery {
+	return &ProductQuery{ctx: ctx, db: db}
 }
 
 // 创建一个带缓存的商品查询
-func NewCachedProductQuery(productQuery ProductQuery, cacheClient *redis.Client) CachedProductQuery {
-	return CachedProductQuery{productQuery: productQuery, cacheClient: cacheClient, prefix: "gomall_product_"}
+func NewCachedProductQuery(productQuery *ProductQuery, cacheClient *redis.Client) *CachedProductQuery {
+	return &CachedProductQuery{productQuery: productQuery, cacheClient: cacheClient, prefix: "gomall_product_"}
 }
 
 // 通过商品ID获取商品
-func GetById(ctx context.Context, db *gorm.DB, productid uint32) (product Product, err error) {
-	err = db.WithContext(ctx).Where(&Product{Base: Base{ID: productid}}).First(&product).Error
+func GetById(ctx context.Context, db *gorm.DB, productid uint32) (product *Product, err error) {
+	err = db.WithContext(ctx).Where(&Product{Base: Base{ID: productid}}).First(product).Error
 	return
 }
 
@@ -150,20 +154,22 @@ func SearchProduct(db *gorm.DB, ctx context.Context, q string) (product []*Produ
 
 // 创建商品
 func CreateProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, product *Product) error {
-	if err := db.WithContext(ctx).Create(product).Error; err != nil {
-		return err
-	}
-
-	// 创建缓存
-	_ = pool.Submit(func () {
-		p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
-		key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
-		if err := p.setCache(key, *product); err != nil {
-			klog.Error("设置缓存失败", err)
-		}
-	})
-
-	return nil
+	return db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+        if err := tx.Create(product).Error; err != nil {
+            return err
+        }
+        
+        // 创建缓存
+        _ = pool.Submit(func() {
+            p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
+            key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
+            if err := p.setCache(key, product); err != nil {
+                klog.Error("设置缓存失败", err)
+            }
+        })
+        
+        return nil
+    })
 }
 
 // 更新商品
@@ -176,7 +182,7 @@ func UpdateProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, 
 	_ = pool.Submit(func () {
 		p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
 		key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
-		if err := p.setCache(key, *product); err != nil {
+		if err := p.setCache(key, product); err != nil {
 			klog.Error("设置缓存失败", err)
 		}
 	})
