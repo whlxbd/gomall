@@ -1,5 +1,11 @@
 package model
 
+// import (
+// 	"context"
+// 	"time"
+// 	"sync"
+// )
+
 type Category struct {
 	Base
 	Name string `json:"name"`								// 分类名称
@@ -11,3 +17,4 @@ type Category struct {
 func (c Category) TableName () string {
 	return "category"
 }
+

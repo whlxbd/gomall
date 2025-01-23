@@ -29,6 +29,11 @@ func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetPr
 		return nil, err
 	}
 
+	Categories := make([]string, len(p.Categories))
+	for i, cat := range p.Categories {
+		Categories[i] = cat.Name
+	}
+
 	return &product.GetProductResp{
 		Product: &product.Product{
 			Id:          p.ID,
@@ -41,7 +46,8 @@ func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetPr
 			Status:      product.ProductStatus(p.Status),
 			Ishot:       p.IsHot,
 			Isnew:       p.IsNew,
-			Isrecommend: p.IsRecommend,   
+			Isrecommend: p.IsRecommend,
+			Categories:  Categories,
 		},
 	}, err
 

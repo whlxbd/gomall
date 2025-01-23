@@ -62,10 +62,10 @@ message CreateProductReq {
   string picture = 3;
   float price = 4;
 
-  uint32 stock = 5;
-  uint32 soldcount = 6;
+  int32 stock = 5;
+  int32 soldcount = 6;
 
-  bool status = 7;
+  ProductStatus status = 7;
   bool ishot = 8;
   bool isnew = 9;
   bool isrecommend = 10;
@@ -85,10 +85,10 @@ message EditProductReq {
   string picture = 4;
   float price = 5;
 
-  uint32 stock = 6;
-  uint32 soldcount = 7;
+  int32 stock = 6;
+  int32 soldcount = 7;
 
-  bool status = 8;
+  ProductStatus status = 8;
   bool ishot = 9;
   bool isnew = 10;
   bool isrecommend = 11;

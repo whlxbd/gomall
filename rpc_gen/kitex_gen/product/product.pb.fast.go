@@ -433,18 +433,23 @@ func (x *CreateProductReq) fastReadField4(buf []byte, _type int8) (offset int, e
 }
 
 func (x *CreateProductReq) fastReadField5(buf []byte, _type int8) (offset int, err error) {
-	x.Stock, offset, err = fastpb.ReadUint32(buf, _type)
+	x.Stock, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
 func (x *CreateProductReq) fastReadField6(buf []byte, _type int8) (offset int, err error) {
-	x.Soldcount, offset, err = fastpb.ReadUint32(buf, _type)
+	x.Soldcount, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
 func (x *CreateProductReq) fastReadField7(buf []byte, _type int8) (offset int, err error) {
-	x.Status, offset, err = fastpb.ReadBool(buf, _type)
-	return offset, err
+	var v int32
+	v, offset, err = fastpb.ReadInt32(buf, _type)
+	if err != nil {
+		return offset, err
+	}
+	x.Status = ProductStatus(v)
+	return offset, nil
 }
 
 func (x *CreateProductReq) fastReadField8(buf []byte, _type int8) (offset int, err error) {
@@ -608,18 +613,23 @@ func (x *EditProductReq) fastReadField5(buf []byte, _type int8) (offset int, err
 }
 
 func (x *EditProductReq) fastReadField6(buf []byte, _type int8) (offset int, err error) {
-	x.Stock, offset, err = fastpb.ReadUint32(buf, _type)
+	x.Stock, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
 func (x *EditProductReq) fastReadField7(buf []byte, _type int8) (offset int, err error) {
-	x.Soldcount, offset, err = fastpb.ReadUint32(buf, _type)
+	x.Soldcount, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
 func (x *EditProductReq) fastReadField8(buf []byte, _type int8) (offset int, err error) {
-	x.Status, offset, err = fastpb.ReadBool(buf, _type)
-	return offset, err
+	var v int32
+	v, offset, err = fastpb.ReadInt32(buf, _type)
+	if err != nil {
+		return offset, err
+	}
+	x.Status = ProductStatus(v)
+	return offset, nil
 }
 
 func (x *EditProductReq) fastReadField9(buf []byte, _type int8) (offset int, err error) {
@@ -1011,7 +1021,7 @@ func (x *CreateProductReq) fastWriteField5(buf []byte) (offset int) {
 	if x.Stock == 0 {
 		return offset
 	}
-	offset += fastpb.WriteUint32(buf[offset:], 5, x.GetStock())
+	offset += fastpb.WriteInt32(buf[offset:], 5, x.GetStock())
 	return offset
 }
 
@@ -1019,15 +1029,15 @@ func (x *CreateProductReq) fastWriteField6(buf []byte) (offset int) {
 	if x.Soldcount == 0 {
 		return offset
 	}
-	offset += fastpb.WriteUint32(buf[offset:], 6, x.GetSoldcount())
+	offset += fastpb.WriteInt32(buf[offset:], 6, x.GetSoldcount())
 	return offset
 }
 
 func (x *CreateProductReq) fastWriteField7(buf []byte) (offset int) {
-	if !x.Status {
+	if x.Status == 0 {
 		return offset
 	}
-	offset += fastpb.WriteBool(buf[offset:], 7, x.GetStatus())
+	offset += fastpb.WriteInt32(buf[offset:], 7, int32(x.GetStatus()))
 	return offset
 }
 
@@ -1153,7 +1163,7 @@ func (x *EditProductReq) fastWriteField6(buf []byte) (offset int) {
 	if x.Stock == 0 {
 		return offset
 	}
-	offset += fastpb.WriteUint32(buf[offset:], 6, x.GetStock())
+	offset += fastpb.WriteInt32(buf[offset:], 6, x.GetStock())
 	return offset
 }
 
@@ -1161,15 +1171,15 @@ func (x *EditProductReq) fastWriteField7(buf []byte) (offset int) {
 	if x.Soldcount == 0 {
 		return offset
 	}
-	offset += fastpb.WriteUint32(buf[offset:], 7, x.GetSoldcount())
+	offset += fastpb.WriteInt32(buf[offset:], 7, x.GetSoldcount())
 	return offset
 }
 
 func (x *EditProductReq) fastWriteField8(buf []byte) (offset int) {
-	if !x.Status {
+	if x.Status == 0 {
 		return offset
 	}
-	offset += fastpb.WriteBool(buf[offset:], 8, x.GetStatus())
+	offset += fastpb.WriteInt32(buf[offset:], 8, int32(x.GetStatus()))
 	return offset
 }
 
@@ -1544,7 +1554,7 @@ func (x *CreateProductReq) sizeField5() (n int) {
 	if x.Stock == 0 {
 		return n
 	}
-	n += fastpb.SizeUint32(5, x.GetStock())
+	n += fastpb.SizeInt32(5, x.GetStock())
 	return n
 }
 
@@ -1552,15 +1562,15 @@ func (x *CreateProductReq) sizeField6() (n int) {
 	if x.Soldcount == 0 {
 		return n
 	}
-	n += fastpb.SizeUint32(6, x.GetSoldcount())
+	n += fastpb.SizeInt32(6, x.GetSoldcount())
 	return n
 }
 
 func (x *CreateProductReq) sizeField7() (n int) {
-	if !x.Status {
+	if x.Status == 0 {
 		return n
 	}
-	n += fastpb.SizeBool(7, x.GetStatus())
+	n += fastpb.SizeInt32(7, int32(x.GetStatus()))
 	return n
 }
 
@@ -1686,7 +1696,7 @@ func (x *EditProductReq) sizeField6() (n int) {
 	if x.Stock == 0 {
 		return n
 	}
-	n += fastpb.SizeUint32(6, x.GetStock())
+	n += fastpb.SizeInt32(6, x.GetStock())
 	return n
 }
 
@@ -1694,15 +1704,15 @@ func (x *EditProductReq) sizeField7() (n int) {
 	if x.Soldcount == 0 {
 		return n
 	}
-	n += fastpb.SizeUint32(7, x.GetSoldcount())
+	n += fastpb.SizeInt32(7, x.GetSoldcount())
 	return n
 }
 
 func (x *EditProductReq) sizeField8() (n int) {
-	if !x.Status {
+	if x.Status == 0 {
 		return n
 	}
-	n += fastpb.SizeBool(8, x.GetStatus())
+	n += fastpb.SizeInt32(8, int32(x.GetStatus()))
 	return n
 }
 
