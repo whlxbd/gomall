@@ -2,12 +2,13 @@ package model
 
 import (
 	"context"
+	// "fmt"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/v9"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"gorm.io/gorm"
-	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type Category struct {
@@ -42,66 +43,77 @@ func NewCategoryQuery(ctx context.Context, db *gorm.DB) *CategoryQuery {
 }
 
 // NewCachedCategoryQuery 创建一个新的CachedCategoryQuery
-func NewCachedCategoryQuery(ctx context.Context, db *gorm.DB, cacheClient *redis.Client) *CachedCategoryQuery {
+func NewCachedCategoryQuery(cq *CategoryQuery, cacheClient *redis.Client) *CachedCategoryQuery {
 	return &CachedCategoryQuery{
-		categoryQuery: NewCategoryQuery(ctx, db),
+		categoryQuery: cq,
 		cacheClient: cacheClient,
 		prefix: "gomall_category_",
 	}
 }
 
 // 在数据库中检查分类是否存在
-func (cq CategoryQuery) IsExistByName (name string) (bool, error) {
-	var count int64
-	if err := cq.db.Model(&Category{}).Where("name = ?", name).Count(&count).Error; err != nil {
-		return false, err
-	}
-	return count > 0, nil	
+func (cq CategoryQuery) IsExistByName (name string) (uint32, error) {
+	var id uint32
+    err := cq.db.Model(&Category{}).Where("name = ?", name).Select("id").Find(&id).Error
+    if err != nil {
+        return 0, err
+    }
+
+    return id, nil
 }
 
 // 设置缓存
-func (ccq CachedCategoryQuery) setCache(name string) error {
+func (ccq CachedCategoryQuery) SetCache(name string, id uint32) error {
     key := ccq.prefix + name
-    return ccq.cacheClient.Set(ccq.categoryQuery.ctx, key, "1", time.Hour).Err()
+    return ccq.cacheClient.Set(ccq.categoryQuery.ctx, key, id, 24 * time.Hour).Err()
 }
 
 // 检查是否存在
-func (ccq CachedCategoryQuery) getFromCache (name string) (bool, error) {
+func (ccq CachedCategoryQuery) getFromCache (name string) (uint32, error) {
 	key := ccq.prefix + name
-    _, err := ccq.cacheClient.Get(ccq.categoryQuery.ctx, key).Result()
-    if err == redis.Nil {
-        return false, redis.Nil
-    }
+
+    id, err := ccq.cacheClient.Get(ccq.categoryQuery.ctx, key).Uint64()
     if err != nil {
-        return false, err
+        return 0, err
     }
-    return true, nil
+    
+    return uint32(id), nil
 }
 
-func (ccq CachedCategoryQuery) IsExistByName(name string) (bool, error) {
+func (ccq CachedCategoryQuery) IsExistByName(name string) (uint32, error) {
     // 1. 先查缓存
-    exists, err := ccq.getFromCache(name)
-    if err == nil {
-        return true, nil  // 缓存中存在
-    }
-    if err != redis.Nil {
-        return false, err // 发生错误
-    }
-
-    // 2. 缓存未命中，查数据库
-    exists, err = ccq.categoryQuery.IsExistByName(name)
-    if err != nil {
-        return false, err
-    }
-
-    // 3. 如果数据库中存在，则设置缓存
-    if exists {
+    id, err := ccq.getFromCache(name)
+    if err == nil && id > 0 {
         _ = pool.Submit(func() {
-            if err := ccq.setCache(name); err != nil {
+            if err := ccq.SetCache(name, id); err != nil {
                 klog.Error("设置缓存失败", err)
             }
         })
+        // fmt.Println("缓存中存在")
+        return id, nil  // 缓存中存在
+    }
+    if err != redis.Nil && err != nil {
+        return 0, err // 发生错误
     }
 
-    return exists, nil
+    // 2. 缓存未命中，查数据库
+    id, err = ccq.categoryQuery.IsExistByName(name)
+    if err != nil{
+        return 0, err
+    }
+
+    // 3. 设置缓存
+    if id > 0 {
+        _ = pool.Submit(func() {
+            if err := ccq.SetCache(name, id); err != nil {
+                klog.Error("设置缓存失败", err)
+            }
+        })
+        // fmt.Println("数据库中存在")
+    } else if id == 0 {
+        // fmt.Println("数据库中不存在")
+        return 0, nil
+    }
+
+    return id, nil
 }

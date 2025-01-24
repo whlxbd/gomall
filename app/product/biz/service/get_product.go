@@ -2,12 +2,14 @@ package service
 
 import (
 	"context"
-	product "github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
+
 	"github.com/whlxbd/gomall/app/product/biz/dal/model"
 	"github.com/whlxbd/gomall/app/product/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/product/biz/dal/redis"
+	product "github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type GetProductService struct {
@@ -20,6 +22,8 @@ func NewGetProductService(ctx context.Context) *GetProductService {
 // Run create note info
 func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetProductResp, err error) {
 	// Finish your business logic.
+	klog.Infof("GetProductService input: %+v\n", req)
+
 	if req.Id == 0 {
 		return nil, kerrors.NewBizStatusError(400, "id is required")
 	}
@@ -50,21 +54,4 @@ func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetPr
 			Categories:  Categories,
 		},
 	}, err
-
-	// resp = &product.GetProductResp{
-	// 	Product: &product.Product{
-	// 		Id:          p.ID,
-	// 		Name:        p.Name,
-	// 		Description: p.Description,
-	// 		Picture:     p.Picture,
-	// 		Price:       p.Price,
-	// 		Stock:       p.Stock,
-	// 		Soldcount:   p.SoldCount,
-	// 		Status:      product.ProductStatus(p.Status),
-	// 		Ishot:       p.IsHot,
-	// 		Isnew:       p.IsNew,
-	// 		Isrecommend: p.IsRecommend,
-	// 	},
-	// }
-	// return
 }

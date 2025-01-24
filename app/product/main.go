@@ -1,19 +1,21 @@
 package main
 
 import (
-	// "fmt"
 	"net"
-	"time"
 	"os"
+	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
+
 	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
-	"github.com/whlxbd/gomall/app/product/conf"
 	"github.com/whlxbd/gomall/app/product/biz/dal"
+	"github.com/whlxbd/gomall/app/product/conf"
+	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -21,8 +23,13 @@ import (
 
 func main() {
 	_ = godotenv.Load()
+	pool.Init()
 	dal.Init()
+	defer pool.Release()
+
 	opts := kitexInit()
+	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
+	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
 

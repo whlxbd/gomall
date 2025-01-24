@@ -15,6 +15,8 @@ func NewListProductsService(ctx context.Context) *ListProductsService {
 // Run create note info
 func (s *ListProductsService) Run(req *product.ListProductsReq) (resp *product.ListProductsResp, err error) {
 	// Finish your business logic.
-
+	// if middleware.CheckAdminPermission(s.ctx) != nil {
+	// 	return nil, kerrors.NewBizStatusError(400, "permission denied: admin required")
+	// }
 	return
 }

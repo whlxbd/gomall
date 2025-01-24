@@ -9,6 +9,7 @@ import (
     "github.com/whlxbd/gomall/app/product/biz/dal/mysql"
     "github.com/whlxbd/gomall/app/product/biz/dal/redis"
     "github.com/whlxbd/gomall/app/product/biz/dal/model"
+    "github.com/whlxbd/gomall/common/utils/pool"
     "gorm.io/driver/sqlite"
     "gorm.io/gorm"
     goredis "github.com/redis/go-redis/v9"
@@ -28,6 +29,7 @@ func setupTestDB(t *testing.T) {
     redis.RedisClient = goredis.NewClient(&goredis.Options{
         Addr: "localhost:6379",
     })
+    pool.Init()
 }
 
 func TestCreateProduct_Run(t *testing.T) {
@@ -63,8 +65,7 @@ func TestCreateProduct_Run(t *testing.T) {
                 Categories: []string{"测试分类"},
                 Status:     1,
             },
-            wantErr: true,
-            errCode: 400,
+            wantErr: false,
         },
         {
             name: "商品参数验证失败",

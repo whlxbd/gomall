@@ -3,14 +3,15 @@ package model
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
-	"fmt"
 
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/v9"
-	"gorm.io/gorm"
 	"github.com/whlxbd/gomall/common/utils/pool"
+	"gorm.io/gorm"
 )
 
 // 商品状态: 1:上架 2:下架 3:删除
@@ -23,11 +24,11 @@ const (
 )
 
 func (s ProductStatus) IsValid() error {
-    if s < ProductStatusOnSale || s > ProductStatusDeleted {
-        return fmt.Errorf("invalid ProductStatus: %d", s)
+	if s < ProductStatusOnSale || s > ProductStatusDeleted {
+		return fmt.Errorf("invalid ProductStatus: %d", s)
 
-    }
-    return nil
+	}
+	return nil
 
 }
 
@@ -55,7 +56,7 @@ type ProductQuery struct {
 }
 
 type CachedProductQuery struct {
-	productQuery *ProductQuery  // 商品查询
+	productQuery *ProductQuery // 商品查询
 	cacheClient  *redis.Client // 缓存客户端
 	prefix       string        // 缓存前缀
 }
@@ -79,29 +80,30 @@ func (p CachedProductQuery) GetById(productid uint32) (*Product, error) {
 	product, err := p.getFromCache(key)
 	if err == nil {
 		// 更新缓存
-		_ = pool.Submit(func () {
-			if err := p.setCache(key, product); err != nil {
-				klog.Error("设置缓存失败", err)
-			}
-		})
+		// _ = pool.Submit(func () {
+		if err := p.setCache(key, product); err != nil {
+			klog.Error("缓存存在但设置缓存失败", err)
+		}
+		// })
 		return product, nil
 	}
 	if err != redis.Nil {
-		return &Product{}, err
+		return &Product{}, kerrors.NewBizStatusError(400, err.Error())
 	}
 
 	// 从数据库获取
 	product, err = p.productQuery.GetById(productid)
 	if err != nil {
-		return &Product{}, err
+		return &Product{}, kerrors.NewBizStatusError(400, err.Error())
+
 	}
 
 	// 更新缓存
-	_ = pool.Submit(func () {
-		if err := p.setCache(key, product); err != nil {
-			klog.Error("设置缓存失败", err)
-		}
-	})
+	// _ = pool.Submit(func () {
+	if err := p.setCache(key, product); err != nil {
+		klog.Error("缓存不存在，设置缓存失败", err)
+	}
+	// })
 
 	return product, nil
 }
@@ -155,55 +157,67 @@ func SearchProduct(db *gorm.DB, ctx context.Context, q string) (product []*Produ
 // 创建商品
 func CreateProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, product *Product) error {
 	return db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-        if err := tx.Create(product).Error; err != nil {
-            return err
-        }
-        
-        // 创建缓存
-        _ = pool.Submit(func() {
-            p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
-            key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
-            if err := p.setCache(key, product); err != nil {
-                klog.Error("设置缓存失败", err)
-            }
-        })
-        
-        return nil
-    })
+		if err := tx.Create(product).Error; err != nil {
+			klog.Errorf("CreateProduct error: %v", err)
+			return kerrors.NewBizStatusError(400, "创建商品失败")
+		}
+
+		// 创建缓存
+		_ = pool.Submit(func() {
+			p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
+			key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
+			if err := p.setCache(key, product); err != nil {
+				klog.Error("设置缓存失败", err)
+			}
+		})
+
+		return nil
+	})
 }
 
 // 更新商品
-func UpdateProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, product *Product) error {
-	if err := db.WithContext(ctx).Model(product).Updates(product).Error; err != nil {
-		return err
-	}
-
-	// 更新缓存
-	_ = pool.Submit(func () {
-		p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
-		key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
-		if err := p.setCache(key, product); err != nil {
-			klog.Error("设置缓存失败", err)
+func EditProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, product *Product) error {
+	return db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(product).Updates(product).Error; err != nil {
+			klog.Errorf("EditProduct error: %v", err)
+			return kerrors.NewBizStatusError(400, "更新商品失败")
 		}
-	})
 
-	return nil
+		// 更新缓存
+		_ = pool.Submit(func() {
+			p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
+			key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
+			if err := p.setCache(key, product); err != nil {
+				klog.Error("设置缓存失败", err)
+			}
+		})
+
+		return nil
+	})
 }
 
 // 删除商品
 func DeleteProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, productId uint32) error {
-	if err := db.WithContext(ctx).Delete(&Product{Base: Base{ID: productId}}).Error; err != nil {
-		return err
-	}
-
-	// 删除缓存
-	_ = pool.Submit(func () {
-		p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
-		key := p.prefix + strconv.FormatUint(uint64(productId), 10)
-		if err := p.cacheClient.Del(p.productQuery.ctx, key).Err(); err != nil {
-			klog.Error("删除缓存失败", err)
+	return db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&Product{Base: Base{ID: productId}}).Association("Categories").Clear(); err != nil {
+			klog.Errorf("删除商品分类关联失败: %v", err)
+			return kerrors.NewBizStatusError(400, "删除商品分类关联失败")
 		}
-	})
 
-	return nil
+		if err := tx.Delete(&Product{Base: Base{ID: productId}}).Error; err != nil {
+			klog.Errorf("DeleteProduct error: %v", err)
+			return kerrors.NewBizStatusError(400, "更新商品失败")
+		}
+
+		// 删除缓存
+		_ = pool.Submit(func() {
+			p := NewCachedProductQuery(NewProductQuery(ctx, db), cacheClient)
+			key := p.prefix + strconv.FormatUint(uint64(productId), 10)
+			if err := p.cacheClient.Del(p.productQuery.ctx, key).Err(); err != nil {
+				klog.Error("删除缓存失败", err)
+			}
+		})
+
+		return nil
+	})
 }
