@@ -24,3 +24,19 @@
 sh build.sh
 sh output/bootstrap.sh
 ```
+
+## 压测指南
+
+### 安装 ghz
+
+```bash
+go install github.com/bojand/ghz/cmd/ghz@latest
+```
+
+### 运行压测
+
+压测文件位于 `ghz_test` 目录下, 默认生成html, 可根据实际情况修改压测文件。
+
+```bash
+ghz --config ./ghz_test/GetProduct.json
+```

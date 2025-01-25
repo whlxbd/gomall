@@ -1,0 +1,21 @@
+{
+    "proto": "../../idl/product.proto",
+    "call": "product.ProductCatalogService/SearchProducts",
+    "total": 3000,
+    "concurrency": 20,
+    "data": {
+        "query": "测试",
+        "page": 1,
+        "pageSize": 100
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "3s",
+    "format": "html",
+    "output": "ghz_SearchProduct.html",
+    "insecure": true,
+    "host": "0.0.0.0:8086"
+}

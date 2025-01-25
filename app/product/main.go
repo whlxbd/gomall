@@ -13,6 +13,7 @@ import (
 	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
+	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 	"github.com/whlxbd/gomall/app/product/biz/dal"
 	"github.com/whlxbd/gomall/app/product/conf"
 	"github.com/whlxbd/gomall/common/utils/pool"
@@ -21,6 +22,8 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+// var serviceName = conf.GetConf().Kitex.Service
+
 func main() {
 	_ = godotenv.Load()
 	pool.Init()
@@ -28,8 +31,6 @@ func main() {
 	defer pool.Release()
 
 	opts := kitexInit()
-	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
-	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
 
@@ -60,6 +61,8 @@ func kitexInit() (opts []server.Option) {
 	}
 	opts = append(opts, server.WithRegistry(r))
 
+	//gzip
+
 	// klog
 	logger := kitexlogrus.NewLogger()
 	klog.SetLogger(logger)
@@ -77,5 +80,8 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
+	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
 	return
 }

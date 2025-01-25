@@ -1,0 +1,19 @@
+{
+    "proto": "../../idl/product.proto",
+    "call": "product.ProductCatalogService/GetProduct",
+    "total": 5000,
+    "concurrency": 30,
+    "data": {
+        "id": 26
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "10s",
+    "format": "html",
+    "output": "ghz_GetProduct.html",
+    "insecure": true,
+    "host": "0.0.0.0:8086"
+}

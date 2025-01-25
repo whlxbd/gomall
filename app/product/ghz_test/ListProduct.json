@@ -1,0 +1,21 @@
+{
+    "proto": "../../idl/product.proto",
+    "call": "product.ProductCatalogService/ListProducts",
+    "total": 3000,
+    "concurrency": 20,
+    "data": {
+        "page": 1,
+        "pageSize": 100,
+        "categoryName": "测试分类"
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "10s",
+    "format": "html",
+    "output": "ghz_ListProduct.html",
+    "insecure": true,
+    "host": "0.0.0.0:8086"
+}

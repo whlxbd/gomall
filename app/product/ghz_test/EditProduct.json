@@ -1,0 +1,34 @@
+{
+    "proto": "../../idl/product.proto",
+    "call": "product.ProductCatalogService/EditProduct",
+    "total": 3000,
+    "concurrency": 20,
+    "data": {
+        "id": 200,
+        "name": "字红",
+        "description": "等保三。力志京去而话在号。连带阶。一品来立后红比多。人员斗线群量马。亲月没示联并里常治。电思但办界确。走月儿难月七组门。",
+        "picture": "https://loremflickr.com/400/400?lock=4241790604673484",
+        "price": 917.85,
+        "stock": 100,
+        "soldcount": 100,
+        "status": "PRODUCT_STATUS_OFF_SALE",
+        "ishot": false,
+        "isnew": true,
+        "isrecommend": false,
+        "categories": [
+            "测试分类",
+            "测试分类3",
+            "测试分类2"
+        ]
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "10s",
+    "format": "html",
+    "output": "ghz_EditProduct.html",
+    "insecure": true,
+    "host": "0.0.0.0:8086"
+}

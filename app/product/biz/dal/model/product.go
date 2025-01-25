@@ -149,9 +149,45 @@ func GetById(ctx context.Context, db *gorm.DB, productid uint32) (product *Produ
 }
 
 // 通过商品名称或描述搜索商品
-func SearchProduct(db *gorm.DB, ctx context.Context, q string) (product []*Product, err error) {
-	err = db.WithContext(ctx).Model(&Product{}).Find(&product, "name like ? or description like ?", "%"+q+"%", "%"+q+"%").Error
-	return product, err
+func SearchProduct(db *gorm.DB, ctx *context.Context, q string, page int32, pageSize int64) (products []*Product, err error) {
+    query := db.WithContext(*ctx).Model(&Product{}).
+        Where("name like ? or description like ?", "%"+q+"%", "%"+q+"%")
+
+    // 分页查询
+    if err = query.Preload("Categories").
+        Limit(int(pageSize)).
+        Offset(int((page - 1) * int32(pageSize))).
+        Find(&products).Error; err != nil {
+        return nil, err
+    }
+
+    return products, nil
+}
+
+// 流式搜索商品
+func StreamSearchProduct(db *gorm.DB, ctx *context.Context, q string, handleFunc func(*Product) error) error {
+    query := db.WithContext(*ctx).
+        Model(&Product{}).
+        Preload("Categories").
+        Where("name like ? or description like ?", "%"+q+"%", "%"+q+"%")
+
+    rows, err := query.Rows()
+    if err != nil {
+        return err
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var product Product
+        if err := db.ScanRows(rows, &product); err != nil {
+            return err
+        }
+        if err := handleFunc(&product); err != nil {
+            return err
+        }
+    }
+
+    return nil
 }
 
 // 创建商品

@@ -52,7 +52,12 @@ message GetProductReq { uint32 id = 1; }
 
 message GetProductResp { Product product = 1; }
 
-message SearchProductsReq { string query = 1; }
+message SearchProductsReq { 
+  string query = 1; 
+
+  int32 page = 2;
+  int64 pageSize = 3;
+}
 
 message SearchProductsResp { repeated Product results = 1; }
 

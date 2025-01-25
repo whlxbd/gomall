@@ -1,0 +1,33 @@
+{
+    "proto": "../../idl/product.proto",
+    "call": "product.ProductCatalogService/CreateProduct",
+    "total": 1500,
+    "concurrency": 30,
+    "data": {
+        "name": "测试商品",
+        "description": "测试",
+        "picture": "https://loremflickr.com/400/400?lock=6130135583212644",
+        "price": 776.69,
+        "stock": 1,
+        "soldcount": 1,
+        "status": "PRODUCT_STATUS_OFF_SALE",
+        "ishot": true,
+        "isnew": false,
+        "isrecommend": true,
+        "categories": [
+            "测试分类",
+            "测试分类3",
+            "测试分类2"
+        ]
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "20s",
+    "format": "html",
+    "output": "ghz_CreateProduct.html",
+    "insecure": true,
+    "host": "0.0.0.0:8086"
+}
