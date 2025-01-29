@@ -5,8 +5,8 @@
     "concurrency": 20,
     "data": {
         "page": 1,
-        "pageSize": 100,
-        "categoryName": "测试分类"
+        "pageSize": 10,
+        "categoryName": ""
     },
     "metadata": {
         "foo": "bar",

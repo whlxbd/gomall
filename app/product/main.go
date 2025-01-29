@@ -18,6 +18,7 @@ import (
 	"github.com/whlxbd/gomall/app/product/conf"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
+	"github.com/whlxbd/gomall/common/mtl"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -29,6 +30,8 @@ func main() {
 	pool.Init()
 	dal.Init()
 	defer pool.Release()
+
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort, os.Getenv("REGISTRY_ADDR"))
 
 	opts := kitexInit()
 

@@ -9,11 +9,82 @@ services:
       - MYSQL_USER=gomall
       - MYSQL_PASSWORD=gomall
       - MYSQL_ROOT_PASSWORD="root
+    networks:
+      - gomall
   redis:
     image: 'redis:latest'
     ports:
       - 6379:6379
+    networks:
+      - gomall
+
   consul:
     image: "hashicorp/consul:latest"
     ports:
       - "8500:8500"
+    networks:
+      - gomall
+
+  prometheus:
+    image: "prom/prometheus:latest"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/config/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - gomall
+
+  rmqnamesrv: # rocketMq namesrv
+    image: apache/rocketmq:5.3.1
+    ports:
+      - 9876:9876
+    command: sh mqnamesrv
+    networks:
+      - gomall
+      
+  rmqbroker: # rocketMq broker
+    image: apache/rocketmq:5.3.1
+    ports:
+      - 10909:10909
+      - 10911:10911
+      - 10912:10912
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
+    depends_on:
+      - rmqnamesrv
+    command: sh mqbroker
+    networks:
+      - gomall
+
+  rmqproxy: # rocketMq proxy
+    image: apache/rocketmq:5.3.1
+    depends_on:
+      - rmqbroker
+      - rmqnamesrv
+    ports:
+      - 9877:8080
+      - 9878:8081
+    restart: on-failure
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
+    command: sh mqproxy
+    networks:
+      - gomall
+
+  rmqconsole: # rocketMq console
+    image: styletang/rocketmq-console-ng:1.0.0
+    ports:
+      - 9898:8080
+    environment:
+      - JAVA_OPTS=-Drocketmq.namesrv.addr=rmqnamesrv:9876
+    depends_on:
+      - rmqnamesrv
+      - rmqbroker
+    networks:
+      - gomall
+
+networks:
+  gomall:
+    driver: bridge
