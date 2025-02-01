@@ -3,7 +3,6 @@ package rmq
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	rmq_client "github.com/apache/rocketmq-clients/golang/v5"
