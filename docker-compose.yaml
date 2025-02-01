@@ -66,8 +66,8 @@ services:
       - rmqbroker
       - rmqnamesrv
     ports:
-      - 9877:8080
-      - 9878:8081
+      - 9877:9877
+      - 9878:9878
     restart: on-failure
     volumes:
       - ./deploy/config/rmqproxy.json:/home/rocketmq/rocketmq-5.3.1/conf/rmq-proxy.json
