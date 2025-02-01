@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   mysql:
     image: 'mysql:latest'
@@ -50,11 +50,13 @@ services:
       - 10909:10909
       - 10911:10911
       - 10912:10912
+    volumes:
+      - ./deploy/config/rmqbroker.conf:/home/rocketmq/rocketmq-5.3.1/conf/broker.conf
     environment:
-      - NAMESRV_ADDR=rmqnamesrv:9876
+        - JAVA_OPTS= -Xms1g -Xmx1g -Xmn512M
     depends_on:
       - rmqnamesrv
-    command: sh mqbroker
+    command: sh mqbroker -c /home/rocketmq/rocketmq-5.3.1/conf/broker.conf
     networks:
       - gomall
 
@@ -67,18 +69,20 @@ services:
       - 9877:8080
       - 9878:8081
     restart: on-failure
-    environment:
-      - NAMESRV_ADDR=rmqnamesrv:9876
-    command: sh mqproxy
+    volumes:
+      - ./deploy/config/rmqproxy.json:/home/rocketmq/rocketmq-5.3.1/conf/rmq-proxy.json
+    # environment:
+      # - NAMESRV_ADDR=rmqnamesrv:9876
+    command: sh mqproxy -pc /home/rocketmq/rocketmq-5.3.1/conf/rmq-proxy.json
     networks:
       - gomall
 
   rmqconsole: # rocketMq console
-    image: styletang/rocketmq-console-ng:1.0.0
+    image: apacherocketmq/rocketmq-dashboard:latest
     ports:
       - 9898:8080
     environment:
-      - JAVA_OPTS=-Drocketmq.namesrv.addr=rmqnamesrv:9876
+      - JAVA_OPTS= -Xmx256M -Xms256M -Xmn128M -Drocketmq.namesrv.addr=rmqnamesrv:9876
     depends_on:
       - rmqnamesrv
       - rmqbroker
