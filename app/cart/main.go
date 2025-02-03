@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"os"
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -13,9 +14,19 @@ import (
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/cart/cartservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"github.com/joho/godotenv"
+	"github.com/whlxbd/gomall/app/cart/biz/dal"
+	"github.com/whlxbd/gomall/common/utils/pool"
+	"github.com/whlxbd/gomall/common/mtl"
 )
 
 func main() {
+	_ = godotenv.Load()
+	pool.Init()
+	dal.Init()
+	defer pool.Release()
+
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort, os.Getenv("REGISTRY_ADDR"))
 	opts := kitexInit()
 
 	svr := cartservice.NewServer(new(CartServiceImpl), opts...)
@@ -40,7 +51,7 @@ func kitexInit() (opts []server.Option) {
 	}))
 
 	// consul
-	r, err := consul.NewConsulRegister(conf.GetConf().Registry.RegistryAddress[0]) // 使用配置中的 Consul 地址
+	r, err := consul.NewConsulRegister(os.Getenv("REGISTRY_ADDR")) // 使用配置中的 Consul 地址
 	if err != nil {
 		klog.Fatal(err)
 	}

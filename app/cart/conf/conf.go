@@ -23,10 +23,15 @@ type Config struct {
 	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
+	RocketMQ RocketMQ `yaml:"rocketmq"`
 }
 
 type MySQL struct {
 	DSN string `yaml:"dsn"`
+}
+
+type RocketMQ struct {
+	Endpoint string `yaml:"endpoint"`
 }
 
 type Redis struct {
@@ -44,6 +49,7 @@ type Kitex struct {
 	LogMaxSize    int    `yaml:"log_max_size"`
 	LogMaxBackups int    `yaml:"log_max_backups"`
 	LogMaxAge     int    `yaml:"log_max_age"`
+	MetricsPort   string `yaml:"metrics_port"`
 }
 
 type Registry struct {

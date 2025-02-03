@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"os"
 
 	rmq_client "github.com/apache/rocketmq-clients/golang/v5"
 	"github.com/apache/rocketmq-clients/golang/v5/credentials"
@@ -26,7 +25,7 @@ type RMQClient struct {
 
 var (
 	// maximum waiting time for receive func
-	awaitDuration = time.Second * 5
+	awaitDuration = time.Second * 30
 	// maximum number of messages received at one time
 	maxMessageNum int32 = 16
 	// invisibleDuration should > 20s
@@ -35,8 +34,8 @@ var (
 )
 
 func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, error) {
-	os.Setenv("mq.consoleAppender.enabled", "true")
-	rmq_client.ResetLogger()
+	topicName := Topic + topicSuffix
+
 	producer, err := rmq_client.NewProducer(&rmq_client.Config{
 		Endpoint: Endpoint,
 		Credentials: &credentials.SessionCredentials{
@@ -44,12 +43,12 @@ func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, 
 			AccessSecret: SecretKey,
 		},
 	},
-		rmq_client.WithTopics(Topic + topicSuffix),
+		rmq_client.WithTopics(topicName),
 		rmq_client.WithMaxAttempts(3),
 	)
 	if err != nil {
-		fmt.Println("Init Producer failed")
-		klog.Error("Init Producer failed")
+		fmt.Println("Init Producer failed: ", err)
+		klog.Error("Init Producer failed： ", err)
 		return &RMQClient{}, kerrors.NewBizStatusError(400, "Init Producer failed")
 	}
 
@@ -63,15 +62,25 @@ func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, 
 	},
 		rmq_client.WithAwaitDuration(awaitDuration),
 		rmq_client.WithSubscriptionExpressions(map[string]*rmq_client.FilterExpression{
-			Topic: rmq_client.SUB_ALL,
-		}),
+			topicName: rmq_client.SUB_ALL,
+		}),// 订阅所有消息
 	)
-
 	if err != nil {
 		fmt.Println("Init Consumer failed")
 		klog.Error("Init Consumer failed")
 		return &RMQClient{}, kerrors.NewBizStatusError(400, "Init Consumer failed")
 	}
+
+	if err := producer.Start(); err != nil {
+		producer.GracefulStop()
+        return nil, fmt.Errorf("start producer failed: %w", err)
+    }
+
+    // 启动consumer
+    if err := simpleConsumer.Start(); err != nil {
+        producer.GracefulStop()
+        return nil, fmt.Errorf("start consumer failed: %w", err)
+    }
 
 	return &RMQClient{
 		producer: producer,
@@ -126,13 +135,13 @@ func (c *RMQClient) ReceiveMsg(ctx context.Context) {
 		msgs, err := c.simpleConsumer.Receive(ctx, maxMessageNum, invisibleDuration)
 		fmt.Printf("Receive message %+v\n", msgs)
 		if err != nil {
-			klog.Error("Receive msg failed")
-			fmt.Println("Receive msg failed")
+			klog.Error("Receive msg failed: ", err)
+			fmt.Println("Receive msg failed： ", err)
 		}
 		
 		for _, mv := range msgs {
 			c.simpleConsumer.Ack(ctx, mv)
+			fmt.Println(mv)
 		}
 	}
 }
-

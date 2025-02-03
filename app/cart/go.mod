@@ -6,6 +6,7 @@ replace (
 	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 	github.com/whlxbd/gomall/common => ../../common
 	github.com/whlxbd/gomall/rpc_gen => ../../rpc_gen
+	github.com/whlxbd/gomall/app/product/biz/dal/model => ../../product/biz/dal/model
 )
 
 require (
