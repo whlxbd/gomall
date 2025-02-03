@@ -25,11 +25,11 @@ type RMQClient struct {
 
 var (
 	// maximum waiting time for receive func
-	awaitDuration = time.Second * 30
+	awaitDuration = time.Second * 60
 	// maximum number of messages received at one time
 	maxMessageNum int32 = 16
 	// invisibleDuration should > 20s
-	invisibleDuration = time.Second * 20
+	invisibleDuration = time.Second * 30
 	// receive messages in a loop
 )
 
@@ -52,6 +52,11 @@ func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, 
 		return &RMQClient{}, kerrors.NewBizStatusError(400, "Init Producer failed")
 	}
 
+	if err := producer.Start(); err != nil {
+		producer.GracefulStop()
+        return nil, fmt.Errorf("start producer failed: %w", err)
+    }
+
 	simpleConsumer, err := rmq_client.NewSimpleConsumer(&rmq_client.Config{
 		Endpoint:      Endpoint,
 		ConsumerGroup: ConsumerGroup + groupSuffix,
@@ -70,11 +75,6 @@ func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, 
 		klog.Error("Init Consumer failed")
 		return &RMQClient{}, kerrors.NewBizStatusError(400, "Init Consumer failed")
 	}
-
-	if err := producer.Start(); err != nil {
-		producer.GracefulStop()
-        return nil, fmt.Errorf("start producer failed: %w", err)
-    }
 
     // 启动consumer
     if err := simpleConsumer.Start(); err != nil {
@@ -140,7 +140,9 @@ func (c *RMQClient) ReceiveMsg(ctx context.Context) {
 		}
 		
 		for _, mv := range msgs {
-			c.simpleConsumer.Ack(ctx, mv)
+			if ackErr := c.simpleConsumer.Ack(ctx, mv); ackErr != nil {
+				klog.Error("Ack msg failed: ", ackErr)
+			}
 			fmt.Println(mv)
 		}
 	}

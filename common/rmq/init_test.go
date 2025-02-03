@@ -68,33 +68,50 @@ func TestReceiveMessage(t *testing.T) {
     assert.NoError(t, err)
     defer client.Close()
 
-    ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
-    defer cancel()
+    ctx := context.Background()
 
-    done := make(chan struct{})
-    msgSent := make(chan struct{})
-    go func() {
-        client.ReceiveMsg(ctx)
-        close(done)
-    }()
+    receivedMsgs := make(chan string, 5)
     
     go func() {
-        // 限制发送5条消息
-        for i := 0; i < 5; i++ {
-            err := client.SendMsgSync(ctx, fmt.Sprintf("test message %d", i), "test", "test_key", "test_tag")
-            if err != nil {
-                t.Errorf("发送消息失败: %v", err)
+        for {
+            select {
+            case <-ctx.Done():
                 return
+            default:
+                msgs, err := client.simpleConsumer.Receive(ctx, maxMessageNum, invisibleDuration)
+                if err != nil {
+                    continue
+                }
+                
+                for _, msg := range msgs {
+                    // 确认消息
+                    _ = client.simpleConsumer.Ack(ctx, msg)
+                    receivedMsgs <- string(msg.GetBody())
+                }
             }
-            time.Sleep(time.Second) // 间隔发送
         }
-        close(msgSent)
     }()
 
-    select {
-    case <-done:
-        // 正常退出
-    case <-time.After(time.Second * 3):
-        t.Error("接收消息超时")
+    // 发送测试消息
+    for i := 0; i < 5; i++ {
+        msgContent := fmt.Sprintf("test message %d", i)
+        err := client.SendMsgSync(ctx, msgContent, "test", fmt.Sprintf("key_%d", i), "test_tag")
+        assert.NoError(t, err)
+        time.Sleep(time.Second)
     }
+
+    // 验证接收到的消息
+    receivedCount := 0
+    timeout := time.After(time.Second * 30)
+    for receivedCount < 5 {
+        select {
+        case msg := <-receivedMsgs:
+            t.Logf("收到消息: %s", msg)
+            receivedCount++
+        case <-timeout:
+            t.Errorf("接收超时, 已接收 %d 条消息", receivedCount)
+            return
+        }
+    }
+    t.Logf("成功接收 %d 条消息", receivedCount)
 }
