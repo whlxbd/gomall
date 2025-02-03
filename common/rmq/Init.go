@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"os"
 
 	rmq_client "github.com/apache/rocketmq-clients/golang/v5"
 	"github.com/apache/rocketmq-clients/golang/v5/credentials"
@@ -33,7 +34,9 @@ var (
 	// receive messages in a loop
 )
 
-func Init(topicPrefix string, groupPrefix string, Endpoint string) (*RMQClient, error) {
+func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, error) {
+	os.Setenv("mq.consoleAppender.enabled", "true")
+	rmq_client.ResetLogger()
 	producer, err := rmq_client.NewProducer(&rmq_client.Config{
 		Endpoint: Endpoint,
 		Credentials: &credentials.SessionCredentials{
@@ -41,7 +44,7 @@ func Init(topicPrefix string, groupPrefix string, Endpoint string) (*RMQClient, 
 			AccessSecret: SecretKey,
 		},
 	},
-		rmq_client.WithTopics(Topic + topicPrefix),
+		rmq_client.WithTopics(Topic + topicSuffix),
 		rmq_client.WithMaxAttempts(3),
 	)
 	if err != nil {
@@ -52,7 +55,7 @@ func Init(topicPrefix string, groupPrefix string, Endpoint string) (*RMQClient, 
 
 	simpleConsumer, err := rmq_client.NewSimpleConsumer(&rmq_client.Config{
 		Endpoint:      Endpoint,
-		ConsumerGroup: ConsumerGroup + groupPrefix,
+		ConsumerGroup: ConsumerGroup + groupSuffix,
 		Credentials: &credentials.SessionCredentials{
 			AccessKey:    AccessKey,
 			AccessSecret: SecretKey,
@@ -77,13 +80,17 @@ func Init(topicPrefix string, groupPrefix string, Endpoint string) (*RMQClient, 
 }
 
 func (c *RMQClient) Close() {
-	c.producer.GracefulStop()
-	c.simpleConsumer.GracefulStop()
+	if c != nil && c.producer != nil {
+		c.producer.GracefulStop()
+	}
+	if c != nil && c.simpleConsumer != nil {
+		c.simpleConsumer.GracefulStop()
+	}
 }
 
-func (c *RMQClient) SendMsgAsync(ctx context.Context, message string, topicPrefix string, key string, tag string) {
+func (c *RMQClient) SendMsgAsync(ctx context.Context, message string, topicSuffix string, key string, tag string) {
 	msg := &rmq_client.Message{
-		Topic: Topic + topicPrefix,
+		Topic: Topic + topicSuffix,
 		Body: []byte(message),
 	}
 	msg.SetKeys(key)
@@ -99,9 +106,9 @@ func (c *RMQClient) SendMsgAsync(ctx context.Context, message string, topicPrefi
 	})
 }
 
-func (c *RMQClient) SendMsgSync(ctx context.Context, message string, topicPrefix string, key string, tag string) error {
+func (c *RMQClient) SendMsgSync(ctx context.Context, message string, topicSuffix string, key string, tag string) error {
 	msg := &rmq_client.Message{
-		Topic: Topic + topicPrefix,
+		Topic: Topic + topicSuffix,
 		Body: []byte(message),
 	}
 	msg.SetKeys(key)

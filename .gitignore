@@ -11,3 +11,6 @@ app/**/kitex_gen/
 app/**/dev/
 
 go.work.sum
+deploy/config/prometheus.yml
+deploy/config/rmqbroker.conf
+deploy/config/rmqproxy.json

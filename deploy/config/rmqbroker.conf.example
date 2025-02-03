@@ -8,5 +8,5 @@ flushDiskType = ASYNC_FLUSH
 listenPort = 10911
 autoCreateTopicEnable = true
 autoCreateSubscriptionGroup = true
-brokerIP1 = 10.255.253.63
-namesrvAddr = 10.255.253.63:9876
+brokerIP1 = 127.0.0.1
+namesrvAddr = 127.0.0.1:9876

@@ -4,7 +4,7 @@ global:
 scrape_configs:
   - job_name: "consul"
     consul_sd_configs:
-      - server: 10.255.253.63:8500
+      - server: 127.0.0.1:8500
         services:
           - prometheus
     relabel_configs:

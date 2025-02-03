@@ -2,5 +2,5 @@
     "rocketMQClusterName": "gomallCluster",
     "remotingListenPort":9877,
     "grpcServerPort":9878,
-    "namesrvAddr": "10.255.253.63:9876"
+    "namesrvAddr": "127.0.0.1:9876"
 }
