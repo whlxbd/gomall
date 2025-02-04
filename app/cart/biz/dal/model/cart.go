@@ -6,8 +6,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/v9"
 	product "github.com/whlxbd/gomall/app/product/biz/dal/model"
+	"github.com/whlxbd/gomall/common/utils/pool"
 	"gorm.io/gorm"
 )
 
@@ -118,6 +120,11 @@ func (c CachedCartQuery) SetCacheByUserID(userid uint32, carts *[]Cart) error {
 func (c CachedCartQuery) GetByUserID(userid uint32) (*[]Cart, error) {
 	carts, err := c.GetFromCacheByUserID(userid)
 	if err == nil {
+		_ = pool.Submit(func() {
+			if err := c.SetCacheByUserID(userid, carts); err != nil {
+				klog.Error("缓存存在但设置缓存失败", err)
+			}
+		})
 		return carts, nil
 	}
 
@@ -126,9 +133,33 @@ func (c CachedCartQuery) GetByUserID(userid uint32) (*[]Cart, error) {
 		return nil, err
 	}
 
-	if err := c.SetCacheByUserID(userid, carts); err != nil {
+	_ = pool.Submit(func() {
+		if err := c.SetCacheByUserID(userid, carts); err != nil {
+			klog.Error("缓存不存在，设置缓存失败", err)
+		}
+	})
+
+	return carts, nil
+}
+
+func (c CachedCartQuery) GetByCartID(cartid uint32) (*Cart, error) {
+	cart, err := c.GetFromCacheByCartId(cartid)
+	if err == nil {
+		return cart, nil
+	}
+
+	cart, err = c.cartQuery.GetByCartId(cartid)
+	if err != nil {
 		return nil, err
 	}
 
-	return carts, nil
+	if err := c.SetCacheByCartId(cartid, cart); err != nil {
+		return nil, err
+	}
+
+	return cart, nil
+}
+
+func AddCart() {
+	
 }

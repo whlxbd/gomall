@@ -80,11 +80,11 @@ func (p CachedProductQuery) GetById(productid uint32) (*Product, error) {
 	product, err := p.getFromCache(key)
 	if err == nil {
 		// 更新缓存
-		// _ = pool.Submit(func () {
-		if err := p.setCache(key, product); err != nil {
-			klog.Error("缓存存在但设置缓存失败", err)
-		}
-		// })
+		_ = pool.Submit(func() {
+			if err := p.setCache(key, product); err != nil {
+				klog.Error("缓存存在但设置缓存失败", err)
+			}
+		})
 		return product, nil
 	}
 	if err != redis.Nil {
@@ -99,11 +99,11 @@ func (p CachedProductQuery) GetById(productid uint32) (*Product, error) {
 	}
 
 	// 更新缓存
-	// _ = pool.Submit(func () {
-	if err := p.setCache(key, product); err != nil {
-		klog.Error("缓存不存在，设置缓存失败", err)
-	}
-	// })
+	_ = pool.Submit(func() {
+		if err := p.setCache(key, product); err != nil {
+			klog.Error("缓存不存在，设置缓存失败", err)
+		}
+	})
 
 	return product, nil
 }
@@ -150,44 +150,44 @@ func GetById(ctx context.Context, db *gorm.DB, productid uint32) (product *Produ
 
 // 通过商品名称或描述搜索商品
 func SearchProduct(db *gorm.DB, ctx *context.Context, q string, page int32, pageSize int64) (products []*Product, err error) {
-    query := db.WithContext(*ctx).Model(&Product{}).
-        Where("name like ? or description like ?", "%"+q+"%", "%"+q+"%")
+	query := db.WithContext(*ctx).Model(&Product{}).
+		Where("name like ? or description like ?", "%"+q+"%", "%"+q+"%")
 
-    // 分页查询
-    if err = query.Preload("Categories").
-        Limit(int(pageSize)).
-        Offset(int((page - 1) * int32(pageSize))).
-        Find(&products).Error; err != nil {
-        return nil, err
-    }
+	// 分页查询
+	if err = query.Preload("Categories").
+		Limit(int(pageSize)).
+		Offset(int((page - 1) * int32(pageSize))).
+		Find(&products).Error; err != nil {
+		return nil, err
+	}
 
-    return products, nil
+	return products, nil
 }
 
 // 流式搜索商品
 func StreamSearchProduct(db *gorm.DB, ctx *context.Context, q string, handleFunc func(*Product) error) error {
-    query := db.WithContext(*ctx).
-        Model(&Product{}).
-        Preload("Categories").
-        Where("name like ? or description like ?", "%"+q+"%", "%"+q+"%")
+	query := db.WithContext(*ctx).
+		Model(&Product{}).
+		Preload("Categories").
+		Where("name like ? or description like ?", "%"+q+"%", "%"+q+"%")
 
-    rows, err := query.Rows()
-    if err != nil {
-        return err
-    }
-    defer rows.Close()
+	rows, err := query.Rows()
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 
-    for rows.Next() {
-        var product Product
-        if err := db.ScanRows(rows, &product); err != nil {
-            return err
-        }
-        if err := handleFunc(&product); err != nil {
-            return err
-        }
-    }
+	for rows.Next() {
+		var product Product
+		if err := db.ScanRows(rows, &product); err != nil {
+			return err
+		}
+		if err := handleFunc(&product); err != nil {
+			return err
+		}
+	}
 
-    return nil
+	return nil
 }
 
 // 创建商品
