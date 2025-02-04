@@ -29,6 +29,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"Info": kitex.NewMethodInfo(
+		infoHandler,
+		newInfoArgs,
+		newInfoResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -401,6 +408,159 @@ func (p *LoginResult) GetResult() interface{} {
 	return p.Success
 }
 
+func infoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.InfoReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserService).Info(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *InfoArgs:
+		success, err := handler.(user.UserService).Info(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*InfoResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newInfoArgs() interface{} {
+	return &InfoArgs{}
+}
+
+func newInfoResult() interface{} {
+	return &InfoResult{}
+}
+
+type InfoArgs struct {
+	Req *user.InfoReq
+}
+
+func (p *InfoArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.InfoReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *InfoArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *InfoArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *InfoArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *InfoArgs) Unmarshal(in []byte) error {
+	msg := new(user.InfoReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var InfoArgs_Req_DEFAULT *user.InfoReq
+
+func (p *InfoArgs) GetReq() *user.InfoReq {
+	if !p.IsSetReq() {
+		return InfoArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *InfoArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *InfoArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type InfoResult struct {
+	Success *user.InfoResp
+}
+
+var InfoResult_Success_DEFAULT *user.InfoResp
+
+func (p *InfoResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.InfoResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *InfoResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *InfoResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *InfoResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *InfoResult) Unmarshal(in []byte) error {
+	msg := new(user.InfoResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *InfoResult) GetSuccess() *user.InfoResp {
+	if !p.IsSetSuccess() {
+		return InfoResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *InfoResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.InfoResp)
+}
+
+func (p *InfoResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *InfoResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -426,6 +586,16 @@ func (p *kClient) Login(ctx context.Context, Req *user.LoginReq) (r *user.LoginR
 	_args.Req = Req
 	var _result LoginResult
 	if err = p.c.Call(ctx, "Login", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) Info(ctx context.Context, Req *user.InfoReq) (r *user.InfoResp, err error) {
+	var _args InfoArgs
+	_args.Req = Req
+	var _result InfoResult
+	if err = p.c.Call(ctx, "Info", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
