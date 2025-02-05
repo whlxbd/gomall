@@ -18,9 +18,12 @@ const (
 	Topic			= "gomall_topic_"
 )
 
-type RMQClient struct {
-    producer       rmq_client.Producer
-    simpleConsumer rmq_client.SimpleConsumer
+type Producer struct {
+	producer rmq_client.Producer
+}
+
+type SimpleConsumer struct {
+	simpleConsumer rmq_client.SimpleConsumer
 }
 
 var (
@@ -33,7 +36,7 @@ var (
 	// receive messages in a loop
 )
 
-func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, error) {
+func InitProducer(topicSuffix string, Endpoint string) (*Producer, error) {
 	topicName := Topic + topicSuffix
 
 	producer, err := rmq_client.NewProducer(&rmq_client.Config{
@@ -49,13 +52,18 @@ func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, 
 	if err != nil {
 		fmt.Println("Init Producer failed: ", err)
 		klog.Error("Init Producer failed： ", err)
-		return &RMQClient{}, kerrors.NewBizStatusError(400, "Init Producer failed")
+		return nil, kerrors.NewBizStatusError(400, "Init Producer failed")
 	}
 
 	if err := producer.Start(); err != nil {
 		producer.GracefulStop()
         return nil, fmt.Errorf("start producer failed: %w", err)
     }
+	return &Producer{producer: producer}, err
+}
+
+func InitConsumer(topicSuffix string, groupSuffix string, Endpoint string) (*SimpleConsumer, error) {
+	topicName := Topic + topicSuffix
 
 	simpleConsumer, err := rmq_client.NewSimpleConsumer(&rmq_client.Config{
 		Endpoint:      Endpoint,
@@ -73,31 +81,31 @@ func Init(topicSuffix string, groupSuffix string, Endpoint string) (*RMQClient, 
 	if err != nil {
 		fmt.Println("Init Consumer failed")
 		klog.Error("Init Consumer failed")
-		return &RMQClient{}, kerrors.NewBizStatusError(400, "Init Consumer failed")
+		return nil, kerrors.NewBizStatusError(400, "Init Consumer failed")
 	}
 
     // 启动consumer
     if err := simpleConsumer.Start(); err != nil {
-        producer.GracefulStop()
+        simpleConsumer.GracefulStop()
         return nil, fmt.Errorf("start consumer failed: %w", err)
     }
 
-	return &RMQClient{
-		producer: producer,
-		simpleConsumer: simpleConsumer, 
-	}, err
+	return &SimpleConsumer{simpleConsumer: simpleConsumer}, err
 }
 
-func (c *RMQClient) Close() {
+func (c *Producer) Close() {
 	if c != nil && c.producer != nil {
 		c.producer.GracefulStop()
 	}
+}
+
+func (c *SimpleConsumer) Close() {
 	if c != nil && c.simpleConsumer != nil {
 		c.simpleConsumer.GracefulStop()
 	}
 }
 
-func (c *RMQClient) SendMsgAsync(ctx context.Context, message string, topicSuffix string, key string, tag string) {
+func (c *Producer) SendMsgAsync(ctx context.Context, message string, topicSuffix string, key string, tag string) {
 	msg := &rmq_client.Message{
 		Topic: Topic + topicSuffix,
 		Body: []byte(message),
@@ -115,7 +123,7 @@ func (c *RMQClient) SendMsgAsync(ctx context.Context, message string, topicSuffi
 	})
 }
 
-func (c *RMQClient) SendMsgSync(ctx context.Context, message string, topicSuffix string, key string, tag string) error {
+func (c *Producer) SendMsgSync(ctx context.Context, message string, topicSuffix string, key string, tag string) error {
 	msg := &rmq_client.Message{
 		Topic: Topic + topicSuffix,
 		Body: []byte(message),
@@ -130,7 +138,7 @@ func (c *RMQClient) SendMsgSync(ctx context.Context, message string, topicSuffix
 	return err
 }
 
-func (c *RMQClient) ReceiveMsg(ctx context.Context) {
+func (c *SimpleConsumer) ReceiveMsg(ctx context.Context) {
 	for {
 		msgs, err := c.simpleConsumer.Receive(ctx, maxMessageNum, invisibleDuration)
 		fmt.Printf("Receive message %+v\n", msgs)

@@ -3,12 +3,15 @@ package model
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"os"
 	"strconv"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/v9"
-	product "github.com/whlxbd/gomall/app/product/biz/dal/model"
+	"github.com/whlxbd/gomall/common/rmq"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"gorm.io/gorm"
 )
@@ -19,147 +22,90 @@ type Cart struct {
 	ProductID uint32 `json:"product_id" gorm:"index:idx_user_product;not null;comment:商品ID"`
 	Quantity  uint32 `json:"quantity" gorm:"not null;default:1;check:quantity > 0;comment:商品数量"`
 	Selected  bool   `json:"selected" gorm:"default:true;comment:是否选中"`
-	Status    int8   `json:"status" gorm:"default:1;comment:状态 1:正常 2:失效"`
-
-	// 关联商品信息(预加载)
-	Product *product.Product `json:"product" gorm:"foreignKey:ProductID"`
+	Status    bool   `json:"status" gorm:"default:true;comment:状态 true:正常 false:失效"`
 }
+
+const (
+	CartCachePrefix = "gomall_cart:userid:"
+	CartExpiration  = time.Minute * 10
+)
 
 func (c Cart) TableName() string {
 	return "cart"
 }
 
-type CartQuery struct {
-	ctx context.Context // 上下文
-	db  *gorm.DB        // 数据库连接
+type CartMessage struct {
+	Operation string  `json:"operation"`
+	UserID    uint32  `json:"user_id"`
+	CartList  []*Cart `json:"cart"`
 }
 
-type CachedCartQuery struct {
-	cartQuery   *CartQuery    // 购物车查询
-	cacheClient *redis.Client // 缓存客户端
-	prefix      string        // 缓存前缀
-}
+var (
+	producer *rmq.Producer
+)
 
-func NewCartQuery(ctx context.Context, db *gorm.DB) *CartQuery {
-	return &CartQuery{ctx: ctx, db: db}
-}
-
-func NewCachedCartQuery(cartQuery *CartQuery, cacheClient *redis.Client) *CachedCartQuery {
-	return &CachedCartQuery{cartQuery: cartQuery, cacheClient: cacheClient, prefix: "gomall_cart_"}
-}
-
-// 根据用户ID从数据库获取购物车
-func GetByUserID(userid uint32, db *gorm.DB, ctx context.Context) (*[]Cart, error) {
-	cart := new([]Cart)
-	err := db.WithContext(ctx).Where(&Cart{UserID: userid}).Find(cart).Error
-	return cart, err
-}
-
-func GetByCartId(cartid uint32, db *gorm.DB, ctx context.Context) (*Cart, error) {
-	cart := new(Cart)
-	err := db.WithContext(ctx).Where(&Cart{Base: Base{ID: cartid}}).First(cart).Error
-	return cart, err
-}
-
-// 从数据库获取购物车
-func (c CartQuery) GetByCartId(cartid uint32) (*Cart, error) {
-	cart := new(Cart)
-	err := c.db.WithContext(c.ctx).Where(&Cart{Base: Base{ID: cartid}}).First(cart).Error
-	return cart, err
-}
-
-// 从数据库获取用户购物车
-func (c CartQuery) GetByUserID(userid uint32) (*[]Cart, error) {
-	carts := new([]Cart)
-	err := c.db.WithContext(c.ctx).Where(&Cart{UserID: userid}).Find(carts).Error
-	return carts, err
-}
-
-func (c CachedCartQuery) GetFromCacheByCartId(cartid uint32) (*Cart, error) {
-	cart := new(Cart)
-	key := c.prefix + "cartid_" + strconv.FormatUint(uint64(cartid), 10)
-	err := c.cacheClient.Get(c.cartQuery.ctx, key).Scan(cart)
-
-	if err != nil {
-		return nil, err
-	}
-	return cart, nil
-}
-
-func (c CachedCartQuery) GetFromCacheByUserID(userid uint32) (*[]Cart, error) {
-	carts := new([]Cart)
-	key := c.prefix + "userid_" + strconv.FormatUint(uint64(userid), 10)
-	err := c.cacheClient.Get(c.cartQuery.ctx, key).Scan(carts)
-
-	if err != nil {
-		return nil, err
-	}
-	return carts, nil
-}
-
-func (c CachedCartQuery) SetCacheByCartId(cartid uint32, cart *Cart) error {
-	encoded, err := json.Marshal(cart)
-	if err != nil {
-		return err
-	}
-
-	key := c.prefix + "cartid_" + strconv.FormatUint(uint64(cartid), 10)
-	return c.cacheClient.Set(c.cartQuery.ctx, key, encoded, time.Hour).Err()
-}
-
-func (c CachedCartQuery) SetCacheByUserID(userid uint32, carts *[]Cart) error {
-	encoded, err := json.Marshal(carts)
-	if err != nil {
-		return err
-	}
-
-	key := c.prefix + "userid_" + strconv.FormatUint(uint64(userid), 10)
-	return c.cacheClient.Set(c.cartQuery.ctx, key, encoded, time.Hour).Err()
-}
-
-func (c CachedCartQuery) GetByUserID(userid uint32) (*[]Cart, error) {
-	carts, err := c.GetFromCacheByUserID(userid)
-	if err == nil {
-		_ = pool.Submit(func() {
-			if err := c.SetCacheByUserID(userid, carts); err != nil {
-				klog.Error("缓存存在但设置缓存失败", err)
-			}
-		})
-		return carts, nil
-	}
-
-	carts, err = c.cartQuery.GetByUserID(userid)
-	if err != nil {
-		return nil, err
-	}
-
-	_ = pool.Submit(func() {
-		if err := c.SetCacheByUserID(userid, carts); err != nil {
-			klog.Error("缓存不存在，设置缓存失败", err)
+func SendCartMessage(ctx context.Context, operation string, cartList []*Cart) (err error) {
+	if producer == nil {
+		producer, err = rmq.InitProducer("cart", os.Getenv("RMQENDPOINT"))
+		if err != nil {
+			klog.Error("Init Producer failed： ", err)
+			return kerrors.NewBizStatusError(400, "Init Producer failed")
 		}
-	})
-
-	return carts, nil
-}
-
-func (c CachedCartQuery) GetByCartID(cartid uint32) (*Cart, error) {
-	cart, err := c.GetFromCacheByCartId(cartid)
-	if err == nil {
-		return cart, nil
 	}
 
-	cart, err = c.cartQuery.GetByCartId(cartid)
+	message := &CartMessage{
+		Operation: operation,
+		UserID:    cartList[0].UserID,
+		CartList:  cartList,
+	}
+
+	data, err := json.Marshal(message)
+	if err != nil {
+		return err
+	}
+	return producer.SendMsgSync(ctx, string(data), "cart", "", "")
+}
+
+
+
+// 从缓存获取购物车信息，若没有则从数据库获取
+func GetCartByUserId(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, userId uint32) (cartList []*Cart, err error) {
+	cartList, err = CachedGetCartByUserId(cacheClient, ctx, userId)
+	if err == nil {
+		return
+	}
+	if err != redis.Nil {
+		klog.Error("获取购物车缓存失败", err)
+	}
+
+	// 从数据库获取
+	err = db.Debug().WithContext(ctx).Model(&Cart{}).Where("user_id = ?", userId).Find(&cartList).Error
+
+	return
+}
+
+// 从缓存获取购物车信息
+func CachedGetCartByUserId(cacheClient *redis.Client, ctx context.Context, userId uint32) (cartList []*Cart, err error) {
+	key := CartCachePrefix + strconv.Itoa(int(userId))
+
+	pipe := cacheClient.Pipeline()
+	getCmd := pipe.Get(ctx, key)
+	pipe.Expire(ctx, key, CartExpiration) // 更新过期时间
+
+	_, err = pipe.Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := c.SetCacheByCartId(cartid, cart); err != nil {
+	data, err := getCmd.Result()
+	if err != nil {
 		return nil, err
 	}
 
-	return cart, nil
+	err = json.Unmarshal([]byte(data), &cartList)
+	return
 }
 
-func AddCart() {
-	
+func AddCart(cart *Cart, db *gorm.DB, ctx context.Context, cacheClient *redis.Client) error {
+
 }
