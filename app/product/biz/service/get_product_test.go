@@ -15,16 +15,28 @@ func TestGetProduct_Run(t *testing.T) {
     setupTestDB(t)
     
     // 预先创建测试商品
-    testProduct := &model.Product{
-        Name:        "测试商品",
-        Description: "测试描述",
-        Price:       99.9,
-        Stock:       100,
-        Status:      model.ProductStatusOnSale,
-        Categories:  []model.Category{{Name: "测试分类"}},
+    testProducts := []*model.Product{
+        {
+            Name:        "测试商品",
+            Description: "测试描述",
+            Price:       99.9,
+            Stock:       100,
+            Status:      model.ProductStatusOnSale,
+            Categories:  []model.Category{{Name: "测试分类"}},
+        },
+        {
+            Name:        "测试商品2",
+            Description: "测试描述2",
+            Price:       199.9,
+            Stock:       200,
+            Status:      model.ProductStatusOnSale,
+            Categories:  []model.Category{{Name: "测试分类2"}, {Name: "测试分类"}},
+        },
     }
-    err := model.CreateProduct(mysql.DB, redis.RedisClient, context.Background(), testProduct)
-    assert.NoError(t, err)
+    for _, p := range testProducts {
+        err := model.CreateProduct(mysql.DB, redis.RedisClient, context.Background(), p)
+        assert.NoError(t, err)
+    }
 
     tests := []struct {
         name    string
@@ -35,22 +47,22 @@ func TestGetProduct_Run(t *testing.T) {
         {
             name: "获取商品成功",
             req: &product.GetProductReq{
-                Id: uint32(testProduct.ID),
+                Ids: []uint32{1, 2},
             },
             wantErr: false,
         },
         {
             name: "商品不存在",
             req: &product.GetProductReq{
-                Id: 9999,
+                Ids: []uint32{9999},
             },
             wantErr: true,
             errCode: 400,
         },
         {
-            name: "商品ID为0",
+            name: "商品ID为空",
             req: &product.GetProductReq{
-                Id: 0,
+                Ids: []uint32{},
             },
             wantErr: true,
             errCode: 400,
@@ -72,11 +84,13 @@ func TestGetProduct_Run(t *testing.T) {
                 }
             }
             if !tt.wantErr {
-                assert.Equal(t, testProduct.Name, resp.Product.Name)
-                assert.Equal(t, testProduct.Description, resp.Product.Description)
-                assert.Equal(t, testProduct.Price, resp.Product.Price)
-                assert.Equal(t, testProduct.Stock, resp.Product.Stock)
-                assert.Equal(t, len(testProduct.Categories), len(resp.Product.Categories))
+                for i, p := range resp.Products {
+                    assert.Equal(t, testProducts[i].Name, p.Name)
+                    assert.Equal(t, testProducts[i].Description, p.Description)
+                    assert.Equal(t, testProducts[i].Price, p.Price)
+                    assert.Equal(t, testProducts[i].Stock, p.Stock)
+                    assert.Equal(t, len(testProducts[i].Categories), len(p.Categories))
+                }
             }
             t.Logf("resp: %v", resp)
         })

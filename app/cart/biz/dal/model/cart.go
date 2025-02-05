@@ -3,18 +3,15 @@ package model
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"os"
 	"strconv"
 	"time"
 
-	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/v9"
-	"github.com/whlxbd/gomall/common/rmq"
-	"github.com/whlxbd/gomall/common/utils/pool"
 	"gorm.io/gorm"
 )
+
+// redis策略 Cache Aside Pattern
 
 type Cart struct {
 	Base
@@ -39,34 +36,6 @@ type CartMessage struct {
 	UserID    uint32  `json:"user_id"`
 	CartList  []*Cart `json:"cart"`
 }
-
-var (
-	producer *rmq.Producer
-)
-
-func SendCartMessage(ctx context.Context, operation string, cartList []*Cart) (err error) {
-	if producer == nil {
-		producer, err = rmq.InitProducer("cart", os.Getenv("RMQENDPOINT"))
-		if err != nil {
-			klog.Error("Init Producer failed： ", err)
-			return kerrors.NewBizStatusError(400, "Init Producer failed")
-		}
-	}
-
-	message := &CartMessage{
-		Operation: operation,
-		UserID:    cartList[0].UserID,
-		CartList:  cartList,
-	}
-
-	data, err := json.Marshal(message)
-	if err != nil {
-		return err
-	}
-	return producer.SendMsgSync(ctx, string(data), "cart", "", "")
-}
-
-
 
 // 从缓存获取购物车信息，若没有则从数据库获取
 func GetCartByUserId(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, userId uint32) (cartList []*Cart, err error) {
@@ -107,5 +76,5 @@ func CachedGetCartByUserId(cacheClient *redis.Client, ctx context.Context, userI
 }
 
 func AddCart(cart *Cart, db *gorm.DB, ctx context.Context, cacheClient *redis.Client) error {
-
+	return nil
 }

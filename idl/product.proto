@@ -48,9 +48,9 @@ message Product {
 
 message ListProductsResp { repeated Product products = 1; }
 
-message GetProductReq { uint32 id = 1; }
+message GetProductReq { repeated uint32 ids = 1; }
 
-message GetProductResp { Product product = 1; }
+message GetProductResp { repeated Product products = 1; }
 
 message SearchProductsReq { 
   string query = 1; 

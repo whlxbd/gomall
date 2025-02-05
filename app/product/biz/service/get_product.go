@@ -21,25 +21,36 @@ func NewGetProductService(ctx context.Context) *GetProductService {
 
 // Run create note info
 func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetProductResp, err error) {
-	// Finish your business logic.
-	klog.Infof("GetProductService input: %+v\n", req)
+	// klog.Error("GetProduct Start")
 
-	if req.Id == 0 {
-		return nil, kerrors.NewBizStatusError(400, "id is required")
+	if len(req.Ids) == 0 {
+		klog.Errorf("ids is required")
+		return nil, kerrors.NewBizStatusError(400, "ids is required")
 	}
 
-	p, err := model.NewCachedProductQuery(model.NewProductQuery(s.ctx, mysql.DB), redis.RedisClient).GetById(req.Id)
+	products, err := model.NewCachedProductQuery(
+		model.NewProductQuery(s.ctx, mysql.DB),
+		redis.RedisClient,
+	).GetByIds(req.Ids)
+
 	if err != nil {
+		klog.Errorf("get product by ids failed: %v", err)
 		return nil, err
 	}
 
-	Categories := make([]string, len(p.Categories))
-	for i, cat := range p.Categories {
-		Categories[i] = cat.Name
+	if len(products) == 0 {
+		klog.Errorf("products not found, ids: %v", req.Ids)
+		return nil, kerrors.NewBizStatusError(400, "products not found")
 	}
 
-	return &product.GetProductResp{
-		Product: &product.Product{
+	respProducts := make([]*product.Product, 0, len(products))
+	for _, p := range products {
+		categories := make([]string, len(p.Categories))
+		for i, cat := range p.Categories {
+			categories[i] = cat.Name
+		}
+
+		respProducts = append(respProducts, &product.Product{
 			Id:          p.ID,
 			Name:        p.Name,
 			Description: p.Description,
@@ -51,7 +62,11 @@ func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetPr
 			Ishot:       p.IsHot,
 			Isnew:       p.IsNew,
 			Isrecommend: p.IsRecommend,
-			Categories:  Categories,
-		},
-	}, err
+			Categories:  categories,
+		})
+	}
+
+	return &product.GetProductResp{
+		Products: respProducts,
+	}, nil
 }

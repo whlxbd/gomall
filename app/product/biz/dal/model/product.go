@@ -14,6 +14,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// redis策略 Read/Write Through Pattern
+
 // 商品状态: 1:上架 2:下架 3:删除
 type ProductStatus int32
 
@@ -72,6 +74,16 @@ func (p ProductQuery) GetById(productid uint32) (*Product, error) {
 	return product, err
 }
 
+// 批量获取商品
+func (p ProductQuery) GetByIds(productIds []uint32) ([]*Product, error) {
+	var products []*Product
+	err := p.db.WithContext(p.ctx).
+		Where("id IN ?", productIds).
+		Preload("Categories").
+		Find(&products).Error
+	return products, err
+}
+
 // 尝试从缓存获取商品，如果缓存不存在则从数据库获取
 func (p CachedProductQuery) GetById(productid uint32) (*Product, error) {
 	key := p.prefix + strconv.FormatUint(uint64(productid), 10)
@@ -106,6 +118,63 @@ func (p CachedProductQuery) GetById(productid uint32) (*Product, error) {
 	})
 
 	return product, nil
+}
+
+// 批量获取商品（带缓存）
+func (p CachedProductQuery) GetByIds(productIds []uint32) ([]*Product, error) {
+	if len(productIds) == 1 {
+		product, err := p.GetById(productIds[0])
+		if err != nil {
+			return nil, err
+		}
+		return []*Product{product}, nil
+	}
+
+	products := make([]*Product, 0, len(productIds))
+	missingIds := make([]uint32, 0)
+
+	// 1. 尝试从缓存获取
+	for _, id := range productIds {
+		if id == 0 {
+			continue
+		}
+		key := p.prefix + strconv.FormatUint(uint64(id), 10)
+		product, err := p.getFromCache(key)
+		if err == nil {
+			products = append(products, product)
+			_ = pool.Submit(func() {
+				if err := p.setCache(key, product); err != nil {
+					klog.Error("设置缓存失败", err)
+				}
+			})
+		} else if err == redis.Nil {
+			missingIds = append(missingIds, id)
+		} else {
+			return nil, kerrors.NewBizStatusError(400, err.Error())
+		}
+	}
+
+	// 2. 未命中的从数据库获取
+	if len(missingIds) > 0 {
+		dbProducts, err := p.productQuery.GetByIds(missingIds)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, dbProducts...)
+
+		// 3. 异步写入缓存
+		for _, product := range dbProducts {
+			product := product // 避免闭包问题
+			_ = pool.Submit(func() {
+				key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
+				if err := p.setCache(key, product); err != nil {
+					klog.Error("设置缓存失败", err)
+				}
+			})
+		}
+	}
+
+	return products, nil
 }
 
 // 从缓存中获取商品

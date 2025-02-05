@@ -13,7 +13,7 @@
         "trace_id": "{{.RequestNumber}}",
         "timestamp": "{{.TimestampUnix}}"
     },
-    "max-duration": "3s",
+    "max-duration": "10s",
     "format": "html",
     "output": "ghz_SearchProduct.html",
     "insecure": true,

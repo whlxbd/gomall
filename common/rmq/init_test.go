@@ -21,7 +21,7 @@ func TestInit(t *testing.T) {
             name:        "正常初始化",
             topicSuffix: "test",
             groupSuffix: "test",
-            endpoint:    "10.255.253.63:9878",
+            endpoint:    "127.0.0.1:9878",
             wantErr:     false,
         },
         {
@@ -55,7 +55,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestSendMessage(t *testing.T) {
-    producer, err := InitProducer("test", "10.255.253.63:9878")
+    producer, err := InitProducer("test", "127.0.0.1:9878")
     assert.NoError(t, err)
     defer producer.Close()
 
@@ -71,11 +71,11 @@ func TestSendMessage(t *testing.T) {
 }
 
 func TestReceiveMessage(t *testing.T) {
-    consumer, err := InitConsumer("test", "test", "10.255.253.63:9878")
+    consumer, err := InitConsumer("test", "test", "127.0.0.1:9878")
     assert.NoError(t, err)
     defer consumer.Close()
 
-    producer, err := InitProducer("test", "10.255.253.63:9878")
+    producer, err := InitProducer("test", "127.0.0.1:9878")
     assert.NoError(t, err)
     defer producer.Close()
 
