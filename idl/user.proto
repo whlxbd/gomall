@@ -37,9 +37,10 @@ message InfoReq {
 }
 
 message InfoResp {
-    string email = 1;
-    string username = 2;
-    string avatar_url = 3;
+    int32 user_id = 1;
+    string email = 2;
+    string username = 3;
+    string avatar_url = 4;
 }
 
 message DeleteReq {

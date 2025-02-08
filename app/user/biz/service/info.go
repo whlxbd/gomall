@@ -19,12 +19,15 @@ func NewInfoService(ctx context.Context) *InfoService {
 // Run create note info
 func (s *InfoService) Run(req *user.InfoReq) (resp *user.InfoResp, err error) {
 	// Finish your business logic.
-	userRow, err := model.GetByID(mysql.DB, s.ctx, int(req.UserId))
+	userRow, err := model.GetByID(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
 		return nil, errors.New("not found user")
 	}
 	resp = &user.InfoResp{
-		Email: userRow.Email,
+		UserId:    userRow.ID,
+		Email:     userRow.Email,
+		Username:  userRow.UserName,
+		AvatarUrl: userRow.AvatarUrl,
 	}
 
 	return

@@ -19,6 +19,7 @@ func TestInfo_Run(t *testing.T) {
 		UserId: 1,
 	}
 	resp, err := s.Run(req)
+	assert.Equal(t, resp.UserId, int32(1))
 	assert.Equal(t, nil, err)
 	assert.Equal(t, "admin@test.com", resp.Email)
 	t.Logf("err: %v", err)
