@@ -29,3 +29,24 @@ func (s *UserServiceImpl) Info(ctx context.Context, req *user.InfoReq) (resp *us
 
 	return resp, err
 }
+
+// Delete implements the UserServiceImpl interface.
+func (s *UserServiceImpl) Delete(ctx context.Context, req *user.DeleteReq) (resp *user.DeleteResp, err error) {
+	resp, err = service.NewDeleteService(ctx).Run(req)
+
+	return resp, err
+}
+
+// Logout implements the UserServiceImpl interface.
+func (s *UserServiceImpl) Logout(ctx context.Context, req *user.LogoutReq) (resp *user.LogoutResp, err error) {
+	resp, err = service.NewLogoutService(ctx).Run(req)
+
+	return resp, err
+}
+
+// Update implements the UserServiceImpl interface.
+func (s *UserServiceImpl) Update(ctx context.Context, req *user.UpdateReq) (resp *user.UpdateResp, err error) {
+	resp, err = service.NewUpdateService(ctx).Run(req)
+
+	return resp, err
+}

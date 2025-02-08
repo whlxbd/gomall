@@ -33,3 +33,30 @@ func Info(ctx context.Context, req *user.InfoReq, callOptions ...callopt.Option)
 	}
 	return resp, nil
 }
+
+func Delete(ctx context.Context, req *user.DeleteReq, callOptions ...callopt.Option) (resp *user.DeleteResp, err error) {
+	resp, err = defaultClient.Delete(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "Delete call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func Logout(ctx context.Context, req *user.LogoutReq, callOptions ...callopt.Option) (resp *user.LogoutResp, err error) {
+	resp, err = defaultClient.Logout(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "Logout call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func Update(ctx context.Context, req *user.UpdateReq, callOptions ...callopt.Option) (resp *user.UpdateResp, err error) {
+	resp, err = defaultClient.Update(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "Update call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

@@ -8,6 +8,9 @@ service UserService {
     rpc Register(RegisterReq) returns (RegisterResp) {}
     rpc Login(LoginReq) returns (LoginResp) {}
     rpc Info(InfoReq) returns (InfoResp) {}
+    rpc Delete(DeleteReq) returns (DeleteResp) {}
+    rpc Logout(LogoutReq) returns (LogoutResp) {}
+    rpc Update(UpdateReq) returns (UpdateResp) {}
 }
 
 message RegisterReq {
@@ -37,4 +40,32 @@ message InfoResp {
     string email = 1;
     string username = 2;
     string avatar_url = 3;
+}
+
+message DeleteReq {
+    int32 user_id = 1;
+}
+
+message DeleteResp {
+    bool success = 1;
+}
+
+message LogoutReq {
+    int32 user_id = 1;
+}
+
+message LogoutResp {
+    bool success = 1;
+}
+
+message UpdateReq {
+    int32 user_id = 1;
+    string email = 2;
+    string username = 3;
+    string password = 4;
+    string avatar_url = 5;
+}
+
+message UpdateResp {
+    bool success = 1;
 }
