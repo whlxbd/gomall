@@ -14,3 +14,6 @@ go.work.sum
 deploy/config/prometheus.yml
 deploy/config/rmqbroker.conf
 deploy/config/rmqproxy.json
+app/cart/ghz_AddItem.html
+app/cart/ghz_EmptyCart.html
+app/cart/ghz_GetCart.html
