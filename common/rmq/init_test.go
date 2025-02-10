@@ -40,7 +40,7 @@ func TestInit(t *testing.T) {
                 assert.Error(t, err)
                 return
             }
-            consumer, err := InitConsumer(tt.groupSuffix, tt.topicSuffix, tt.endpoint)
+            consumer, err := InitConsumer(tt.topicSuffix, tt.groupSuffix, tt.endpoint)
             if tt.wantErr {
                 assert.Error(t, err)
                 return
@@ -48,36 +48,46 @@ func TestInit(t *testing.T) {
             assert.NoError(t, err)
             assert.NotNil(t, producer)
             assert.NotNil(t, consumer)
-            defer producer.Close()
-            defer consumer.Close()
+            defer Close(producer, consumer)
         })
     }
+}
+
+func TestClose(t *testing.T) {
+    producer, err := InitProducer("test", "127.0.0.1:9878")
+    assert.NoError(t, err)
+    assert.NotNil(t, producer)
+    consumer, err := InitConsumer("test", "test", "127.0.0.1:9878")
+    assert.NoError(t, err)
+    assert.NotNil(t, consumer)
+
+    err = Close(producer, consumer)
+    assert.NoError(t, err)
 }
 
 func TestSendMessage(t *testing.T) {
     producer, err := InitProducer("test", "127.0.0.1:9878")
     assert.NoError(t, err)
-    defer producer.Close()
+    defer Close(producer, nil)
 
     ctx := context.Background()
     
     // 测试同步发送
-    err = producer.SendMsgSync(ctx, "test message", "test", "test_key", "test_tag")
+    err = SendMsgSync(producer, ctx, "test message", "test", "test_key", "test_tag")
     assert.NoError(t, err)
 
     // 测试异步发送
-    producer.SendMsgAsync(ctx, "test message async", "test", "test_key", "test_tag")
+    SendMsgAsync(producer, ctx, "test message async", "test", "test_key", "test_tag")
     time.Sleep(time.Second) // 等待异步完成
 }
 
 func TestReceiveMessage(t *testing.T) {
     consumer, err := InitConsumer("test", "test", "127.0.0.1:9878")
     assert.NoError(t, err)
-    defer consumer.Close()
-
+    assert.NotNil(t, consumer)
     producer, err := InitProducer("test", "127.0.0.1:9878")
     assert.NoError(t, err)
-    defer producer.Close()
+    assert.NotNil(t, producer)
 
     ctx := context.Background()
 
@@ -89,14 +99,14 @@ func TestReceiveMessage(t *testing.T) {
             case <-ctx.Done():
                 return
             default:
-                msgs, err := consumer.simpleConsumer.Receive(ctx, maxMessageNum, invisibleDuration)
+                msgs, err := consumer.Receive(ctx, MaxMessageNum, InvisibleDuration)
                 if err != nil {
                     continue
                 }
                 
                 for _, msg := range msgs {
                     // 确认消息
-                    _ = consumer.simpleConsumer.Ack(ctx, msg)
+                    _ = consumer.Ack(ctx, msg)
                     receivedMsgs <- string(msg.GetBody())
                 }
             }
@@ -106,7 +116,7 @@ func TestReceiveMessage(t *testing.T) {
     // 发送测试消息
     for i := 0; i < 5; i++ {
         msgContent := fmt.Sprintf("test message %d", i)
-        err := producer.SendMsgSync(ctx, msgContent, "test", fmt.Sprintf("key_%d", i), "test_tag")
+        err := SendMsgSync(producer, ctx, msgContent, "test", fmt.Sprintf("key_%d", i), "test_tag")
         assert.NoError(t, err)
         time.Sleep(time.Second)
     }

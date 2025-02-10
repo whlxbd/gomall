@@ -7,6 +7,7 @@ import (
 	// "github.com/whlxbd/gomall/app/product/biz/middleware"
 	"github.com/whlxbd/gomall/app/product/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/product/biz/dal/redis"
+	"github.com/whlxbd/gomall/common/utils/pool"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -25,13 +26,17 @@ func (s *DeleteProductService) Run(req *product.DeleteProductReq) (resp *product
 	// if middleware.CheckAdminPermission(s.ctx) != nil {
 	// 	return nil, kerrors.NewBizStatusError(400, "permission denied: admin required")
 	// }
-
-	klog.Infof("DeleteProductService input: %+v\n", req)
+	_ = pool.Submit(func() {
+		klog.Infof("delete product: %+v", req)
+	})
 
 	resp = &product.DeleteProductResp{}
 
 	if req.Id == 0 {
 		resp.Success = false
+		_ = pool.Submit(func() {
+			klog.Errorf("id is required: %+v", req)
+		})
 		return resp, kerrors.NewBizStatusError(400, "id is required")
 	}
 
@@ -44,7 +49,9 @@ func (s *DeleteProductService) Run(req *product.DeleteProductReq) (resp *product
 
 	if p == nil { // 商品不存在
 		resp.Success = false
-		klog.Errorf("product not found, id: %d\n", req.Id)
+		_ = pool.Submit(func() {
+			klog.Errorf("product not found, id: %d", req.Id)
+		})
 		return resp, kerrors.NewBizStatusError(400, "product not found")
 	}
 
@@ -52,6 +59,9 @@ func (s *DeleteProductService) Run(req *product.DeleteProductReq) (resp *product
 	if err != nil {
 		klog.Errorf("delete product failed, id: %d, err: %v\n", req.Id, err)
 		resp.Success = false
+		_ = pool.Submit(func() {
+			klog.Errorf("delete product failed: %+v", err)
+		})
 		return resp, kerrors.NewBizStatusError(400, "delete product failed")
 	}
 

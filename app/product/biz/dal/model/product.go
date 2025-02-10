@@ -208,7 +208,7 @@ func NewProductQuery(ctx context.Context, db *gorm.DB) *ProductQuery {
 
 // 创建一个带缓存的商品查询
 func NewCachedProductQuery(productQuery *ProductQuery, cacheClient *redis.Client) *CachedProductQuery {
-	return &CachedProductQuery{productQuery: productQuery, cacheClient: cacheClient, prefix: "gomall_product_"}
+	return &CachedProductQuery{productQuery: productQuery, cacheClient: cacheClient, prefix: "gomall_product:productid:"}
 }
 
 // 通过商品ID获取商品

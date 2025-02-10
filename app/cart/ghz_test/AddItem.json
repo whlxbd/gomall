@@ -1,0 +1,23 @@
+{
+    "proto": "../../idl/cart.proto",
+    "call": "cart.CartService/AddItem",
+    "total": 5000,
+    "concurrency": 30,
+    "data": {
+        "user_id": 1,
+        "item": {
+            "product_id": 19,
+            "quantity": 1
+        }
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "10s",
+    "format": "html",
+    "output": "ghz_AddItem.html",
+    "insecure": true,
+    "host": "0.0.0.0:8080"
+}

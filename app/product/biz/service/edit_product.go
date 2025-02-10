@@ -6,6 +6,7 @@ import (
 	"github.com/whlxbd/gomall/app/product/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/product/biz/dal/redis"
 	"github.com/whlxbd/gomall/app/product/biz/dal/model"
+	"github.com/whlxbd/gomall/common/utils/pool"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -24,20 +25,31 @@ func (s *EditProductService) Run(req *product.EditProductReq) (resp *product.Edi
 	// if middleware.CheckAdminPermission(s.ctx) != nil {
 	// 	return nil, kerrors.NewBizStatusError(400, "permission denied: admin required")
 	// }
-	klog.Infof("EditProductService input: %+v\n", req)
+	_ = pool.Submit(func() {
+		klog.Infof("edit product: %+v", req)
+	})
 	
 	resp = &product.EditProductResp{}
 
 
 	if req.Id == 0 { // 商品ID不能为空
+		_ = pool.Submit(func() {
+			klog.Errorf("id is required: %+v", req)
+		})
 		return nil, kerrors.NewBizStatusError(400, "id is required")
 	}
 
 	if req.Name == "" { // 商品名称不能为空
+		_ = pool.Submit(func() {
+			klog.Errorf("name is required: %+v", req)
+		})
 		return nil, kerrors.NewBizStatusError(400, "name is required")
 	}
 
 	if req.Price < 0 || req.Stock < 0 || req.Soldcount < 0 { // 价格、库存、销量必须大于0
+		_ = pool.Submit(func() {
+			klog.Errorf("price, stock, soldcount, must be greater than 0: %+v", req)
+		})
 		return nil, kerrors.NewBizStatusError(400, "price, stock, soldcount, must be greater than 0")
 	}
 

@@ -73,17 +73,28 @@ func (s *CreateProductService) Run(req *product.CreateProductReq) (resp *product
 	// 	return nil, kerrors.NewBizStatusError(400, err.Error())
 	// }
 
-	klog.Infof("CreateProductService input: %+v\n", req)
+	_ = pool.Submit(func() {
+		klog.Infof("create product: %+v", req)
+	})
 
 	if req.Name == "" {
+		_ = pool.Submit(func() {
+			klog.Errorf("name is required: %+v", req)
+		})
 		return nil, kerrors.NewBizStatusError(400, "name is required")
 	}
 
 	if req.Price < 0 || req.Stock < 0 || req.Soldcount < 0 {
+		_ = pool.Submit(func() {
+			klog.Errorf("price, stock, soldcount, must be greater than 0: %+v", req)
+		})
 		return nil, kerrors.NewBizStatusError(400, "price, stock, soldcount, must be greater than 0")
 	}
 
 	if err := model.ProductStatus(req.Status).IsValid(); err != nil {
+		_ = pool.Submit(func() {
+			klog.Errorf("status is invalid: %+v", req)
+		})
 		return nil, kerrors.NewBizStatusError(400, "status is invalid")
 	}
 

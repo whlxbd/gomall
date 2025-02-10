@@ -7,23 +7,29 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
+	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 	consul "github.com/kitex-contrib/registry-consul"
+	"github.com/whlxbd/gomall/app/cart/biz/dal"
+	// "github.com/whlxbd/gomall/app/cart/biz/dal/mq"
 	"github.com/whlxbd/gomall/app/cart/conf"
+	"github.com/whlxbd/gomall/app/cart/infra/rpc"
+	"github.com/whlxbd/gomall/common/mtl"
+	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/cart/cartservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"github.com/joho/godotenv"
-	"github.com/whlxbd/gomall/app/cart/biz/dal"
-	"github.com/whlxbd/gomall/common/utils/pool"
-	"github.com/whlxbd/gomall/common/mtl"
 )
 
 func main() {
 	_ = godotenv.Load()
 	pool.Init()
 	dal.Init()
+	rpc.InitClient()
+	// defer mq.GetCartMQ().Close()
 	defer pool.Release()
 
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort, os.Getenv("REGISTRY_ADDR"))
@@ -74,5 +80,8 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
+	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
 	return
 }
