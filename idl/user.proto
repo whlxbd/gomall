@@ -41,6 +41,7 @@ message InfoResp {
     string email = 2;
     string username = 3;
     string avatar_url = 4;
+    string type = 5;
 }
 
 message DeleteReq {
@@ -65,6 +66,7 @@ message UpdateReq {
     string username = 3;
     string password = 4;
     string avatar_url = 5;
+    string type = 6;
 }
 
 message UpdateResp {

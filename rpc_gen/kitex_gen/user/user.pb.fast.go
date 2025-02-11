@@ -189,6 +189,11 @@ func (x *InfoResp) FastRead(buf []byte, _type int8, number int32) (offset int, e
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 5:
+		offset, err = x.fastReadField5(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -219,6 +224,11 @@ func (x *InfoResp) fastReadField3(buf []byte, _type int8) (offset int, err error
 
 func (x *InfoResp) fastReadField4(buf []byte, _type int8) (offset int, err error) {
 	x.AvatarUrl, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *InfoResp) fastReadField5(buf []byte, _type int8) (offset int, err error) {
+	x.Type, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
@@ -349,6 +359,11 @@ func (x *UpdateReq) FastRead(buf []byte, _type int8, number int32) (offset int, 
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 6:
+		offset, err = x.fastReadField6(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -384,6 +399,11 @@ func (x *UpdateReq) fastReadField4(buf []byte, _type int8) (offset int, err erro
 
 func (x *UpdateReq) fastReadField5(buf []byte, _type int8) (offset int, err error) {
 	x.AvatarUrl, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *UpdateReq) fastReadField6(buf []byte, _type int8) (offset int, err error) {
+	x.Type, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
@@ -527,6 +547,7 @@ func (x *InfoResp) FastWrite(buf []byte) (offset int) {
 	offset += x.fastWriteField2(buf[offset:])
 	offset += x.fastWriteField3(buf[offset:])
 	offset += x.fastWriteField4(buf[offset:])
+	offset += x.fastWriteField5(buf[offset:])
 	return offset
 }
 
@@ -559,6 +580,14 @@ func (x *InfoResp) fastWriteField4(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 4, x.GetAvatarUrl())
+	return offset
+}
+
+func (x *InfoResp) fastWriteField5(buf []byte) (offset int) {
+	if x.Type == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 5, x.GetType())
 	return offset
 }
 
@@ -635,6 +664,7 @@ func (x *UpdateReq) FastWrite(buf []byte) (offset int) {
 	offset += x.fastWriteField3(buf[offset:])
 	offset += x.fastWriteField4(buf[offset:])
 	offset += x.fastWriteField5(buf[offset:])
+	offset += x.fastWriteField6(buf[offset:])
 	return offset
 }
 
@@ -675,6 +705,14 @@ func (x *UpdateReq) fastWriteField5(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 5, x.GetAvatarUrl())
+	return offset
+}
+
+func (x *UpdateReq) fastWriteField6(buf []byte) (offset int) {
+	if x.Type == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 6, x.GetType())
 	return offset
 }
 
@@ -809,6 +847,7 @@ func (x *InfoResp) Size() (n int) {
 	n += x.sizeField2()
 	n += x.sizeField3()
 	n += x.sizeField4()
+	n += x.sizeField5()
 	return n
 }
 
@@ -841,6 +880,14 @@ func (x *InfoResp) sizeField4() (n int) {
 		return n
 	}
 	n += fastpb.SizeString(4, x.GetAvatarUrl())
+	return n
+}
+
+func (x *InfoResp) sizeField5() (n int) {
+	if x.Type == "" {
+		return n
+	}
+	n += fastpb.SizeString(5, x.GetType())
 	return n
 }
 
@@ -917,6 +964,7 @@ func (x *UpdateReq) Size() (n int) {
 	n += x.sizeField3()
 	n += x.sizeField4()
 	n += x.sizeField5()
+	n += x.sizeField6()
 	return n
 }
 
@@ -957,6 +1005,14 @@ func (x *UpdateReq) sizeField5() (n int) {
 		return n
 	}
 	n += fastpb.SizeString(5, x.GetAvatarUrl())
+	return n
+}
+
+func (x *UpdateReq) sizeField6() (n int) {
+	if x.Type == "" {
+		return n
+	}
+	n += fastpb.SizeString(6, x.GetType())
 	return n
 }
 
@@ -1004,6 +1060,7 @@ var fieldIDToName_InfoResp = map[int32]string{
 	2: "Email",
 	3: "Username",
 	4: "AvatarUrl",
+	5: "Type",
 }
 
 var fieldIDToName_DeleteReq = map[int32]string{
@@ -1028,6 +1085,7 @@ var fieldIDToName_UpdateReq = map[int32]string{
 	3: "Username",
 	4: "Password",
 	5: "AvatarUrl",
+	6: "Type",
 }
 
 var fieldIDToName_UpdateResp = map[int32]string{
