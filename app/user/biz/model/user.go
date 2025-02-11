@@ -2,15 +2,17 @@ package model
 
 import (
 	"context"
+
 	"gorm.io/gorm"
 )
 
 type User struct {
 	Base
-	Email    string `gorm:"unique;not null" validate:"required,email"`
-	Password string `gorm:"not null"`
-	UserName string `gorm:"not null"`
+	Email     string `gorm:"unique;not null" validate:"required,email"`
+	Password  string `gorm:"not null"`
+	UserName  string `gorm:"not null"`
 	AvatarUrl string `gorm:"not null"`
+	Type      string `gorm:"not null"`
 }
 
 func (u *User) TableName() string {

@@ -28,6 +28,7 @@ func (s *InfoService) Run(req *user.InfoReq) (resp *user.InfoResp, err error) {
 		Email:     userRow.Email,
 		Username:  userRow.UserName,
 		AvatarUrl: userRow.AvatarUrl,
+		Type:      userRow.Type,
 	}
 
 	return
