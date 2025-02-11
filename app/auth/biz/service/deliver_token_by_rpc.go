@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
+	"github.com/whlxbd/gomall/app/user/biz/model"
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
@@ -23,13 +26,19 @@ func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.De
 	var (
 		key []byte
 		t   *jwt.Token
-		str   string
+		str string
 	)
 
 	key = []byte(os.Getenv("JWT_SECRET"))
+	userRow, err := model.GetByID(mysql.DB, s.ctx, req.UserId)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
 	t = jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"user_id": req.UserId,
+			"user_id":     req.UserId,
+			"type":        userRow.Type,
 			"expire_time": time.Now().Add(time.Hour * 24).Unix(),
 		})
 	str, err = t.SignedString(key)
