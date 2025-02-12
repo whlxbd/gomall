@@ -5,6 +5,8 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/whlxbd/gomall/app/payment/biz/model"
 )
 
 var (
@@ -22,4 +24,5 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+	DB.AutoMigrate(&model.PaymentRecord{})
 }

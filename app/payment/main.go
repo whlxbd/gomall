@@ -9,6 +9,7 @@ import (
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
+	"github.com/whlxbd/gomall/app/cart/biz/dal"
 	"github.com/whlxbd/gomall/app/payment/conf"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment/paymentservice"
 	"go.uber.org/zap/zapcore"
@@ -16,6 +17,7 @@ import (
 )
 
 func main() {
+	dal.Init()
 	opts := kitexInit()
 
 	svr := paymentservice.NewServer(new(PaymentServiceImpl), opts...)
