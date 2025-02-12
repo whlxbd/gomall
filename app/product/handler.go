@@ -50,3 +50,10 @@ func (s *ProductCatalogServiceImpl) DeleteProduct(ctx context.Context, req *prod
 
 	return resp, err
 }
+
+// UpdateBatchProduct implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) UpdateBatchProduct(ctx context.Context, req *product.UpdateBatchProductReq) (resp *product.UpdateBatchProductResp, err error) {
+	resp, err = service.NewUpdateBatchProductService(ctx).Run(req)
+
+	return resp, err
+}

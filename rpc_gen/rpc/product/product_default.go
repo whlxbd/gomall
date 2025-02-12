@@ -60,3 +60,12 @@ func DeleteProduct(ctx context.Context, req *product.DeleteProductReq, callOptio
 	}
 	return resp, nil
 }
+
+func UpdateBatchProduct(ctx context.Context, req *product.UpdateBatchProductReq, callOptions ...callopt.Option) (resp *product.UpdateBatchProductResp, err error) {
+	resp, err = defaultClient.UpdateBatchProduct(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "UpdateBatchProduct call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

@@ -761,6 +761,104 @@ func (x *DeleteProductResp) fastReadField1(buf []byte, _type int8) (offset int, 
 	return offset, err
 }
 
+func (x *ProductBatch) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_ProductBatch[number], err)
+}
+
+func (x *ProductBatch) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.ProductId, offset, err = fastpb.ReadUint32(buf, _type)
+	return offset, err
+}
+
+func (x *ProductBatch) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.StockChange, offset, err = fastpb.ReadInt32(buf, _type)
+	return offset, err
+}
+
+func (x *ProductBatch) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+	x.SoldcountChange, offset, err = fastpb.ReadInt32(buf, _type)
+	return offset, err
+}
+
+func (x *UpdateBatchProductReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_UpdateBatchProductReq[number], err)
+}
+
+func (x *UpdateBatchProductReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	var v ProductBatch
+	offset, err = fastpb.ReadMessage(buf, _type, &v)
+	if err != nil {
+		return offset, err
+	}
+	x.Products = append(x.Products, &v)
+	return offset, nil
+}
+
+func (x *UpdateBatchProductReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.IsStock, offset, err = fastpb.ReadBool(buf, _type)
+	return offset, err
+}
+
+func (x *UpdateBatchProductResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+}
+
 func (x *ListProductsReq) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
@@ -1316,6 +1414,74 @@ func (x *DeleteProductResp) fastWriteField1(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteBool(buf[offset:], 1, x.GetSuccess())
+	return offset
+}
+
+func (x *ProductBatch) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
+	return offset
+}
+
+func (x *ProductBatch) fastWriteField1(buf []byte) (offset int) {
+	if x.ProductId == 0 {
+		return offset
+	}
+	offset += fastpb.WriteUint32(buf[offset:], 1, x.GetProductId())
+	return offset
+}
+
+func (x *ProductBatch) fastWriteField2(buf []byte) (offset int) {
+	if x.StockChange == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt32(buf[offset:], 2, x.GetStockChange())
+	return offset
+}
+
+func (x *ProductBatch) fastWriteField3(buf []byte) (offset int) {
+	if x.SoldcountChange == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt32(buf[offset:], 3, x.GetSoldcountChange())
+	return offset
+}
+
+func (x *UpdateBatchProductReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	return offset
+}
+
+func (x *UpdateBatchProductReq) fastWriteField1(buf []byte) (offset int) {
+	if x.Products == nil {
+		return offset
+	}
+	for i := range x.GetProducts() {
+		offset += fastpb.WriteMessage(buf[offset:], 1, x.GetProducts()[i])
+	}
+	return offset
+}
+
+func (x *UpdateBatchProductReq) fastWriteField2(buf []byte) (offset int) {
+	if !x.IsStock {
+		return offset
+	}
+	offset += fastpb.WriteBool(buf[offset:], 2, x.GetIsStock())
+	return offset
+}
+
+func (x *UpdateBatchProductResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
 	return offset
 }
 
@@ -1877,6 +2043,74 @@ func (x *DeleteProductResp) sizeField1() (n int) {
 	return n
 }
 
+func (x *ProductBatch) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	n += x.sizeField3()
+	return n
+}
+
+func (x *ProductBatch) sizeField1() (n int) {
+	if x.ProductId == 0 {
+		return n
+	}
+	n += fastpb.SizeUint32(1, x.GetProductId())
+	return n
+}
+
+func (x *ProductBatch) sizeField2() (n int) {
+	if x.StockChange == 0 {
+		return n
+	}
+	n += fastpb.SizeInt32(2, x.GetStockChange())
+	return n
+}
+
+func (x *ProductBatch) sizeField3() (n int) {
+	if x.SoldcountChange == 0 {
+		return n
+	}
+	n += fastpb.SizeInt32(3, x.GetSoldcountChange())
+	return n
+}
+
+func (x *UpdateBatchProductReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	return n
+}
+
+func (x *UpdateBatchProductReq) sizeField1() (n int) {
+	if x.Products == nil {
+		return n
+	}
+	for i := range x.GetProducts() {
+		n += fastpb.SizeMessage(1, x.GetProducts()[i])
+	}
+	return n
+}
+
+func (x *UpdateBatchProductReq) sizeField2() (n int) {
+	if !x.IsStock {
+		return n
+	}
+	n += fastpb.SizeBool(2, x.GetIsStock())
+	return n
+}
+
+func (x *UpdateBatchProductResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	return n
+}
+
 var fieldIDToName_ListProductsReq = map[int32]string{
 	1: "Page",
 	2: "PageSize",
@@ -1965,3 +2199,16 @@ var fieldIDToName_DeleteProductReq = map[int32]string{
 var fieldIDToName_DeleteProductResp = map[int32]string{
 	1: "Success",
 }
+
+var fieldIDToName_ProductBatch = map[int32]string{
+	1: "ProductId",
+	2: "StockChange",
+	3: "SoldcountChange",
+}
+
+var fieldIDToName_UpdateBatchProductReq = map[int32]string{
+	1: "Products",
+	2: "IsStock",
+}
+
+var fieldIDToName_UpdateBatchProductResp = map[int32]string{}

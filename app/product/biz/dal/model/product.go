@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
@@ -41,7 +42,7 @@ type Product struct {
 	Picture     string  `json:"picture"`     // 商品图片
 	Price       float32 `json:"price"`       // 商品价格
 
-	Stock     int32 `json:"stock"`      // 库存数量
+    Stock     int32 `json:"stock" gorm:"check:stock >= 0;not null;default:0"`   // 库存数量
 	SoldCount int32 `json:"sold_count"` // 销售数量
 
 	Status      ProductStatus `json:"status"`       // 商品状态(1:上架 2:下架 3:删除)
@@ -50,6 +51,12 @@ type Product struct {
 	IsRecommend bool          `json:"is_recommend"` // 是否推荐
 
 	Categories []Category `gorm:"many2many:product_category;"`
+}
+
+type ProductStockItem struct {
+    ProductId uint32
+	SoldcountChange int32 // 销售数量变化，负数表示退货
+    StockChange  int32 // 数量变化，负数表示扣减库存
 }
 
 type ProductQuery struct {
@@ -65,6 +72,15 @@ type CachedProductQuery struct {
 
 func (p Product) TableName() string {
 	return "product"
+}
+
+func (p *Product) BeforeMigrate(tx *gorm.DB) error {
+    return tx.Exec(`
+        ALTER TABLE products
+        ADD CONSTRAINT check_stock_non_negative CHECK (stock >= 0),
+        ADD CONSTRAINT check_sold_count_non_negative CHECK (sold_count >= 0),
+        ADD CONSTRAINT check_price_non_negative CHECK (price >= 0)
+    `).Error
 }
 
 // 从数据库获取商品
@@ -220,6 +236,7 @@ func GetById(ctx context.Context, db *gorm.DB, productid uint32) (product *Produ
 // 通过商品名称或描述搜索商品
 func SearchProduct(db *gorm.DB, ctx *context.Context, q string, page int32, pageSize int64) (products []*Product, err error) {
 	query := db.WithContext(*ctx).Model(&Product{}).
+		Select("id, name, description, price, stock").
 		Where("name like ? or description like ?", "%"+q+"%", "%"+q+"%")
 
 	// 分页查询
@@ -294,6 +311,10 @@ func EditProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, pr
 			key := p.prefix + strconv.FormatUint(uint64(product.ID), 10)
 			if err := p.setCache(key, product); err != nil {
 				klog.Error("设置缓存失败", err)
+				// 删除缓存
+				if err := p.cacheClient.Del(p.productQuery.ctx, key).Err(); err != nil {
+					klog.Error("删除缓存失败", err)
+				}
 			}
 		})
 
@@ -324,5 +345,80 @@ func DeleteProduct(db *gorm.DB, cacheClient *redis.Client, ctx context.Context, 
 		})
 
 		return nil
+	})
+}
+
+func UpdateBatchProduct(db *gorm.DB, cacheClient *redis.Client, ctx *context.Context, items []*ProductStockItem, isStock bool) error {
+	return db.WithContext(*ctx).Transaction(func(tx *gorm.DB) error {
+		ids := make([]string, 0, len(items))
+		var stockCase strings.Builder
+		var cnt int
+
+		stockCase.WriteString("CASE id")
+
+		if isStock {
+			for _, item := range items {
+				ids = append(ids, fmt.Sprintf("%d", item.ProductId))
+
+				if item.StockChange == 0 {
+					cnt += 1
+					continue
+				} else if item.StockChange < 0 {
+					stockCase.WriteString(fmt.Sprintf(" WHEN %d THEN stock %d", item.ProductId, item.StockChange))
+				} else {
+					stockCase.WriteString(fmt.Sprintf(" WHEN %d THEN stock + %d", item.ProductId, item.StockChange))
+				}
+			}
+		} else {
+			for _, item := range items {
+				ids = append(ids, fmt.Sprintf("%d", item.ProductId))
+
+				if item.SoldcountChange == 0 {
+					cnt += 1
+					continue
+				} else if item.SoldcountChange < 0 {
+					stockCase.WriteString(fmt.Sprintf(" WHEN %d THEN sold_count %d", item.ProductId, item.SoldcountChange))
+				} else {
+					stockCase.WriteString(fmt.Sprintf(" WHEN %d THEN sold_count + %d", item.ProductId, item.SoldcountChange))
+				}
+			}
+		}
+
+		if cnt == len(items) {
+			return nil
+		}
+		stockCase.WriteString(" END")
+
+		idList := strings.Join(ids, ",")
+		var err error
+		if isStock {
+			err = tx.Exec(fmt.Sprintf("UPDATE product SET stock = %s WHERE id IN (%s)", stockCase.String(), idList)).Error
+		} else {
+			err = tx.Exec(fmt.Sprintf("UPDATE product SET sold_count = %s WHERE id IN (%s)", stockCase.String(), idList)).Error
+		}
+
+		if err != nil {
+			_ = pool.Submit(func() {
+				klog.Errorf("UpdateBatchProduct error: %v", err)
+				
+			})
+			if isStock {
+				return kerrors.NewBizStatusError(40010, "商品库存不足")
+			} else {
+				return kerrors.NewBizStatusError(40011, "销量修改失败")
+			}
+		}
+
+		// 删除缓存
+		_ = pool.Submit(func() {
+			for _, item := range items {
+				key := "gomall_product:productid:" + strconv.FormatUint(uint64(item.ProductId), 10)
+				if err := cacheClient.Del(*ctx, key).Err(); err != nil {
+					klog.Error("删除缓存失败", err)
+				}
+			}
+		})
+
+		return err
 	})
 }

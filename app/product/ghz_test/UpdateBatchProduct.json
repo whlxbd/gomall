@@ -1,0 +1,31 @@
+{
+    "proto": "../../idl/product.proto",
+    "call": "product.ProductCatalogService/UpdateBatchProduct",
+    "total": 5000,
+    "concurrency": 30,
+    "data": {
+        "products": [
+            {
+                "product_id": 2,
+                "stock_change": 1,
+                "soldcount_change": 0
+            },
+            {
+                "product_id": 3,
+                "stock_change": 1,
+                "soldcount_change": 0  
+            }
+        ],
+        "isStock": true
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "10s",
+    "format": "html",
+    "output": "ghz_UpdateBatchProduct.html",
+    "insecure": true,
+    "host": "0.0.0.0:8086"
+}
