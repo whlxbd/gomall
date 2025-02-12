@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,7 +9,6 @@ import (
 )
 
 func TestVerifyTokenByRPC_Run(t *testing.T) {
-	os.Setenv("JWT_SECRET", "test")
 	ctx := context.Background()
 	s := NewVerifyTokenByRPCService(ctx)
 	// init req and assert value

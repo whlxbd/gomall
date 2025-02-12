@@ -2,17 +2,13 @@ package service
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/whlxbd/gomall/app/user/biz/dal"
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
 func TestDeliverTokenByRPC_Run(t *testing.T) {
-	dal.Init()
-	os.Setenv("JWT_SECRET", "test")
 	ctx := context.Background()
 	s := NewDeliverTokenByRPCService(ctx)
 	// init req and assert value
@@ -25,4 +21,5 @@ func TestDeliverTokenByRPC_Run(t *testing.T) {
 	assert.NotEmpty(t, resp.Token)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)
+	t.Logf("token: %v", resp.Token)
 }
