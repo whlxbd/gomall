@@ -22,3 +22,10 @@ func (s *AuthServiceImpl) VerifyTokenByRPC(ctx context.Context, req *auth.Verify
 
 	return resp, err
 }
+
+// Payload implements the AuthServiceImpl interface.
+func (s *AuthServiceImpl) Payload(ctx context.Context, req *auth.PayloadReq) (resp *auth.PayloadResp, err error) {
+	resp, err = service.NewPayloadService(ctx).Run(req)
+
+	return resp, err
+}
