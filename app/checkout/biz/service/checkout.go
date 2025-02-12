@@ -34,7 +34,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	if err != nil {
 		return nil, kerrors.NewBizStatusError(500, err.Error())
 	}
-	if authVerifyResp.Res == false {
+	if !authVerifyResp.Res {
 		return nil, kerrors.NewBizStatusError(401, "token invalid")
 	}
 
