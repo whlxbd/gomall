@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
-	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/metadata"
-	"github.com/whlxbd/gomall/app/checkout/infra/rpc"
-	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
+	"github.com/cloudwego/kitex/pkg/klog"
+
+	"github.com/whlxbd/gomall/common/utils/authpayload"
 	checkout "github.com/whlxbd/gomall/rpc_gen/kitex_gen/checkout"
 )
 
@@ -20,28 +20,13 @@ func NewCheckoutService(ctx context.Context) *CheckoutService {
 // Run create note info
 func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.CheckoutResp, err error) {
 	// Finish your business logic.
-	md, ok := metadata.FromIncomingContext(s.ctx)
-	if !ok {
-		return nil, kerrors.NewBizStatusError(400, "metadata not found")
-	}
-	tokens := md.Get("token")
-	if len(tokens) == 0 || tokens[0] == "" {
-		return nil, kerrors.NewBizStatusError(400, "token not found")
-	}
-	token := tokens[0]
-
-	authVerifyResp, err := rpc.AuthClient.VerifyTokenByRPC(s.ctx, &auth.VerifyTokenReq{Token: token})
+	payload, err := authpayload.Get(s.ctx)
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(500, err.Error())
-	}
-	if !authVerifyResp.Res {
-		return nil, kerrors.NewBizStatusError(401, "token invalid")
+		klog.Errorf("get payload failed: %v", err)
+		return nil, err
 	}
 
-	payload, err := rpc.AuthClient.GetPayload(s.ctx, &auth.GetPayloadReq{Token: token})
-	if err != nil {
-		return nil, kerrors.NewBizStatusError(500, err.Error())
-	}
+	klog.Infof("payload: %v", payload)
 
 	if payload.UserId == 0 {
 		return nil, kerrors.NewBizStatusError(401, "user not found")

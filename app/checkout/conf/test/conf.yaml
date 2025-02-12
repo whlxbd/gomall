@@ -1,6 +1,6 @@
 kitex:
   service: "checkout"
-  address: ":8888"
+  address: ":8083"
   log_level: info
   log_file_name: "log/kitex.log"
   log_max_size: 10
@@ -9,12 +9,12 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:2379
+    - 10.255.254.166:8500
   username: ""
   password: ""
 
 mysql:
-  dsn: "gorm:gorm@tcp(127.0.0.1:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local"
+  dsn: "gomall:gomall@tcp(127.0.0.1:3306)/gomall?charset=utf8mb4&parseTime=True&loc=Local"
 
 redis:
   address: "127.0.0.1:6379"
