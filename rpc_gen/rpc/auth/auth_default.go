@@ -24,3 +24,12 @@ func VerifyTokenByRPC(ctx context.Context, req *auth.VerifyTokenReq, callOptions
 	}
 	return resp, nil
 }
+
+func Payload(ctx context.Context, req *auth.PayloadReq, callOptions ...callopt.Option) (resp *auth.PayloadResp, err error) {
+	resp, err = defaultClient.Payload(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "Payload call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

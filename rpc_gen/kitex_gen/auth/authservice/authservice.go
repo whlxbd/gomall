@@ -29,6 +29,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"Payload": kitex.NewMethodInfo(
+		payloadHandler,
+		newPayloadArgs,
+		newPayloadResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -401,6 +408,159 @@ func (p *VerifyTokenByRPCResult) GetResult() interface{} {
 	return p.Success
 }
 
+func payloadHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(auth.PayloadReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(auth.AuthService).Payload(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *PayloadArgs:
+		success, err := handler.(auth.AuthService).Payload(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*PayloadResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newPayloadArgs() interface{} {
+	return &PayloadArgs{}
+}
+
+func newPayloadResult() interface{} {
+	return &PayloadResult{}
+}
+
+type PayloadArgs struct {
+	Req *auth.PayloadReq
+}
+
+func (p *PayloadArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(auth.PayloadReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *PayloadArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *PayloadArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *PayloadArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *PayloadArgs) Unmarshal(in []byte) error {
+	msg := new(auth.PayloadReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var PayloadArgs_Req_DEFAULT *auth.PayloadReq
+
+func (p *PayloadArgs) GetReq() *auth.PayloadReq {
+	if !p.IsSetReq() {
+		return PayloadArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *PayloadArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *PayloadArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type PayloadResult struct {
+	Success *auth.PayloadResp
+}
+
+var PayloadResult_Success_DEFAULT *auth.PayloadResp
+
+func (p *PayloadResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(auth.PayloadResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *PayloadResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *PayloadResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *PayloadResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *PayloadResult) Unmarshal(in []byte) error {
+	msg := new(auth.PayloadResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *PayloadResult) GetSuccess() *auth.PayloadResp {
+	if !p.IsSetSuccess() {
+		return PayloadResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *PayloadResult) SetSuccess(x interface{}) {
+	p.Success = x.(*auth.PayloadResp)
+}
+
+func (p *PayloadResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *PayloadResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -426,6 +586,16 @@ func (p *kClient) VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq
 	_args.Req = Req
 	var _result VerifyTokenByRPCResult
 	if err = p.c.Call(ctx, "VerifyTokenByRPC", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) Payload(ctx context.Context, Req *auth.PayloadReq) (r *auth.PayloadResp, err error) {
+	var _args PayloadArgs
+	_args.Req = Req
+	var _result PayloadResult
+	if err = p.c.Call(ctx, "Payload", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
