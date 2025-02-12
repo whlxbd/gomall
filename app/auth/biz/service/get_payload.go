@@ -8,15 +8,15 @@ import (
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
-type PayloadService struct {
+type GetPayloadService struct {
 	ctx context.Context
-} // NewPayloadService new PayloadService
-func NewPayloadService(ctx context.Context) *PayloadService {
-	return &PayloadService{ctx: ctx}
+} // NewGetPayloadService new GetPayloadService
+func NewGetPayloadService(ctx context.Context) *GetPayloadService {
+	return &GetPayloadService{ctx: ctx}
 }
 
 // Run create note info
-func (s *PayloadService) Run(req *auth.PayloadReq) (resp *auth.PayloadResp, err error) {
+func (s *GetPayloadService) Run(req *auth.GetPayloadReq) (resp *auth.GetPayloadResp, err error) {
 	// Finish your business logic.
 	payload := jwt.MapClaims{}
 	_, err = jwt.ParseWithClaims(req.Token, payload, func(token *jwt.Token) (interface{}, error) {
@@ -25,7 +25,7 @@ func (s *PayloadService) Run(req *auth.PayloadReq) (resp *auth.PayloadResp, err 
 	if err != nil {
 		return nil, err
 	}
-	return &auth.PayloadResp{
+	return &auth.GetPayloadResp{
 		UserId: int32((payload["user_id"].(float64))),
 		Type:   payload["type"].(string),
 	}, nil

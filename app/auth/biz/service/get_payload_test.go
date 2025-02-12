@@ -8,12 +8,12 @@ import (
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
-func TestPayload_Run(t *testing.T) {
+func TestGetPayload_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewPayloadService(ctx)
+	s := NewGetPayloadService(ctx)
 	// init req and assert value
 
-	req := &auth.PayloadReq{
+	req := &auth.GetPayloadReq{
 		Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVfdGltZSI6MTczOTQ1Mzg3MywidHlwZSI6ImFkbWluIiwidXNlcl9pZCI6MX0.8DNwRg6PI0DMTM4duv5csnf90_k98okKCLyuuyaoHK4",
 	}
 
@@ -21,5 +21,4 @@ func TestPayload_Run(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, int32(1), resp.UserId)
 	assert.Equal(t, "admin", resp.Type)
-
 }

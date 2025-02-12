@@ -7,7 +7,7 @@ option go_package="/auth";
 service AuthService {
     rpc DeliverTokenByRPC(DeliverTokenReq) returns (DeliveryResp) {}
     rpc VerifyTokenByRPC(VerifyTokenReq) returns (VerifyResp) {}
-    rpc Payload(PayloadReq) returns (PayloadResp) {}
+    rpc GetPayload(GetPayloadReq) returns (GetPayloadResp) {}
 }
 
 message DeliverTokenReq {
@@ -26,11 +26,11 @@ message VerifyResp {
     bool res = 1;
 }
 
-message PayloadReq {
+message GetPayloadReq {
     string token = 1;
 }
 
-message PayloadResp {
+message GetPayloadResp {
     int32 user_id = 1;
     string type = 2;
 }

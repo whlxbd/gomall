@@ -14,7 +14,7 @@ type RPCClient interface {
 	Service() string
 	DeliverTokenByRPC(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryResp, err error)
 	VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyResp, err error)
-	Payload(ctx context.Context, Req *auth.PayloadReq, callOptions ...callopt.Option) (r *auth.PayloadResp, err error)
+	GetPayload(ctx context.Context, Req *auth.GetPayloadReq, callOptions ...callopt.Option) (r *auth.GetPayloadResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -51,6 +51,6 @@ func (c *clientImpl) VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyToken
 	return c.kitexClient.VerifyTokenByRPC(ctx, Req, callOptions...)
 }
 
-func (c *clientImpl) Payload(ctx context.Context, Req *auth.PayloadReq, callOptions ...callopt.Option) (r *auth.PayloadResp, err error) {
-	return c.kitexClient.Payload(ctx, Req, callOptions...)
+func (c *clientImpl) GetPayload(ctx context.Context, Req *auth.GetPayloadReq, callOptions ...callopt.Option) (r *auth.GetPayloadResp, err error) {
+	return c.kitexClient.GetPayload(ctx, Req, callOptions...)
 }

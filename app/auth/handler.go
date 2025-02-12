@@ -29,3 +29,10 @@ func (s *AuthServiceImpl) Payload(ctx context.Context, req *auth.PayloadReq) (re
 
 	return resp, err
 }
+
+// GetPayload implements the AuthServiceImpl interface.
+func (s *AuthServiceImpl) GetPayload(ctx context.Context, req *auth.GetPayloadReq) (resp *auth.GetPayloadResp, err error) {
+	resp, err = service.NewGetPayloadService(ctx).Run(req)
+
+	return resp, err
+}

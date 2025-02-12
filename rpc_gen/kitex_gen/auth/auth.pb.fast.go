@@ -112,7 +112,7 @@ func (x *VerifyResp) fastReadField1(buf []byte, _type int8) (offset int, err err
 	return offset, err
 }
 
-func (x *PayloadReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *GetPayloadReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -129,15 +129,15 @@ func (x *PayloadReq) FastRead(buf []byte, _type int8, number int32) (offset int,
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_PayloadReq[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetPayloadReq[number], err)
 }
 
-func (x *PayloadReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+func (x *GetPayloadReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 	x.Token, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *PayloadResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *GetPayloadResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -159,15 +159,15 @@ func (x *PayloadResp) FastRead(buf []byte, _type int8, number int32) (offset int
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_PayloadResp[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetPayloadResp[number], err)
 }
 
-func (x *PayloadResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+func (x *GetPayloadResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 	x.UserId, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
-func (x *PayloadResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+func (x *GetPayloadResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	x.Type, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
@@ -236,7 +236,7 @@ func (x *VerifyResp) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *PayloadReq) FastWrite(buf []byte) (offset int) {
+func (x *GetPayloadReq) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -244,7 +244,7 @@ func (x *PayloadReq) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *PayloadReq) fastWriteField1(buf []byte) (offset int) {
+func (x *GetPayloadReq) fastWriteField1(buf []byte) (offset int) {
 	if x.Token == "" {
 		return offset
 	}
@@ -252,7 +252,7 @@ func (x *PayloadReq) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *PayloadResp) FastWrite(buf []byte) (offset int) {
+func (x *GetPayloadResp) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -261,7 +261,7 @@ func (x *PayloadResp) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *PayloadResp) fastWriteField1(buf []byte) (offset int) {
+func (x *GetPayloadResp) fastWriteField1(buf []byte) (offset int) {
 	if x.UserId == 0 {
 		return offset
 	}
@@ -269,7 +269,7 @@ func (x *PayloadResp) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *PayloadResp) fastWriteField2(buf []byte) (offset int) {
+func (x *GetPayloadResp) fastWriteField2(buf []byte) (offset int) {
 	if x.Type == "" {
 		return offset
 	}
@@ -341,7 +341,7 @@ func (x *VerifyResp) sizeField1() (n int) {
 	return n
 }
 
-func (x *PayloadReq) Size() (n int) {
+func (x *GetPayloadReq) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -349,7 +349,7 @@ func (x *PayloadReq) Size() (n int) {
 	return n
 }
 
-func (x *PayloadReq) sizeField1() (n int) {
+func (x *GetPayloadReq) sizeField1() (n int) {
 	if x.Token == "" {
 		return n
 	}
@@ -357,7 +357,7 @@ func (x *PayloadReq) sizeField1() (n int) {
 	return n
 }
 
-func (x *PayloadResp) Size() (n int) {
+func (x *GetPayloadResp) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -366,7 +366,7 @@ func (x *PayloadResp) Size() (n int) {
 	return n
 }
 
-func (x *PayloadResp) sizeField1() (n int) {
+func (x *GetPayloadResp) sizeField1() (n int) {
 	if x.UserId == 0 {
 		return n
 	}
@@ -374,7 +374,7 @@ func (x *PayloadResp) sizeField1() (n int) {
 	return n
 }
 
-func (x *PayloadResp) sizeField2() (n int) {
+func (x *GetPayloadResp) sizeField2() (n int) {
 	if x.Type == "" {
 		return n
 	}
@@ -398,11 +398,11 @@ var fieldIDToName_VerifyResp = map[int32]string{
 	1: "Res",
 }
 
-var fieldIDToName_PayloadReq = map[int32]string{
+var fieldIDToName_GetPayloadReq = map[int32]string{
 	1: "Token",
 }
 
-var fieldIDToName_PayloadResp = map[int32]string{
+var fieldIDToName_GetPayloadResp = map[int32]string{
 	1: "UserId",
 	2: "Type",
 }
