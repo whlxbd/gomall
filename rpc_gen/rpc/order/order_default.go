@@ -33,3 +33,12 @@ func MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidReq, callOptions
 	}
 	return resp, nil
 }
+
+func EditOrder(ctx context.Context, req *order.EditOrderReq, callOptions ...callopt.Option) (resp *order.EditOrderResp, err error) {
+	resp, err = defaultClient.EditOrder(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "EditOrder call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

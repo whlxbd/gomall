@@ -2,21 +2,45 @@ package main
 
 import (
 	"net"
+	"os"
 	"time"
+	"context"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
+	"github.com/whlxbd/gomall/app/order/biz/dal"
+	"github.com/whlxbd/gomall/app/order/biz/dal/mq"
 	"github.com/whlxbd/gomall/app/order/conf"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/order/orderservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"github.com/whlxbd/gomall/common/utils/pool"
 )
 
 func main() {
+	_ = godotenv.Load()
 	opts := kitexInit()
+	pool.Init()
+	dal.Init()
+	defer pool.Release()
+
+    // 初始化MQ
+    if err := mq.Init(os.Getenv("RMQENDPOINT")); err != nil {
+        klog.Fatalf("init mq failed: %v", err)
+    }
+
+    // 启动消费者，使用context控制生命周期
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
+
+
+	_ = pool.Submit(func() {
+		mq.StartOrderConsumer(ctx)
+	})
 
 	svr := orderservice.NewServer(new(OrderServiceImpl), opts...)
 
@@ -40,7 +64,7 @@ func kitexInit() (opts []server.Option) {
 	}))
 
 	// consul
-	r, err := consul.NewConsulRegister(conf.GetConf().Registry.RegistryAddress[0]) // 使用配置中的 Consul 地址
+	r, err := consul.NewConsulRegister(os.Getenv("REGISTRY_ADDR")) // 使用配置中的 Consul 地址
 	if err != nil {
 		klog.Fatal(err)
 	}

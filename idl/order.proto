@@ -10,6 +10,7 @@ service OrderService {
   rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp) {}
   rpc ListOrder(ListOrderReq) returns (ListOrderResp) {}
   rpc MarkOrderPaid(MarkOrderPaidReq) returns (MarkOrderPaidResp) {}
+  rpc EditOrder(EditOrderReq) returns (EditOrderResp) {}
 }
 
 message Address {
@@ -66,3 +67,14 @@ message MarkOrderPaidReq {
 }
 
 message MarkOrderPaidResp {}
+
+message EditOrderReq {
+  uint32 user_id = 1;
+  string order_id = 2;
+  string user_currency = 3;
+  Address address = 4;
+  string email = 5;
+  repeated OrderItem order_items = 6;
+}
+  
+message EditOrderResp {}

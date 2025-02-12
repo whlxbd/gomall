@@ -36,6 +36,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"EditOrder": kitex.NewMethodInfo(
+		editOrderHandler,
+		newEditOrderArgs,
+		newEditOrderResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -561,6 +568,159 @@ func (p *MarkOrderPaidResult) GetResult() interface{} {
 	return p.Success
 }
 
+func editOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(order.EditOrderReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(order.OrderService).EditOrder(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *EditOrderArgs:
+		success, err := handler.(order.OrderService).EditOrder(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*EditOrderResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newEditOrderArgs() interface{} {
+	return &EditOrderArgs{}
+}
+
+func newEditOrderResult() interface{} {
+	return &EditOrderResult{}
+}
+
+type EditOrderArgs struct {
+	Req *order.EditOrderReq
+}
+
+func (p *EditOrderArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(order.EditOrderReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *EditOrderArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *EditOrderArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *EditOrderArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *EditOrderArgs) Unmarshal(in []byte) error {
+	msg := new(order.EditOrderReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var EditOrderArgs_Req_DEFAULT *order.EditOrderReq
+
+func (p *EditOrderArgs) GetReq() *order.EditOrderReq {
+	if !p.IsSetReq() {
+		return EditOrderArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *EditOrderArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *EditOrderArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type EditOrderResult struct {
+	Success *order.EditOrderResp
+}
+
+var EditOrderResult_Success_DEFAULT *order.EditOrderResp
+
+func (p *EditOrderResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(order.EditOrderResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *EditOrderResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *EditOrderResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *EditOrderResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *EditOrderResult) Unmarshal(in []byte) error {
+	msg := new(order.EditOrderResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *EditOrderResult) GetSuccess() *order.EditOrderResp {
+	if !p.IsSetSuccess() {
+		return EditOrderResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *EditOrderResult) SetSuccess(x interface{}) {
+	p.Success = x.(*order.EditOrderResp)
+}
+
+func (p *EditOrderResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *EditOrderResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -596,6 +756,16 @@ func (p *kClient) MarkOrderPaid(ctx context.Context, Req *order.MarkOrderPaidReq
 	_args.Req = Req
 	var _result MarkOrderPaidResult
 	if err = p.c.Call(ctx, "MarkOrderPaid", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) EditOrder(ctx context.Context, Req *order.EditOrderReq) (r *order.EditOrderResp, err error) {
+	var _args EditOrderArgs
+	_args.Req = Req
+	var _result EditOrderResult
+	if err = p.c.Call(ctx, "EditOrder", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -29,3 +29,10 @@ func (s *OrderServiceImpl) MarkOrderPaid(ctx context.Context, req *order.MarkOrd
 
 	return resp, err
 }
+
+// EditOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) EditOrder(ctx context.Context, req *order.EditOrderReq) (resp *order.EditOrderResp, err error) {
+	resp, err = service.NewEditOrderService(ctx).Run(req)
+
+	return resp, err
+}
