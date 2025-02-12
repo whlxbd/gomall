@@ -10,12 +10,14 @@ import (
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/auth/conf"
+	"github.com/whlxbd/gomall/app/auth/infra/rpc"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth/authservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func main() {
+	rpc.InitClient()
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)

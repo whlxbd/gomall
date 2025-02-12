@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
-	"github.com/whlxbd/gomall/app/user/biz/model"
+	"github.com/whlxbd/gomall/app/auth/infra/rpc"
+	"github.com/whlxbd/gomall/app/user/kitex_gen/user"
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
@@ -30,7 +30,7 @@ func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.De
 	)
 
 	key = []byte(os.Getenv("JWT_SECRET"))
-	userRow, err := model.GetByID(mysql.DB, s.ctx, req.UserId)
+	userInfo, err := rpc.UserClient.Info(s.ctx, &user.InfoReq{UserId: req.UserId})
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
@@ -38,7 +38,7 @@ func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.De
 	t = jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"user_id":     req.UserId,
-			"type":        userRow.Type,
+			"type":        userInfo.Type,
 			"expire_time": time.Now().Add(time.Hour * 24).Unix(),
 		})
 	str, err = t.SignedString(key)
