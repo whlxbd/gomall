@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
+
 	"github.com/whlxbd/gomall/app/auth/biz/service"
+	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
 // AuthServiceImpl implements the last service interface defined in the IDL.
@@ -19,13 +20,6 @@ func (s *AuthServiceImpl) DeliverTokenByRPC(ctx context.Context, req *auth.Deliv
 // VerifyTokenByRPC implements the AuthServiceImpl interface.
 func (s *AuthServiceImpl) VerifyTokenByRPC(ctx context.Context, req *auth.VerifyTokenReq) (resp *auth.VerifyResp, err error) {
 	resp, err = service.NewVerifyTokenByRPCService(ctx).Run(req)
-
-	return resp, err
-}
-
-// Payload implements the AuthServiceImpl interface.
-func (s *AuthServiceImpl) Payload(ctx context.Context, req *auth.PayloadReq) (resp *auth.PayloadResp, err error) {
-	resp, err = service.NewPayloadService(ctx).Run(req)
 
 	return resp, err
 }
