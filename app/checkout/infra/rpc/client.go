@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"os"
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
@@ -39,7 +40,7 @@ func initProductClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       conf.GetConf().Registry.RegistryAddress[0],
+			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
 		}),
 	}
 
@@ -53,7 +54,7 @@ func initAuthClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       conf.GetConf().Registry.RegistryAddress[0],
+			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
 		}),
 	}
 
@@ -67,7 +68,7 @@ func initOrderClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       conf.GetConf().Registry.RegistryAddress[0],
+			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
 		}),
 	}
 
@@ -81,7 +82,7 @@ func initPaymentClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       conf.GetConf().Registry.RegistryAddress[0],
+			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
 		}),
 	}
 
@@ -95,7 +96,7 @@ func initCartClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       conf.GetConf().Registry.RegistryAddress[0],
+			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
 		}),
 	}
 

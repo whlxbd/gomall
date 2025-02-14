@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"os"
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -40,7 +41,7 @@ func kitexInit() (opts []server.Option) {
 	}))
 
 	// consul
-	r, err := consul.NewConsulRegister(conf.GetConf().Registry.RegistryAddress[0]) // 使用配置中的 Consul 地址
+	r, err := consul.NewConsulRegister(os.Getenv("REGISTRY_ADDR")) // 使用配置中的 Consul 地址
 	if err != nil {
 		klog.Fatal(err)
 	}

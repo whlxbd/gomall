@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"os"
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
@@ -27,7 +28,7 @@ func initAuthClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       conf.GetConf().Registry.RegistryAddress[0],
+			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
 		}),
 	}
 

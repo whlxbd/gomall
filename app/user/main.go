@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/whlxbd/gomall/app/user/biz/dal"
 	"net"
+	"os"
 	"time"
+
+	"github.com/whlxbd/gomall/app/user/biz/dal"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -43,7 +45,7 @@ func kitexInit() (opts []server.Option) {
 	}))
 
 	// consul
-	r, err := consul.NewConsulRegister(conf.GetConf().Registry.RegistryAddress[0]) // 使用配置中的 Consul 地址
+	r, err := consul.NewConsulRegister(os.Getenv("REGISTRY_ADDR")) // 使用配置中的 Consul 地址
 	if err != nil {
 		klog.Fatal(err)
 	}
