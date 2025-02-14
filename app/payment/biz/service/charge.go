@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
 	"github.com/whlxbd/gomall/app/payment/biz/dal/mysql"
@@ -25,30 +26,32 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 	// Finish your business logic.
 	cardInfo := creditcard.Card{
 		Number: req.CreditCard.CreditCardNumber,
-		Cvv: strconv.Itoa(int(req.CreditCard.CreditCardCvv)),
-		Month: strconv.Itoa(int(req.CreditCard.CreditCardExpirationMonth)),
-		Year: strconv.Itoa(int(req.CreditCard.CreditCardExpirationYear)),
+		Cvv:    strconv.Itoa(int(req.CreditCard.CreditCardCvv)),
+		Month:  strconv.Itoa(int(req.CreditCard.CreditCardExpirationMonth)),
+		Year:   strconv.Itoa(int(req.CreditCard.CreditCardExpirationYear)),
 	}
 
 	err = cardInfo.Validate(true)
 	if err != nil {
+		klog.Errorf("validate credit card failed: %v", err)
 		return nil, kerrors.NewBizStatusError(400, err.Error())
 	}
 
 	transactionId, err := uuid.NewRandom()
 	if err != nil {
+		klog.Errorf("generate transaction id failed: %v", err)
 		return nil, kerrors.NewBizStatusError(500, err.Error())
 	}
 
 	err = model.Create(mysql.DB, s.ctx, &model.PaymentRecord{
 		TransactionId: transactionId.String(),
-		Amount: req.Amount,
-		OrderId: req.OrderId,
-		UserId: req.UserId,
-		PayAt: time.Now(),
+		Amount:        req.Amount,
+		OrderId:       req.OrderId,
+		UserId:        req.UserId,
+		PayAt:         time.Now(),
 	})
-
 	if err != nil {
+		klog.Errorf("create payment record failed: %v", err)
 		return nil, kerrors.NewBizStatusError(500, err.Error())
 	}
 
