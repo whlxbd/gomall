@@ -30,6 +30,8 @@ message LoginReq {
 
 message LoginResp {
     int32 user_id = 1;
+    string type = 2;
+    string token = 3;
 }
 
 message InfoReq {
