@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
-	"errors"
+
+	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/user/biz/model"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
@@ -20,14 +22,12 @@ func NewLoginService(ctx context.Context) *LoginService {
 func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error) {
 	// Finish your business logic.
 	userRow, err := model.GetByEmail(mysql.DB, context.Background(), req.Email)
-	if err != nil {
-		return nil, err
-	}
-	if userRow == nil {
-		return nil, errors.New("not found user")
+	if err != nil || userRow == nil {
+		return nil, kerrors.NewBizStatusError(400, "user not found")
 	}
 	if err = bcrypt.CompareHashAndPassword([]byte(userRow.Password), []byte(req.Password)); err != nil {
-		return nil, errors.New("password not match")
+		klog.Errorf("password not match: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "password not match")
 	}
 	resp = &user.LoginResp{
 		UserId: int32(userRow.ID),

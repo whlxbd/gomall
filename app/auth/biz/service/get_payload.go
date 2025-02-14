@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 
+	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/golang-jwt/jwt/v5"
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
@@ -23,7 +25,8 @@ func (s *GetPayloadService) Run(req *auth.GetPayloadReq) (resp *auth.GetPayloadR
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
-		return nil, err
+		klog.Errorf("parse token failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "parse token failed")
 	}
 	return &auth.GetPayloadResp{
 		UserId: int32((payload["user_id"].(float64))),

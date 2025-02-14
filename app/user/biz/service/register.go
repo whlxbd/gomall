@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"errors"
 
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/go-playground/validator/v10"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
@@ -23,24 +23,30 @@ func NewRegisterService(ctx context.Context) *RegisterService {
 func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, err error) {
 	// Finish your business logic.
 	if req.Email == "" {
-		return nil, errors.New("email is empty")
+		klog.Error("email is empty")
+		return nil, kerrors.NewBizStatusError(400, "email is empty")
 	}
 	validate := validator.New()
 	err = validate.Var(req.Email, "required,email")
 	if err != nil {
-		return nil, errors.New("invalid email format")
+		klog.Error("invalid email format")
+		return nil, kerrors.NewBizStatusError(400, "invalid email format")
 	}
 	if req.Password == "" {
-		return nil, errors.New("password is empty")
+		klog.Error("password is empty")
+		return nil, kerrors.NewBizStatusError(400, "password is empty")
 	}
 	if req.ConfirmPassword == "" {
-		return nil, errors.New("ConfirmPassword is empty")
+		klog.Error("ConfirmPassword is empty")
+		return nil, kerrors.NewBizStatusError(400, "ConfirmPassword is empty")
 	}
 	if req.Password != req.ConfirmPassword {
-		return nil, errors.New("password and ConfirmPassword are not the same")
+		klog.Error("password and ConfirmPassword are not the same")
+		return nil, kerrors.NewBizStatusError(400, "password and ConfirmPassword are not the same")
 	}
 	if findUser, err := model.GetByEmail(mysql.DB, context.Background(), req.Email); err == nil && findUser != nil {
-		return nil, errors.New("user already exists")
+		klog.Error("user already exists")
+		return nil, kerrors.NewBizStatusError(400, "user already exists")
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	err = model.Create(mysql.DB, context.Background(), &model.User{
@@ -49,10 +55,11 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 	})
 	if err != nil {
 		klog.Error(err)
+		return nil, kerrors.NewGRPCBizStatusError(500, "create user failed")
 	}
 	userRow, err := model.GetByEmail(mysql.DB, context.Background(), req.Email)
 	if err != nil {
-		return nil, errors.New("not found user")
+		return nil, kerrors.NewGRPCBizStatusError(500, "get user info failed")
 	}
 	resp = &user.RegisterResp{
 		UserId: userRow.ID,

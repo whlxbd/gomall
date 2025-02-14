@@ -29,21 +29,24 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	payload, err := authpayload.Get(s.ctx)
 	if err != nil {
 		klog.Errorf("get payload failed: %v", err)
-		return nil, err
+		return nil, kerrors.NewBizStatusError(401, "get payload failed")
 	}
 
 	klog.Infof("payload: %v", payload)
 
 	if payload.UserId == 0 {
+		klog.Errorf("user not found")
 		return nil, kerrors.NewBizStatusError(401, "user not found")
 	}
 
 	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: uint32(payload.UserId)})
 	if err != nil {
-		return nil, err
+		klog.Errorf("get cart failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "get cart failed")
 	}
 
 	if len(cartResult.Cart.Items) == 0 {
+		klog.Errorf("cart is empty")
 		return nil, kerrors.NewBizStatusError(400, "cart is empty")
 	}
 
@@ -54,7 +57,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 
 	productsResult, err := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Ids: itemIds})
 	if err != nil {
-		return nil, err
+		klog.Errorf("get products failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "get products failed")
 	}
 
 	amount := float32(0)
@@ -78,6 +82,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	if req.Address != nil {
 		ZipCodeInt, err := strconv.Atoi(req.Address.ZipCode)
 		if err != nil {
+			klog.Errorf("invalid zip code: %v", err)
 			return nil, kerrors.NewBizStatusError(400, "invalid zip code")
 		}
 		placeOrderReq.Address = &order.Address{
@@ -91,7 +96,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 
 	placeOrderResult, err := rpc.OrderClient.PlaceOrder(s.ctx, &placeOrderReq)
 	if err != nil {
-		return nil, err
+		klog.Errorf("place order failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "place order failed")
 	}
 
 	orderId := placeOrderResult.Order.OrderId
@@ -104,11 +110,12 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 
 	paymentResult, err := rpc.PaymentClient.Charge(s.ctx, &paymentReq)
 	if err != nil {
-		return nil, err
+		klog.Errorf("payment failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "payment failed")
 	}
 
 	resp = &checkout.CheckoutResp{
-		OrderId: orderId,
+		OrderId:       orderId,
 		TransactionId: paymentResult.TransactionId,
 	}
 

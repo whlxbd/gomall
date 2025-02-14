@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
-	"errors"
 	"os"
 	"time"
+
+	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/whlxbd/gomall/app/auth/infra/rpc"
@@ -32,7 +34,8 @@ func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.De
 	key = []byte(os.Getenv("JWT_SECRET"))
 	userInfo, err := rpc.UserClient.Info(s.ctx, &user.InfoReq{UserId: req.UserId})
 	if err != nil {
-		return nil, errors.New("user not found")
+		klog.Errorf("get user info failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "user not found")
 	}
 
 	t = jwt.NewWithClaims(jwt.SigningMethodHS256,
@@ -43,7 +46,8 @@ func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.De
 		})
 	str, err = t.SignedString(key)
 	if err != nil {
-		return nil, err
+		klog.Errorf("sign token failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "sign token failed")
 	}
 
 	resp = &auth.DeliveryResp{

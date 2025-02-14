@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"errors"
 
+	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/user/biz/model"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
@@ -21,7 +22,8 @@ func (s *InfoService) Run(req *user.InfoReq) (resp *user.InfoResp, err error) {
 	// Finish your business logic.
 	userRow, err := model.GetByID(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
-		return nil, errors.New("not found user")
+		klog.Errorf("get user info failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "user not found")
 	}
 	resp = &user.InfoResp{
 		UserId:    userRow.ID,
