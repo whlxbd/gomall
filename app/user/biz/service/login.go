@@ -7,6 +7,8 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/user/biz/model"
+	"github.com/whlxbd/gomall/app/user/infra/rpc"
+	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -29,8 +31,16 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 		klog.Errorf("password not match: %v", err)
 		return nil, kerrors.NewBizStatusError(400, "password not match")
 	}
+
+	diliverTokenResp, err := rpc.AuthClient.DeliverTokenByRPC(s.ctx, &auth.DeliverTokenReq{UserId: int32(userRow.ID)})
+	if err != nil {
+		klog.Errorf("deliver token failed: %v", err)
+		return nil, kerrors.NewGRPCBizStatusError(400, "deliver token failed")
+	}
 	resp = &user.LoginResp{
 		UserId: int32(userRow.ID),
+		Type:   userRow.Type,
+		Token:  diliverTokenResp.Token,
 	}
 
 	return

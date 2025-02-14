@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/whlxbd/gomall/app/user/biz/dal"
+	"github.com/whlxbd/gomall/app/user/infra/rpc"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -24,6 +25,7 @@ func main() {
 	opts := kitexInit()
 
 	dal.Init()
+	rpc.InitClient()
 
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
 
