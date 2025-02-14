@@ -8,8 +8,10 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
+	"github.com/whlxbd/gomall/app/auth/biz/dal"
 	"github.com/whlxbd/gomall/app/auth/conf"
 	"github.com/whlxbd/gomall/app/auth/infra/rpc"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth/authservice"
@@ -18,8 +20,10 @@ import (
 )
 
 func main() {
-	rpc.InitClient()
+	_ = godotenv.Load()
 	opts := kitexInit()
+	dal.Init()
+	rpc.InitClient()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)
 

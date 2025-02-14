@@ -8,9 +8,10 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
-	"github.com/whlxbd/gomall/app/cart/biz/dal"
+	"github.com/whlxbd/gomall/app/payment/biz/dal"
 	"github.com/whlxbd/gomall/app/payment/conf"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment/paymentservice"
 	"go.uber.org/zap/zapcore"
@@ -18,8 +19,9 @@ import (
 )
 
 func main() {
-	dal.Init()
+	_ = godotenv.Load()
 	opts := kitexInit()
+	dal.Init()
 
 	svr := paymentservice.NewServer(new(PaymentServiceImpl), opts...)
 

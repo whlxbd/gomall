@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/whlxbd/gomall/app/user/biz/dal"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -19,6 +20,7 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
 	opts := kitexInit()
 
 	dal.Init()
