@@ -3,9 +3,12 @@ package agent
 import (
 	"context"
 	"sync"
+	"os"
 
 	"github.com/cloudwego/eino/compose"
 	"github.com/cloudwego/eino/schema"
+	"github.com/cloudwego/eino-ext/callbacks/langfuse"
+	"github.com/cloudwego/eino/callbacks"
 )
 
 var (
@@ -59,6 +62,20 @@ func Init() {
 		flow, err = Buildgomall(context.Background())
 		if err != nil {
 			panic(err)
+		}
+
+		if os.Getenv("LANGFUSE_PUBLIC_KEY") != "" && os.Getenv("LANGFUSE_SECRET_KEY") != "" {
+			cbh, _ := langfuse.NewLangfuseHandler(&langfuse.Config{
+				Host:      "https://cloud.langfuse.com",
+				PublicKey: os.Getenv("LANGFUSE_PUBLIC_KEY"),
+				SecretKey: os.Getenv("LANGFUSE_SECRET_KEY"),
+				Name:      "Eino gomall",
+				Public:    true,
+				Release:   "release/v0.0.1",
+				UserID:    "yihang_01",
+				Tags:      []string{"eino", "gomall"},
+			})
+			callbacks.InitCallbackHandlers([]callbacks.Handler{cbh})
 		}
 	})
 }
