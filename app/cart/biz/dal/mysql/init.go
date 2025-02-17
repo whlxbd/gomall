@@ -9,7 +9,6 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	// "github.com/brianvoe/gofakeit/v7"
 )
 
 var (

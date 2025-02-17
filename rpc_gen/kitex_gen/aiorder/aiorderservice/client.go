@@ -11,9 +11,8 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	CreateAIOrder(ctx context.Context, Req *aiorder.CreateAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CreateAIOrderResp, err error)
-	GetAIOrder(ctx context.Context, Req *aiorder.GetAIOrderReq, callOptions ...callopt.Option) (r *aiorder.GetAIOrderResp, err error)
-	CancelAIOrder(ctx context.Context, Req *aiorder.CancelAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CancelAIOrderResp, err error)
+	QueryOrder(ctx context.Context, Req *aiorder.QueryOrderReq, callOptions ...callopt.Option) (r *aiorder.QueryOrderResp, err error)
+	SimulateOrder(ctx context.Context, Req *aiorder.SimulateOrderReq, callOptions ...callopt.Option) (r *aiorder.SimulateOrderResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -45,17 +44,12 @@ type kAIOrderServiceClient struct {
 	*kClient
 }
 
-func (p *kAIOrderServiceClient) CreateAIOrder(ctx context.Context, Req *aiorder.CreateAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CreateAIOrderResp, err error) {
+func (p *kAIOrderServiceClient) QueryOrder(ctx context.Context, Req *aiorder.QueryOrderReq, callOptions ...callopt.Option) (r *aiorder.QueryOrderResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CreateAIOrder(ctx, Req)
+	return p.kClient.QueryOrder(ctx, Req)
 }
 
-func (p *kAIOrderServiceClient) GetAIOrder(ctx context.Context, Req *aiorder.GetAIOrderReq, callOptions ...callopt.Option) (r *aiorder.GetAIOrderResp, err error) {
+func (p *kAIOrderServiceClient) SimulateOrder(ctx context.Context, Req *aiorder.SimulateOrderReq, callOptions ...callopt.Option) (r *aiorder.SimulateOrderResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetAIOrder(ctx, Req)
-}
-
-func (p *kAIOrderServiceClient) CancelAIOrder(ctx context.Context, Req *aiorder.CancelAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CancelAIOrderResp, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CancelAIOrder(ctx, Req)
+	return p.kClient.SimulateOrder(ctx, Req)
 }

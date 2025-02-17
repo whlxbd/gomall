@@ -9,23 +9,16 @@ import (
 // AIOrderServiceImpl implements the last service interface defined in the IDL.
 type AIOrderServiceImpl struct{}
 
-// CreateAIOrder implements the AIOrderServiceImpl interface.
-func (s *AIOrderServiceImpl) CreateAIOrder(ctx context.Context, req *aiorder.CreateAIOrderReq) (resp *aiorder.CreateAIOrderResp, err error) {
-	resp, err = service.NewCreateAIOrderService(ctx).Run(req)
+// QueryOrder implements the AIOrderServiceImpl interface.
+func (s *AIOrderServiceImpl) QueryOrder(ctx context.Context, req *aiorder.QueryOrderReq) (resp *aiorder.QueryOrderResp, err error) {
+	resp, err = service.NewQueryOrderService(ctx).Run(req)
 
 	return resp, err
 }
 
-// GetAIOrder implements the AIOrderServiceImpl interface.
-func (s *AIOrderServiceImpl) GetAIOrder(ctx context.Context, req *aiorder.GetAIOrderReq) (resp *aiorder.GetAIOrderResp, err error) {
-	resp, err = service.NewGetAIOrderService(ctx).Run(req)
-
-	return resp, err
-}
-
-// CancelAIOrder implements the AIOrderServiceImpl interface.
-func (s *AIOrderServiceImpl) CancelAIOrder(ctx context.Context, req *aiorder.CancelAIOrderReq) (resp *aiorder.CancelAIOrderResp, err error) {
-	resp, err = service.NewCancelAIOrderService(ctx).Run(req)
+// SimulateOrder implements the AIOrderServiceImpl interface.
+func (s *AIOrderServiceImpl) SimulateOrder(ctx context.Context, req *aiorder.SimulateOrderReq) (resp *aiorder.SimulateOrderResp, err error) {
+	resp, err = service.NewSimulateOrderService(ctx).Run(req)
 
 	return resp, err
 }

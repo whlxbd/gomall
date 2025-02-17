@@ -6,12 +6,12 @@ import (
 	aiorder "github.com/whlxbd/gomall/rpc_gen/kitex_gen/aiorder"
 )
 
-func TestCreateAIOrder_Run(t *testing.T) {
+func TestSimulateOrder_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewCreateAIOrderService(ctx)
+	s := NewSimulateOrderService(ctx)
 	// init req and assert value
 
-	req := &aiorder.CreateAIOrderReq{}
+	req := &aiorder.SimulateOrderReq{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)

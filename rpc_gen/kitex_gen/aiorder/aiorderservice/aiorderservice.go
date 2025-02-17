@@ -15,24 +15,17 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"CreateAIOrder": kitex.NewMethodInfo(
-		createAIOrderHandler,
-		newCreateAIOrderArgs,
-		newCreateAIOrderResult,
+	"QueryOrder": kitex.NewMethodInfo(
+		queryOrderHandler,
+		newQueryOrderArgs,
+		newQueryOrderResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"GetAIOrder": kitex.NewMethodInfo(
-		getAIOrderHandler,
-		newGetAIOrderArgs,
-		newGetAIOrderResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingUnary),
-	),
-	"CancelAIOrder": kitex.NewMethodInfo(
-		cancelAIOrderHandler,
-		newCancelAIOrderArgs,
-		newCancelAIOrderResult,
+	"SimulateOrder": kitex.NewMethodInfo(
+		simulateOrderHandler,
+		newSimulateOrderArgs,
+		newSimulateOrderResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
@@ -102,73 +95,73 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 	return svcInfo
 }
 
-func createAIOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func queryOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
 		st := s.Stream
-		req := new(aiorder.CreateAIOrderReq)
+		req := new(aiorder.QueryOrderReq)
 		if err := st.RecvMsg(req); err != nil {
 			return err
 		}
-		resp, err := handler.(aiorder.AIOrderService).CreateAIOrder(ctx, req)
+		resp, err := handler.(aiorder.AIOrderService).QueryOrder(ctx, req)
 		if err != nil {
 			return err
 		}
 		return st.SendMsg(resp)
-	case *CreateAIOrderArgs:
-		success, err := handler.(aiorder.AIOrderService).CreateAIOrder(ctx, s.Req)
+	case *QueryOrderArgs:
+		success, err := handler.(aiorder.AIOrderService).QueryOrder(ctx, s.Req)
 		if err != nil {
 			return err
 		}
-		realResult := result.(*CreateAIOrderResult)
+		realResult := result.(*QueryOrderResult)
 		realResult.Success = success
 		return nil
 	default:
 		return errInvalidMessageType
 	}
 }
-func newCreateAIOrderArgs() interface{} {
-	return &CreateAIOrderArgs{}
+func newQueryOrderArgs() interface{} {
+	return &QueryOrderArgs{}
 }
 
-func newCreateAIOrderResult() interface{} {
-	return &CreateAIOrderResult{}
+func newQueryOrderResult() interface{} {
+	return &QueryOrderResult{}
 }
 
-type CreateAIOrderArgs struct {
-	Req *aiorder.CreateAIOrderReq
+type QueryOrderArgs struct {
+	Req *aiorder.QueryOrderReq
 }
 
-func (p *CreateAIOrderArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *QueryOrderArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetReq() {
-		p.Req = new(aiorder.CreateAIOrderReq)
+		p.Req = new(aiorder.QueryOrderReq)
 	}
 	return p.Req.FastRead(buf, _type, number)
 }
 
-func (p *CreateAIOrderArgs) FastWrite(buf []byte) (n int) {
+func (p *QueryOrderArgs) FastWrite(buf []byte) (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.FastWrite(buf)
 }
 
-func (p *CreateAIOrderArgs) Size() (n int) {
+func (p *QueryOrderArgs) Size() (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.Size()
 }
 
-func (p *CreateAIOrderArgs) Marshal(out []byte) ([]byte, error) {
+func (p *QueryOrderArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
 		return out, nil
 	}
 	return proto.Marshal(p.Req)
 }
 
-func (p *CreateAIOrderArgs) Unmarshal(in []byte) error {
-	msg := new(aiorder.CreateAIOrderReq)
+func (p *QueryOrderArgs) Unmarshal(in []byte) error {
+	msg := new(aiorder.QueryOrderReq)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -176,59 +169,59 @@ func (p *CreateAIOrderArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-var CreateAIOrderArgs_Req_DEFAULT *aiorder.CreateAIOrderReq
+var QueryOrderArgs_Req_DEFAULT *aiorder.QueryOrderReq
 
-func (p *CreateAIOrderArgs) GetReq() *aiorder.CreateAIOrderReq {
+func (p *QueryOrderArgs) GetReq() *aiorder.QueryOrderReq {
 	if !p.IsSetReq() {
-		return CreateAIOrderArgs_Req_DEFAULT
+		return QueryOrderArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *CreateAIOrderArgs) IsSetReq() bool {
+func (p *QueryOrderArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *CreateAIOrderArgs) GetFirstArgument() interface{} {
+func (p *QueryOrderArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-type CreateAIOrderResult struct {
-	Success *aiorder.CreateAIOrderResp
+type QueryOrderResult struct {
+	Success *aiorder.QueryOrderResp
 }
 
-var CreateAIOrderResult_Success_DEFAULT *aiorder.CreateAIOrderResp
+var QueryOrderResult_Success_DEFAULT *aiorder.QueryOrderResp
 
-func (p *CreateAIOrderResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *QueryOrderResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetSuccess() {
-		p.Success = new(aiorder.CreateAIOrderResp)
+		p.Success = new(aiorder.QueryOrderResp)
 	}
 	return p.Success.FastRead(buf, _type, number)
 }
 
-func (p *CreateAIOrderResult) FastWrite(buf []byte) (n int) {
+func (p *QueryOrderResult) FastWrite(buf []byte) (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.FastWrite(buf)
 }
 
-func (p *CreateAIOrderResult) Size() (n int) {
+func (p *QueryOrderResult) Size() (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.Size()
 }
 
-func (p *CreateAIOrderResult) Marshal(out []byte) ([]byte, error) {
+func (p *QueryOrderResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
 		return out, nil
 	}
 	return proto.Marshal(p.Success)
 }
 
-func (p *CreateAIOrderResult) Unmarshal(in []byte) error {
-	msg := new(aiorder.CreateAIOrderResp)
+func (p *QueryOrderResult) Unmarshal(in []byte) error {
+	msg := new(aiorder.QueryOrderResp)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -236,92 +229,92 @@ func (p *CreateAIOrderResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *CreateAIOrderResult) GetSuccess() *aiorder.CreateAIOrderResp {
+func (p *QueryOrderResult) GetSuccess() *aiorder.QueryOrderResp {
 	if !p.IsSetSuccess() {
-		return CreateAIOrderResult_Success_DEFAULT
+		return QueryOrderResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *CreateAIOrderResult) SetSuccess(x interface{}) {
-	p.Success = x.(*aiorder.CreateAIOrderResp)
+func (p *QueryOrderResult) SetSuccess(x interface{}) {
+	p.Success = x.(*aiorder.QueryOrderResp)
 }
 
-func (p *CreateAIOrderResult) IsSetSuccess() bool {
+func (p *QueryOrderResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *CreateAIOrderResult) GetResult() interface{} {
+func (p *QueryOrderResult) GetResult() interface{} {
 	return p.Success
 }
 
-func getAIOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func simulateOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
 		st := s.Stream
-		req := new(aiorder.GetAIOrderReq)
+		req := new(aiorder.SimulateOrderReq)
 		if err := st.RecvMsg(req); err != nil {
 			return err
 		}
-		resp, err := handler.(aiorder.AIOrderService).GetAIOrder(ctx, req)
+		resp, err := handler.(aiorder.AIOrderService).SimulateOrder(ctx, req)
 		if err != nil {
 			return err
 		}
 		return st.SendMsg(resp)
-	case *GetAIOrderArgs:
-		success, err := handler.(aiorder.AIOrderService).GetAIOrder(ctx, s.Req)
+	case *SimulateOrderArgs:
+		success, err := handler.(aiorder.AIOrderService).SimulateOrder(ctx, s.Req)
 		if err != nil {
 			return err
 		}
-		realResult := result.(*GetAIOrderResult)
+		realResult := result.(*SimulateOrderResult)
 		realResult.Success = success
 		return nil
 	default:
 		return errInvalidMessageType
 	}
 }
-func newGetAIOrderArgs() interface{} {
-	return &GetAIOrderArgs{}
+func newSimulateOrderArgs() interface{} {
+	return &SimulateOrderArgs{}
 }
 
-func newGetAIOrderResult() interface{} {
-	return &GetAIOrderResult{}
+func newSimulateOrderResult() interface{} {
+	return &SimulateOrderResult{}
 }
 
-type GetAIOrderArgs struct {
-	Req *aiorder.GetAIOrderReq
+type SimulateOrderArgs struct {
+	Req *aiorder.SimulateOrderReq
 }
 
-func (p *GetAIOrderArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *SimulateOrderArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetReq() {
-		p.Req = new(aiorder.GetAIOrderReq)
+		p.Req = new(aiorder.SimulateOrderReq)
 	}
 	return p.Req.FastRead(buf, _type, number)
 }
 
-func (p *GetAIOrderArgs) FastWrite(buf []byte) (n int) {
+func (p *SimulateOrderArgs) FastWrite(buf []byte) (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.FastWrite(buf)
 }
 
-func (p *GetAIOrderArgs) Size() (n int) {
+func (p *SimulateOrderArgs) Size() (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.Size()
 }
 
-func (p *GetAIOrderArgs) Marshal(out []byte) ([]byte, error) {
+func (p *SimulateOrderArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
 		return out, nil
 	}
 	return proto.Marshal(p.Req)
 }
 
-func (p *GetAIOrderArgs) Unmarshal(in []byte) error {
-	msg := new(aiorder.GetAIOrderReq)
+func (p *SimulateOrderArgs) Unmarshal(in []byte) error {
+	msg := new(aiorder.SimulateOrderReq)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -329,59 +322,59 @@ func (p *GetAIOrderArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-var GetAIOrderArgs_Req_DEFAULT *aiorder.GetAIOrderReq
+var SimulateOrderArgs_Req_DEFAULT *aiorder.SimulateOrderReq
 
-func (p *GetAIOrderArgs) GetReq() *aiorder.GetAIOrderReq {
+func (p *SimulateOrderArgs) GetReq() *aiorder.SimulateOrderReq {
 	if !p.IsSetReq() {
-		return GetAIOrderArgs_Req_DEFAULT
+		return SimulateOrderArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *GetAIOrderArgs) IsSetReq() bool {
+func (p *SimulateOrderArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *GetAIOrderArgs) GetFirstArgument() interface{} {
+func (p *SimulateOrderArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-type GetAIOrderResult struct {
-	Success *aiorder.GetAIOrderResp
+type SimulateOrderResult struct {
+	Success *aiorder.SimulateOrderResp
 }
 
-var GetAIOrderResult_Success_DEFAULT *aiorder.GetAIOrderResp
+var SimulateOrderResult_Success_DEFAULT *aiorder.SimulateOrderResp
 
-func (p *GetAIOrderResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *SimulateOrderResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetSuccess() {
-		p.Success = new(aiorder.GetAIOrderResp)
+		p.Success = new(aiorder.SimulateOrderResp)
 	}
 	return p.Success.FastRead(buf, _type, number)
 }
 
-func (p *GetAIOrderResult) FastWrite(buf []byte) (n int) {
+func (p *SimulateOrderResult) FastWrite(buf []byte) (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.FastWrite(buf)
 }
 
-func (p *GetAIOrderResult) Size() (n int) {
+func (p *SimulateOrderResult) Size() (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.Size()
 }
 
-func (p *GetAIOrderResult) Marshal(out []byte) ([]byte, error) {
+func (p *SimulateOrderResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
 		return out, nil
 	}
 	return proto.Marshal(p.Success)
 }
 
-func (p *GetAIOrderResult) Unmarshal(in []byte) error {
-	msg := new(aiorder.GetAIOrderResp)
+func (p *SimulateOrderResult) Unmarshal(in []byte) error {
+	msg := new(aiorder.SimulateOrderResp)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -389,175 +382,22 @@ func (p *GetAIOrderResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *GetAIOrderResult) GetSuccess() *aiorder.GetAIOrderResp {
+func (p *SimulateOrderResult) GetSuccess() *aiorder.SimulateOrderResp {
 	if !p.IsSetSuccess() {
-		return GetAIOrderResult_Success_DEFAULT
+		return SimulateOrderResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *GetAIOrderResult) SetSuccess(x interface{}) {
-	p.Success = x.(*aiorder.GetAIOrderResp)
+func (p *SimulateOrderResult) SetSuccess(x interface{}) {
+	p.Success = x.(*aiorder.SimulateOrderResp)
 }
 
-func (p *GetAIOrderResult) IsSetSuccess() bool {
+func (p *SimulateOrderResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *GetAIOrderResult) GetResult() interface{} {
-	return p.Success
-}
-
-func cancelAIOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	switch s := arg.(type) {
-	case *streaming.Args:
-		st := s.Stream
-		req := new(aiorder.CancelAIOrderReq)
-		if err := st.RecvMsg(req); err != nil {
-			return err
-		}
-		resp, err := handler.(aiorder.AIOrderService).CancelAIOrder(ctx, req)
-		if err != nil {
-			return err
-		}
-		return st.SendMsg(resp)
-	case *CancelAIOrderArgs:
-		success, err := handler.(aiorder.AIOrderService).CancelAIOrder(ctx, s.Req)
-		if err != nil {
-			return err
-		}
-		realResult := result.(*CancelAIOrderResult)
-		realResult.Success = success
-		return nil
-	default:
-		return errInvalidMessageType
-	}
-}
-func newCancelAIOrderArgs() interface{} {
-	return &CancelAIOrderArgs{}
-}
-
-func newCancelAIOrderResult() interface{} {
-	return &CancelAIOrderResult{}
-}
-
-type CancelAIOrderArgs struct {
-	Req *aiorder.CancelAIOrderReq
-}
-
-func (p *CancelAIOrderArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetReq() {
-		p.Req = new(aiorder.CancelAIOrderReq)
-	}
-	return p.Req.FastRead(buf, _type, number)
-}
-
-func (p *CancelAIOrderArgs) FastWrite(buf []byte) (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.FastWrite(buf)
-}
-
-func (p *CancelAIOrderArgs) Size() (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.Size()
-}
-
-func (p *CancelAIOrderArgs) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetReq() {
-		return out, nil
-	}
-	return proto.Marshal(p.Req)
-}
-
-func (p *CancelAIOrderArgs) Unmarshal(in []byte) error {
-	msg := new(aiorder.CancelAIOrderReq)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Req = msg
-	return nil
-}
-
-var CancelAIOrderArgs_Req_DEFAULT *aiorder.CancelAIOrderReq
-
-func (p *CancelAIOrderArgs) GetReq() *aiorder.CancelAIOrderReq {
-	if !p.IsSetReq() {
-		return CancelAIOrderArgs_Req_DEFAULT
-	}
-	return p.Req
-}
-
-func (p *CancelAIOrderArgs) IsSetReq() bool {
-	return p.Req != nil
-}
-
-func (p *CancelAIOrderArgs) GetFirstArgument() interface{} {
-	return p.Req
-}
-
-type CancelAIOrderResult struct {
-	Success *aiorder.CancelAIOrderResp
-}
-
-var CancelAIOrderResult_Success_DEFAULT *aiorder.CancelAIOrderResp
-
-func (p *CancelAIOrderResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetSuccess() {
-		p.Success = new(aiorder.CancelAIOrderResp)
-	}
-	return p.Success.FastRead(buf, _type, number)
-}
-
-func (p *CancelAIOrderResult) FastWrite(buf []byte) (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.FastWrite(buf)
-}
-
-func (p *CancelAIOrderResult) Size() (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.Size()
-}
-
-func (p *CancelAIOrderResult) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetSuccess() {
-		return out, nil
-	}
-	return proto.Marshal(p.Success)
-}
-
-func (p *CancelAIOrderResult) Unmarshal(in []byte) error {
-	msg := new(aiorder.CancelAIOrderResp)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Success = msg
-	return nil
-}
-
-func (p *CancelAIOrderResult) GetSuccess() *aiorder.CancelAIOrderResp {
-	if !p.IsSetSuccess() {
-		return CancelAIOrderResult_Success_DEFAULT
-	}
-	return p.Success
-}
-
-func (p *CancelAIOrderResult) SetSuccess(x interface{}) {
-	p.Success = x.(*aiorder.CancelAIOrderResp)
-}
-
-func (p *CancelAIOrderResult) IsSetSuccess() bool {
-	return p.Success != nil
-}
-
-func (p *CancelAIOrderResult) GetResult() interface{} {
+func (p *SimulateOrderResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -571,31 +411,21 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) CreateAIOrder(ctx context.Context, Req *aiorder.CreateAIOrderReq) (r *aiorder.CreateAIOrderResp, err error) {
-	var _args CreateAIOrderArgs
+func (p *kClient) QueryOrder(ctx context.Context, Req *aiorder.QueryOrderReq) (r *aiorder.QueryOrderResp, err error) {
+	var _args QueryOrderArgs
 	_args.Req = Req
-	var _result CreateAIOrderResult
-	if err = p.c.Call(ctx, "CreateAIOrder", &_args, &_result); err != nil {
+	var _result QueryOrderResult
+	if err = p.c.Call(ctx, "QueryOrder", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetAIOrder(ctx context.Context, Req *aiorder.GetAIOrderReq) (r *aiorder.GetAIOrderResp, err error) {
-	var _args GetAIOrderArgs
+func (p *kClient) SimulateOrder(ctx context.Context, Req *aiorder.SimulateOrderReq) (r *aiorder.SimulateOrderResp, err error) {
+	var _args SimulateOrderArgs
 	_args.Req = Req
-	var _result GetAIOrderResult
-	if err = p.c.Call(ctx, "GetAIOrder", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) CancelAIOrder(ctx context.Context, Req *aiorder.CancelAIOrderReq) (r *aiorder.CancelAIOrderResp, err error) {
-	var _args CancelAIOrderArgs
-	_args.Req = Req
-	var _result CancelAIOrderResult
-	if err = p.c.Call(ctx, "CancelAIOrder", &_args, &_result); err != nil {
+	var _result SimulateOrderResult
+	if err = p.c.Call(ctx, "SimulateOrder", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

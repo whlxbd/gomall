@@ -4,6 +4,7 @@ import (
 	"net"
 	"os"
 	"time"
+	"github.com/joho/godotenv"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -14,9 +15,18 @@ import (
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/aiorder/aiorderservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"github.com/whlxbd/gomall/app/aiorder/biz/dal"
+	"github.com/whlxbd/gomall/common/utils/pool"
+	"github.com/whlxbd/gomall/app/aiorder/agent"
 )
 
 func main() {
+	_ = godotenv.Load()
+	pool.Init()
+	dal.Init()
+	agent.Init()
+	defer pool.Release()
+
 	opts := kitexInit()
 
 	svr := aiorderservice.NewServer(new(AIOrderServiceImpl), opts...)

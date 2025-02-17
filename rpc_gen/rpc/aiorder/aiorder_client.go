@@ -12,9 +12,8 @@ import (
 type RPCClient interface {
 	KitexClient() aiorderservice.Client
 	Service() string
-	CreateAIOrder(ctx context.Context, Req *aiorder.CreateAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CreateAIOrderResp, err error)
-	GetAIOrder(ctx context.Context, Req *aiorder.GetAIOrderReq, callOptions ...callopt.Option) (r *aiorder.GetAIOrderResp, err error)
-	CancelAIOrder(ctx context.Context, Req *aiorder.CancelAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CancelAIOrderResp, err error)
+	QueryOrder(ctx context.Context, Req *aiorder.QueryOrderReq, callOptions ...callopt.Option) (r *aiorder.QueryOrderResp, err error)
+	SimulateOrder(ctx context.Context, Req *aiorder.SimulateOrderReq, callOptions ...callopt.Option) (r *aiorder.SimulateOrderResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -43,14 +42,10 @@ func (c *clientImpl) KitexClient() aiorderservice.Client {
 	return c.kitexClient
 }
 
-func (c *clientImpl) CreateAIOrder(ctx context.Context, Req *aiorder.CreateAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CreateAIOrderResp, err error) {
-	return c.kitexClient.CreateAIOrder(ctx, Req, callOptions...)
+func (c *clientImpl) QueryOrder(ctx context.Context, Req *aiorder.QueryOrderReq, callOptions ...callopt.Option) (r *aiorder.QueryOrderResp, err error) {
+	return c.kitexClient.QueryOrder(ctx, Req, callOptions...)
 }
 
-func (c *clientImpl) GetAIOrder(ctx context.Context, Req *aiorder.GetAIOrderReq, callOptions ...callopt.Option) (r *aiorder.GetAIOrderResp, err error) {
-	return c.kitexClient.GetAIOrder(ctx, Req, callOptions...)
-}
-
-func (c *clientImpl) CancelAIOrder(ctx context.Context, Req *aiorder.CancelAIOrderReq, callOptions ...callopt.Option) (r *aiorder.CancelAIOrderResp, err error) {
-	return c.kitexClient.CancelAIOrder(ctx, Req, callOptions...)
+func (c *clientImpl) SimulateOrder(ctx context.Context, Req *aiorder.SimulateOrderReq, callOptions ...callopt.Option) (r *aiorder.SimulateOrderResp, err error) {
+	return c.kitexClient.SimulateOrder(ctx, Req, callOptions...)
 }
