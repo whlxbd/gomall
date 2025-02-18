@@ -18,6 +18,7 @@ import (
 	"github.com/whlxbd/gomall/app/aiorder/biz/dal"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/app/aiorder/agent"
+	"github.com/whlxbd/gomall/app/aiorder/infra/rpc"
 )
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 	pool.Init()
 	dal.Init()
 	agent.Init()
+	rpc.InitClient()
 	defer pool.Release()
 
 	opts := kitexInit()

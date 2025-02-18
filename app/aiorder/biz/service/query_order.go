@@ -6,7 +6,6 @@ import (
 
 	aiorder "github.com/whlxbd/gomall/rpc_gen/kitex_gen/aiorder"
 	"github.com/whlxbd/gomall/app/aiorder/agent"
-	// "github.com/whlxbd/gomall/common/utils/autopayload"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -22,8 +21,9 @@ func (s *QueryOrderService) Run(req *aiorder.QueryOrderReq) (resp *aiorder.Query
 	// Finish your business logic.
 	usrMsg := &agent.UserMessage {
 		UserId: req.UserId,
-		Content: req.Content,
+		Content: fmt.Sprintf("当前用户ID: %d，用户给出的订单查询文本: %s", req.UserId, req.Content),
 	}
+	fmt.Printf("usrMsg: %+v\n", usrMsg)
 
 	sr, err := agent.GetFlow().Invoke(s.ctx, usrMsg)
 	if err != nil {

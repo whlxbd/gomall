@@ -10,7 +10,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/whlxbd/gomall/app/auth/infra/rpc"
-	"github.com/whlxbd/gomall/app/user/kitex_gen/user"
+	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 

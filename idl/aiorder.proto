@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package aiorder;
 
-import "order.proto";
-
 option go_package = "/aiorder";
 
 // AI订单服务
@@ -28,14 +26,10 @@ message QueryOrderResp {
 // 模拟下单请求
 message SimulateOrderReq {
   uint32 user_id = 1;
-  string user_currency = 2;
-
-  order.Address address = 3;
-  string email = 4;
-  repeated order.OrderItem order_items = 5;
+  string content = 2;
 }
 
 // 模拟下单响应
 message SimulateOrderResp {
-  string order_id = 1;    // 订单ID
+  string result = 1;    // 订单ID
 }

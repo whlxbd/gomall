@@ -5,7 +5,6 @@ package aiorder
 import (
 	fmt "fmt"
 	fastpb "github.com/cloudwego/fastpb"
-	order "github.com/whlxbd/gomall/rpc_gen/kitex_gen/order"
 )
 
 var (
@@ -85,21 +84,6 @@ func (x *SimulateOrderReq) FastRead(buf []byte, _type int8, number int32) (offse
 		if err != nil {
 			goto ReadFieldError
 		}
-	case 3:
-		offset, err = x.fastReadField3(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 4:
-		offset, err = x.fastReadField4(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 5:
-		offset, err = x.fastReadField5(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -119,33 +103,8 @@ func (x *SimulateOrderReq) fastReadField1(buf []byte, _type int8) (offset int, e
 }
 
 func (x *SimulateOrderReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	x.UserCurrency, offset, err = fastpb.ReadString(buf, _type)
+	x.Content, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
-}
-
-func (x *SimulateOrderReq) fastReadField3(buf []byte, _type int8) (offset int, err error) {
-	var v order.Address
-	offset, err = fastpb.ReadMessage(buf, _type, &v)
-	if err != nil {
-		return offset, err
-	}
-	x.Address = &v
-	return offset, nil
-}
-
-func (x *SimulateOrderReq) fastReadField4(buf []byte, _type int8) (offset int, err error) {
-	x.Email, offset, err = fastpb.ReadString(buf, _type)
-	return offset, err
-}
-
-func (x *SimulateOrderReq) fastReadField5(buf []byte, _type int8) (offset int, err error) {
-	var v order.OrderItem
-	offset, err = fastpb.ReadMessage(buf, _type, &v)
-	if err != nil {
-		return offset, err
-	}
-	x.OrderItems = append(x.OrderItems, &v)
-	return offset, nil
 }
 
 func (x *SimulateOrderResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
@@ -169,7 +128,7 @@ ReadFieldError:
 }
 
 func (x *SimulateOrderResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.OrderId, offset, err = fastpb.ReadString(buf, _type)
+	x.Result, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
@@ -220,9 +179,6 @@ func (x *SimulateOrderReq) FastWrite(buf []byte) (offset int) {
 	}
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
-	offset += x.fastWriteField3(buf[offset:])
-	offset += x.fastWriteField4(buf[offset:])
-	offset += x.fastWriteField5(buf[offset:])
 	return offset
 }
 
@@ -235,36 +191,10 @@ func (x *SimulateOrderReq) fastWriteField1(buf []byte) (offset int) {
 }
 
 func (x *SimulateOrderReq) fastWriteField2(buf []byte) (offset int) {
-	if x.UserCurrency == "" {
+	if x.Content == "" {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 2, x.GetUserCurrency())
-	return offset
-}
-
-func (x *SimulateOrderReq) fastWriteField3(buf []byte) (offset int) {
-	if x.Address == nil {
-		return offset
-	}
-	offset += fastpb.WriteMessage(buf[offset:], 3, x.GetAddress())
-	return offset
-}
-
-func (x *SimulateOrderReq) fastWriteField4(buf []byte) (offset int) {
-	if x.Email == "" {
-		return offset
-	}
-	offset += fastpb.WriteString(buf[offset:], 4, x.GetEmail())
-	return offset
-}
-
-func (x *SimulateOrderReq) fastWriteField5(buf []byte) (offset int) {
-	if x.OrderItems == nil {
-		return offset
-	}
-	for i := range x.GetOrderItems() {
-		offset += fastpb.WriteMessage(buf[offset:], 5, x.GetOrderItems()[i])
-	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetContent())
 	return offset
 }
 
@@ -277,10 +207,10 @@ func (x *SimulateOrderResp) FastWrite(buf []byte) (offset int) {
 }
 
 func (x *SimulateOrderResp) fastWriteField1(buf []byte) (offset int) {
-	if x.OrderId == "" {
+	if x.Result == "" {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 1, x.GetOrderId())
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetResult())
 	return offset
 }
 
@@ -331,9 +261,6 @@ func (x *SimulateOrderReq) Size() (n int) {
 	}
 	n += x.sizeField1()
 	n += x.sizeField2()
-	n += x.sizeField3()
-	n += x.sizeField4()
-	n += x.sizeField5()
 	return n
 }
 
@@ -346,36 +273,10 @@ func (x *SimulateOrderReq) sizeField1() (n int) {
 }
 
 func (x *SimulateOrderReq) sizeField2() (n int) {
-	if x.UserCurrency == "" {
+	if x.Content == "" {
 		return n
 	}
-	n += fastpb.SizeString(2, x.GetUserCurrency())
-	return n
-}
-
-func (x *SimulateOrderReq) sizeField3() (n int) {
-	if x.Address == nil {
-		return n
-	}
-	n += fastpb.SizeMessage(3, x.GetAddress())
-	return n
-}
-
-func (x *SimulateOrderReq) sizeField4() (n int) {
-	if x.Email == "" {
-		return n
-	}
-	n += fastpb.SizeString(4, x.GetEmail())
-	return n
-}
-
-func (x *SimulateOrderReq) sizeField5() (n int) {
-	if x.OrderItems == nil {
-		return n
-	}
-	for i := range x.GetOrderItems() {
-		n += fastpb.SizeMessage(5, x.GetOrderItems()[i])
-	}
+	n += fastpb.SizeString(2, x.GetContent())
 	return n
 }
 
@@ -388,10 +289,10 @@ func (x *SimulateOrderResp) Size() (n int) {
 }
 
 func (x *SimulateOrderResp) sizeField1() (n int) {
-	if x.OrderId == "" {
+	if x.Result == "" {
 		return n
 	}
-	n += fastpb.SizeString(1, x.GetOrderId())
+	n += fastpb.SizeString(1, x.GetResult())
 	return n
 }
 
@@ -406,14 +307,9 @@ var fieldIDToName_QueryOrderResp = map[int32]string{
 
 var fieldIDToName_SimulateOrderReq = map[int32]string{
 	1: "UserId",
-	2: "UserCurrency",
-	3: "Address",
-	4: "Email",
-	5: "OrderItems",
+	2: "Content",
 }
 
 var fieldIDToName_SimulateOrderResp = map[int32]string{
-	1: "OrderId",
+	1: "Result",
 }
-
-var _ = order.File_order_proto

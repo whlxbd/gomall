@@ -8,7 +8,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/whlxbd/gomall/app/cart/conf"
-	"github.com/whlxbd/gomall/app/user/kitex_gen/user/userservice"
+	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/user/userservice"
 	"github.com/whlxbd/gomall/common/clientsuite"
 )
 

@@ -18,10 +18,10 @@ func newLambda(ctx context.Context) (lba *compose.Lambda, err error) {
 		return nil, err
 	}
 	config.Model = chatModelIns11
-	toolIns21, err := NewDuckDuckGoTool(ctx)
-	if err != nil {
-		return nil, err
-	}
+	// toolIns21, err := NewDuckDuckGoTool(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	toolIns22, err := NewOrdreQueryTool(ctx)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func newLambda(ctx context.Context) (lba *compose.Lambda, err error) {
 	if err != nil {
 		return nil, err
 	}
-	config.ToolsConfig.Tools = []tool.BaseTool{toolIns21, toolIns22, toolIns23}
+	config.ToolsConfig.Tools = []tool.BaseTool{ toolIns22, toolIns23}
 	ins, err := react.NewAgent(ctx, config)
 	if err != nil {
 		return nil, err
