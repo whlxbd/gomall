@@ -18,6 +18,8 @@ import (
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/user/userservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 )
 
 func main() {

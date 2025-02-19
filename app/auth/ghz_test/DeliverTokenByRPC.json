@@ -1,0 +1,19 @@
+{
+    "proto": "../../idl/auth.proto",
+    "call": "auth.AuthService/DeliverTokenByRPC",
+    "total": 150,
+    "concurrency": 10,
+    "data": {
+        "user_id": 3
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "20s",
+    "format": "html",
+    "output": "ghz_DeliverTokenByRPC.html",
+    "insecure": true,
+    "host": "0.0.0.0:8081"
+}

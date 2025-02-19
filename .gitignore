@@ -17,3 +17,5 @@ deploy/config/rmqproxy.json
 app/cart/ghz_AddItem.html
 app/cart/ghz_EmptyCart.html
 app/cart/ghz_GetCart.html
+
+app/**/ghz_test/*.html

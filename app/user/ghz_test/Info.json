@@ -1,0 +1,19 @@
+{
+    "proto": "../../idl/user.proto",
+    "call": "user.UserService/Info",
+    "total": 1500,
+    "concurrency": 30,
+    "data": {
+        "user_id": 3
+    },
+    "metadata": {
+        "foo": "bar",
+        "trace_id": "{{.RequestNumber}}",
+        "timestamp": "{{.TimestampUnix}}"
+    },
+    "max-duration": "10s",
+    "format": "html",
+    "output": "ghz_Info.html",
+    "insecure": true,
+    "host": "0.0.0.0:8087"
+}

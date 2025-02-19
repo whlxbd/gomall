@@ -7,7 +7,6 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/user/biz/model"
-	"github.com/whlxbd/gomall/common/utils/authpayload"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 )
 
@@ -21,14 +20,6 @@ func NewInfoService(ctx context.Context) *InfoService {
 // Run create note info
 func (s *InfoService) Run(req *user.InfoReq) (resp *user.InfoResp, err error) {
 	// Finish your business logic.
-	payload, err := authpayload.Get(s.ctx)
-	if err != nil {
-		klog.Errorf("get payload failed: %v", err)
-		return nil, kerrors.NewBizStatusError(400, "get payload failed")
-	}
-	if payload.Type != "admin" || payload.UserId != req.UserId {
-		return nil, kerrors.NewBizStatusError(400, "permission denied")
-	}
 	userRow, err := model.GetByID(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
 		klog.Errorf("get user info failed: %v", err)
