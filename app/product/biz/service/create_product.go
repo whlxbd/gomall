@@ -2,16 +2,17 @@ package service
 
 import (
 	"context"
-	// "fmt"
 
 	"github.com/whlxbd/gomall/app/product/biz/dal/model"
 	"github.com/whlxbd/gomall/app/product/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/product/biz/dal/redis"
 
+	"github.com/whlxbd/gomall/common/utils/authpayload"
 	"github.com/whlxbd/gomall/common/utils/pool"
+
 	// "github.com/whlxbd/gomall/app/product/biz/middleware"
-	product "github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/pkg/kerrors"
+	product "github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
@@ -72,11 +73,20 @@ func (s *CreateProductService) Run(req *product.CreateProductReq) (resp *product
 	// if err = middleware.CheckAdminPermission(s.ctx); err != nil {
 	// 	return nil, kerrors.NewBizStatusError(400, err.Error())
 	// }
-
+	payload, err := authpayload.Get(s.ctx)
+	if err != nil {
+		klog.Error("获取payload失败", err)
+		return nil, kerrors.NewBizStatusError(401, "get payload failed")
+	}
+	
 	_ = pool.Submit(func() {
 		klog.Infof("create product: %+v", req)
 	})
-
+	
+	if payload.Type != "admin" {
+		return nil, kerrors.NewBizStatusError(401, "permission denied")
+	}
+	
 	if req.Name == "" {
 		_ = pool.Submit(func() {
 			klog.Errorf("name is required: %+v", req)
