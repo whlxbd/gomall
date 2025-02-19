@@ -16,23 +16,16 @@ import (
 	"context"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
-	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/metadata"
 	"github.com/whlxbd/gomall/common/utils/authpayload/rpc"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
 // 传入微服务的上下文，该函数将从metadata中提取token并校验token的有效性，最后获取token的payload并返回
 func Get(ctx context.Context) (payload *auth.GetPayloadResp, err error) {
-	rpc.InitClient()
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, kerrors.NewBizStatusError(400, "metadata not found")
+	token, err := Token(ctx)
+	if err != nil {
+		return nil, err
 	}
-	tokens := md.Get("token")
-	if len(tokens) == 0 || tokens[0] == "" {
-		return nil, kerrors.NewBizStatusError(400, "token not found")
-	}
-	token := tokens[0]
 
 	authVerifyResp, err := rpc.AuthClient.VerifyTokenByRPC(ctx, &auth.VerifyTokenReq{Token: token})
 	if err != nil {

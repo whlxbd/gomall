@@ -6,6 +6,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/metadata"
 	"github.com/whlxbd/gomall/app/checkout/infra/rpc"
 
 	"github.com/whlxbd/gomall/common/utils/authpayload"
@@ -26,6 +27,14 @@ func NewCheckoutService(ctx context.Context) *CheckoutService {
 // Run create note info
 func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.CheckoutResp, err error) {
 	// Finish your business logic.
+	token, err := authpayload.Token(s.ctx)
+	if err != nil {
+		klog.Errorf("get token failed: %v", err)
+		return nil, kerrors.NewBizStatusError(401, "get token failed")
+	}
+
+	s.ctx = metadata.AppendToOutgoingContext(s.ctx, "token", token)
+
 	payload, err := authpayload.Get(s.ctx)
 	if err != nil {
 		klog.Errorf("get payload failed: %v", err)
@@ -34,9 +43,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 
 	klog.Infof("payload: %v", payload)
 
-	if payload.UserId == 0 {
-		klog.Errorf("user not found")
-		return nil, kerrors.NewBizStatusError(401, "user not found")
+	if payload.UserId != int32(req.UserId) {
+		return nil, kerrors.NewBizStatusError(401, "permission denied")
 	}
 
 	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: uint32(payload.UserId)})
@@ -63,11 +71,11 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 
 	amount := float32(0)
 	ois := []*order.OrderItem{}
-	for _, pdt := range productsResult.Products {
-		cost := pdt.Price * float32(cartResult.Cart.Items[pdt.Id].Quantity)
+	for id, pdt := range productsResult.Products {
+		cost := pdt.Price * float32(cartResult.Cart.Items[id].Quantity)
 		amount += cost
 		ois = append(ois, &order.OrderItem{
-			Item: &cart.CartItem{ProductId: pdt.Id, Quantity: cartResult.Cart.Items[pdt.Id].Quantity},
+			Item: &cart.CartItem{ProductId: pdt.Id, Quantity: cartResult.Cart.Items[id].Quantity},
 			Cost: cost,
 		})
 	}

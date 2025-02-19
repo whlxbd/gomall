@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/whlxbd/gomall/app/payment/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/payment/biz/model"
+	"github.com/whlxbd/gomall/common/utils/authpayload"
 	payment "github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment"
 )
 
@@ -24,6 +25,14 @@ func NewChargeService(ctx context.Context) *ChargeService {
 // Run create note info
 func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, err error) {
 	// Finish your business logic.
+	payload, err := authpayload.Get(s.ctx)
+	if err != nil {
+		klog.Errorf("get payload failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "get payload failed")
+	}
+	if payload.UserId != int32(req.UserId) {
+		return nil, kerrors.NewBizStatusError(400, "permission denied")
+	}
 	cardInfo := creditcard.Card{
 		Number: req.CreditCard.CreditCardNumber,
 		Cvv:    strconv.Itoa(int(req.CreditCard.CreditCardCvv)),
