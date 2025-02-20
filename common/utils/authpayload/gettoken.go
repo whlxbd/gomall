@@ -15,9 +15,9 @@ func Token(ctx context.Context) (token string, err error) {
 		return "", kerrors.NewBizStatusError(400, "metadata not found")
 	}
 	tokens := md.Get("Authorization")
-	if len(tokens) == 0 || tokens[0] == "" {
+	if len(tokens) == 0 || len(tokens[0]) < 7 {
 		return "", kerrors.NewBizStatusError(400, "token not found")
 	}
-	token = tokens[0]
+	token = tokens[0][7:]
 	return token, nil
 }
