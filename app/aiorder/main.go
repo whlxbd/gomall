@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"time"
+
 	"github.com/joho/godotenv"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -11,18 +13,21 @@ import (
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
+	"github.com/whlxbd/gomall/app/aiorder/agent"
+	"github.com/whlxbd/gomall/app/aiorder/biz/dal"
 	"github.com/whlxbd/gomall/app/aiorder/conf"
+	"github.com/whlxbd/gomall/app/aiorder/infra/rpc"
+	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/aiorder/aiorderservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"github.com/whlxbd/gomall/app/aiorder/biz/dal"
-	"github.com/whlxbd/gomall/common/utils/pool"
-	"github.com/whlxbd/gomall/app/aiorder/agent"
-	"github.com/whlxbd/gomall/app/aiorder/infra/rpc"
 )
 
 func main() {
-	_ = godotenv.Load()
+	enverr := godotenv.Load()
+	if enverr != nil {
+		panic(fmt.Sprintf("Error loading .env file: %v", enverr))
+	}
 	pool.Init()
 	dal.Init()
 	agent.Init()

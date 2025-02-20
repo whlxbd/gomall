@@ -17,7 +17,7 @@ var RedisClient *redis.Client
 func Init() {
 	db, err := strconv.Atoi(os.Getenv("REDIS_DB"))
 	if err != nil {
-		panic(err)
+		db = 0
 	}
 	RedisClient = redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_ADDR"),

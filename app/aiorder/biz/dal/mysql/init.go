@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"github.com/whlxbd/gomall/app/aiorder/conf"
+	"github.com/whlxbd/gomall/app/aiorder/biz/model"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -25,5 +26,9 @@ func Init() {
 	)
 	if err != nil {
 		panic(err)
+	}
+	
+	if(os.Getenv("GO_ENV") != "online") {
+		DB.AutoMigrate(model.Message{})
 	}
 }
