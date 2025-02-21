@@ -2,7 +2,7 @@
     "protoset": "../../../idl/bundle.protoset",
     "call": "checkout.CheckoutService/Checkout",
     "total": 1500,
-    "concurrency": 800,
+    "concurrency": 50,
     "data": {
         "user_id": 3,
         "firstname": "浩辰",
@@ -23,7 +23,7 @@
         }
     },
     "metadata": {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVfdGltZSI6MTc0MDEzODAwMSwidHlwZSI6ImFkbWluIiwidXNlcl9pZCI6M30.2uFhE5r70QbGUhNYZ8kpfFqCBkMwzlxThduTy69Yy3M",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVfdGltZSI6MTc0MDIyMDQxOCwidHlwZSI6ImFkbWluIiwidXNlcl9pZCI6M30.jyzE47QlWIGXW-xTEXkASjp84Uijs-eSuEc_6HfhbGQ",
         "foo": "bar",
         "trace_id": "{{.RequestNumber}}",
         "timestamp": "{{.TimestampUnix}}"
