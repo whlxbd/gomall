@@ -13,6 +13,7 @@ import (
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/payment/biz/dal"
 	"github.com/whlxbd/gomall/app/payment/conf"
+	"github.com/whlxbd/gomall/app/payment/infra/rpc"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment/paymentservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -24,6 +25,7 @@ func main() {
 	_ = godotenv.Load()
 	opts := kitexInit()
 	dal.Init()
+	rpc.InitClient()
 
 	svr := paymentservice.NewServer(new(PaymentServiceImpl), opts...)
 

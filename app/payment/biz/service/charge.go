@@ -13,6 +13,9 @@ import (
 	"github.com/whlxbd/gomall/app/payment/biz/dal/mysql"
 	"github.com/whlxbd/gomall/common/utils/authpayload"
 	payment "github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment"
+
+	"github.com/whlxbd/gomall/app/payment/infra/rpc"
+	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/order"
 )
 
 type ChargeService struct {
@@ -62,6 +65,15 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 	})
 	if err != nil {
 		klog.Errorf("create payment record failed: %v", err)
+		return nil, kerrors.NewBizStatusError(500, err.Error())
+	}
+
+	_, err = rpc.OrderClient.MarkOrderPaid(s.ctx, &order.MarkOrderPaidReq{
+		OrderId: req.OrderId,
+		UserId:  req.UserId,
+	})
+	if err != nil {
+		klog.Errorf("mark order paid failed: %v", err)
 		return nil, kerrors.NewBizStatusError(500, err.Error())
 	}
 
