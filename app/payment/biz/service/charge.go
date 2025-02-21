@@ -9,8 +9,8 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
+	"github.com/whlxbd/gomall/app/payment/biz/dal/model"
 	"github.com/whlxbd/gomall/app/payment/biz/dal/mysql"
-	"github.com/whlxbd/gomall/app/payment/biz/model"
 	"github.com/whlxbd/gomall/common/utils/authpayload"
 	payment "github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment"
 )

@@ -29,6 +29,7 @@ func NewCheckoutService(ctx context.Context) *CheckoutService {
 // Run create note info
 func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.CheckoutResp, err error) {
 	// Finish your business logic.
+	// 鉴权
 	token, err := authpayload.Token(s.ctx)
 	if err != nil {
 		klog.Errorf("get token failed: %v", err)
@@ -49,6 +50,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		return nil, kerrors.NewBizStatusError(401, "permission denied")
 	}
 
+	// 获取购物车
 	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: uint32(payload.UserId)})
 	if err != nil {
 		klog.Errorf("get cart failed: %v", err)
@@ -65,12 +67,14 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		itemIds = append(itemIds, item.ProductId)
 	}
 
+	// 获取商品信息
 	productsResult, err := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Ids: itemIds})
 	if err != nil {
 		klog.Errorf("get products failed: %v", err)
 		return nil, kerrors.NewBizStatusError(400, "get products failed")
 	}
 
+	// 计算总价
 	amount := float32(0)
 	ois := []*order.OrderItem{}
 	for id, pdt := range productsResult.Products {
@@ -82,6 +86,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		})
 	}
 
+	// 下单
 	placeOrderReq := order.PlaceOrderReq{
 		UserId:       uint32(payload.UserId),
 		UserCurrency: "CNY",
@@ -118,6 +123,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		UserId:     uint32(payload.UserId),
 	}
 
+	// 支付
 	paymentResult, err := rpc.PaymentClient.Charge(s.ctx, &paymentReq)
 	if err != nil {
 		klog.Errorf("payment failed: %v", err)

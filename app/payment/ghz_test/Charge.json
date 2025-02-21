@@ -1,26 +1,18 @@
 {
     "protoset": "../../../idl/bundle.protoset",
-    "call": "checkout.CheckoutService/Checkout",
+    "call": "payment.PaymentService/Charge",
     "total": 1500,
-    "concurrency": 800,
+    "concurrency": 100,
     "data": {
-        "user_id": 3,
-        "firstname": "浩辰",
-        "lastname": "化",
-        "email": "k18to369@126.com",
-        "address": {
-            "street_address": "河北省 成徽市 深水埗区 赏旁6702号 42层",
-            "city": "太门市",
-            "state": "河南省",
-            "country": "voluptate",
-            "zip_code": "713515"
-        },
+        "amount": 938.89,
         "credit_card": {
             "credit_card_number": "5193316967786456",
             "credit_card_cvv": 929,
             "credit_card_expiration_year": 2028,
             "credit_card_expiration_month": 5
-        }
+        },
+        "order_id": "1",
+        "user_id": 3
     },
     "metadata": {
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVfdGltZSI6MTc0MDEzODAwMSwidHlwZSI6ImFkbWluIiwidXNlcl9pZCI6M30.2uFhE5r70QbGUhNYZ8kpfFqCBkMwzlxThduTy69Yy3M",
@@ -30,7 +22,7 @@
     },
     "max-duration": "10s",
     "format": "html",
-    "output": "ghz_Checkout.html",
+    "output": "ghz_Charge.html",
     "insecure": true,
-    "host": "0.0.0.0:8083"
+    "host": "0.0.0.0:8085"
 }

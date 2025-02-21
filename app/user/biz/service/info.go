@@ -6,9 +6,9 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	cache "github.com/whlxbd/gomall/app/user/biz/cache"
+	cache "github.com/whlxbd/gomall/app/user/biz/dal/cache"
+	"github.com/whlxbd/gomall/app/user/biz/dal/model"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
-	"github.com/whlxbd/gomall/app/user/biz/model"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 
 	goredis "github.com/redis/go-redis/v9"
@@ -38,7 +38,6 @@ func (s *InfoService) Run(req *user.InfoReq) (resp *user.InfoResp, err error) {
 		}
 		return
 	}
-
 
 	userRow, err := model.GetByID(mysql.DB, s.ctx, req.UserId)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/whlxbd/gomall/app/user/biz/model"
+	"github.com/whlxbd/gomall/app/user/biz/dal/model"
 	"github.com/whlxbd/gomall/app/user/conf"
 
 	"gorm.io/driver/mysql"

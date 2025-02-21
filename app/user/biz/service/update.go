@@ -5,7 +5,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
-	"github.com/whlxbd/gomall/app/user/biz/model"
+	"github.com/whlxbd/gomall/app/user/biz/dal/model"
 	"github.com/whlxbd/gomall/common/utils/authpayload"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 )

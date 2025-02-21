@@ -10,7 +10,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"github.com/whlxbd/gomall/app/payment/biz/model"
+	"github.com/whlxbd/gomall/app/payment/biz/dal/model"
 )
 
 var (

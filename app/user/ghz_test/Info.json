@@ -1,8 +1,8 @@
 {
-    "proto": "../../idl/user.proto",
+    "protoset": "../../../idl/bundle.protoset",
     "call": "user.UserService/Info",
     "total": 1500,
-    "concurrency": 30,
+    "concurrency": 100,
     "data": {
         "user_id": 3
     },
