@@ -31,6 +31,7 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 		return nil, kerrors.NewBizStatusError(400, "get payload failed")
 	}
 	if payload.UserId != int32(req.UserId) {
+		klog.Errorf("permission denied, user id: %v, req user id: %v", payload.UserId, req.UserId)
 		return nil, kerrors.NewBizStatusError(400, "permission denied")
 	}
 	cardInfo := creditcard.Card{

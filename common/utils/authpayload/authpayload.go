@@ -16,6 +16,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/common/utils/authpayload/rpc"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
@@ -24,19 +25,23 @@ import (
 func Get(ctx context.Context) (payload *auth.GetPayloadResp, err error) {
 	token, err := Token(ctx)
 	if err != nil {
+		klog.Errorf("get token failed: %v", err)
 		return nil, err
 	}
 
 	authVerifyResp, err := rpc.AuthClient.VerifyTokenByRPC(ctx, &auth.VerifyTokenReq{Token: token})
 	if err != nil {
+		klog.Errorf("verify token failed: %v", err)
 		return nil, kerrors.NewBizStatusError(500, err.Error())
 	}
 	if !authVerifyResp.Res {
+		klog.Errorf("token invalid")
 		return nil, kerrors.NewBizStatusError(401, "token invalid")
 	}
 
 	payload, err = rpc.AuthClient.GetPayload(ctx, &auth.GetPayloadReq{Token: token})
 	if err != nil {
+		klog.Errorf("get payload failed: %v", err)
 		return nil, kerrors.NewBizStatusError(500, err.Error())
 	}
 

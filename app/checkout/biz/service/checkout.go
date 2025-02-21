@@ -15,6 +15,8 @@ import (
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/order"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product"
+
+	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 )
 
 type CheckoutService struct {
@@ -33,7 +35,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		return nil, kerrors.NewBizStatusError(401, "get token failed")
 	}
 
-	s.ctx = metadata.AppendToOutgoingContext(s.ctx, "token", token)
+	s.ctx = metadata.AppendToOutgoingContext(s.ctx, "Authorization", "Bearer "+token)
 
 	payload, err := authpayload.Get(s.ctx)
 	if err != nil {
