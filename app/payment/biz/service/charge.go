@@ -13,6 +13,7 @@ import (
 	"github.com/whlxbd/gomall/app/payment/biz/dal/mysql"
 	"github.com/whlxbd/gomall/common/utils/authpayload"
 	payment "github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment"
+	"gorm.io/gorm"
 
 	"github.com/whlxbd/gomall/app/payment/infra/rpc"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/order"
@@ -56,25 +57,33 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 		return nil, kerrors.NewBizStatusError(500, err.Error())
 	}
 
-	err = model.Create(mysql.DB, s.ctx, &model.PaymentRecord{
-		TransactionId: transactionId.String(),
-		Amount:        req.Amount,
-		OrderId:       req.OrderId,
-		UserId:        req.UserId,
-		PayAt:         time.Now(),
-	})
-	if err != nil {
-		klog.Errorf("create payment record failed: %v", err)
-		return nil, kerrors.NewBizStatusError(500, err.Error())
-	}
+	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
+		err = model.Create(mysql.DB, s.ctx, &model.PaymentRecord{
+			TransactionId: transactionId.String(),
+			Amount:        req.Amount,
+			OrderId:       req.OrderId,
+			UserId:        req.UserId,
+			PayAt:         time.Now(),
+		})
+		if err != nil {
+			klog.Errorf("create payment record failed: %v", err)
+			return kerrors.NewBizStatusError(500, err.Error())
+		}
 
-	_, err = rpc.OrderClient.MarkOrderPaid(s.ctx, &order.MarkOrderPaidReq{
-		OrderId: req.OrderId,
-		UserId:  req.UserId,
+		_, err = rpc.OrderClient.MarkOrderPaid(s.ctx, &order.MarkOrderPaidReq{
+			OrderId: req.OrderId,
+			UserId:  req.UserId,
+		})
+		if err != nil {
+			klog.Errorf("mark order paid failed: %v", err)
+			return kerrors.NewBizStatusError(500, err.Error())
+		}
+
+		return nil
 	})
 	if err != nil {
-		klog.Errorf("mark order paid failed: %v", err)
-		return nil, kerrors.NewBizStatusError(500, err.Error())
+		klog.Errorf("transaction failed: %v", err)
+		return nil, err
 	}
 
 	return &payment.ChargeResp{TransactionId: transactionId.String()}, nil
