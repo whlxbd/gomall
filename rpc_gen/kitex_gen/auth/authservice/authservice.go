@@ -36,6 +36,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"Authenticate": kitex.NewMethodInfo(
+		authenticateHandler,
+		newAuthenticateArgs,
+		newAuthenticateResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -561,6 +568,159 @@ func (p *GetPayloadResult) GetResult() interface{} {
 	return p.Success
 }
 
+func authenticateHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(auth.AuthenticateReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(auth.AuthService).Authenticate(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AuthenticateArgs:
+		success, err := handler.(auth.AuthService).Authenticate(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AuthenticateResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newAuthenticateArgs() interface{} {
+	return &AuthenticateArgs{}
+}
+
+func newAuthenticateResult() interface{} {
+	return &AuthenticateResult{}
+}
+
+type AuthenticateArgs struct {
+	Req *auth.AuthenticateReq
+}
+
+func (p *AuthenticateArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(auth.AuthenticateReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *AuthenticateArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *AuthenticateArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *AuthenticateArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AuthenticateArgs) Unmarshal(in []byte) error {
+	msg := new(auth.AuthenticateReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AuthenticateArgs_Req_DEFAULT *auth.AuthenticateReq
+
+func (p *AuthenticateArgs) GetReq() *auth.AuthenticateReq {
+	if !p.IsSetReq() {
+		return AuthenticateArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AuthenticateArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AuthenticateArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AuthenticateResult struct {
+	Success *auth.AuthenticateResp
+}
+
+var AuthenticateResult_Success_DEFAULT *auth.AuthenticateResp
+
+func (p *AuthenticateResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(auth.AuthenticateResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *AuthenticateResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *AuthenticateResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *AuthenticateResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AuthenticateResult) Unmarshal(in []byte) error {
+	msg := new(auth.AuthenticateResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AuthenticateResult) GetSuccess() *auth.AuthenticateResp {
+	if !p.IsSetSuccess() {
+		return AuthenticateResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AuthenticateResult) SetSuccess(x interface{}) {
+	p.Success = x.(*auth.AuthenticateResp)
+}
+
+func (p *AuthenticateResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AuthenticateResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -596,6 +756,16 @@ func (p *kClient) GetPayload(ctx context.Context, Req *auth.GetPayloadReq) (r *a
 	_args.Req = Req
 	var _result GetPayloadResult
 	if err = p.c.Call(ctx, "GetPayload", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) Authenticate(ctx context.Context, Req *auth.AuthenticateReq) (r *auth.AuthenticateResp, err error) {
+	var _args AuthenticateArgs
+	_args.Req = Req
+	var _result AuthenticateResult
+	if err = p.c.Call(ctx, "Authenticate", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

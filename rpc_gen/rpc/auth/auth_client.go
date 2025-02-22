@@ -4,21 +4,23 @@ import (
 	"context"
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 
-	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth/authservice"
+	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth/ruleservice"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 )
 
 type RPCClient interface {
-	KitexClient() authservice.Client
+	KitexClient() ruleservice.Client
 	Service() string
-	DeliverTokenByRPC(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryResp, err error)
-	VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyResp, err error)
-	GetPayload(ctx context.Context, Req *auth.GetPayloadReq, callOptions ...callopt.Option) (r *auth.GetPayloadResp, err error)
+	Create(ctx context.Context, Req *auth.CreateReq, callOptions ...callopt.Option) (r *auth.CreateResp, err error)
+	List(ctx context.Context, Req *auth.ListReq, callOptions ...callopt.Option) (r *auth.ListResp, err error)
+	Delete(ctx context.Context, Req *auth.DeleteReq, callOptions ...callopt.Option) (r *auth.DeleteResp, err error)
+	Get(ctx context.Context, Req *auth.GetReq, callOptions ...callopt.Option) (r *auth.GetResp, err error)
+	Update(ctx context.Context, Req *auth.UpdateReq, callOptions ...callopt.Option) (r *auth.UpdateResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
-	kitexClient, err := authservice.NewClient(dstService, opts...)
+	kitexClient, err := ruleservice.NewClient(dstService, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -32,25 +34,33 @@ func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
 
 type clientImpl struct {
 	service     string
-	kitexClient authservice.Client
+	kitexClient ruleservice.Client
 }
 
 func (c *clientImpl) Service() string {
 	return c.service
 }
 
-func (c *clientImpl) KitexClient() authservice.Client {
+func (c *clientImpl) KitexClient() ruleservice.Client {
 	return c.kitexClient
 }
 
-func (c *clientImpl) DeliverTokenByRPC(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryResp, err error) {
-	return c.kitexClient.DeliverTokenByRPC(ctx, Req, callOptions...)
+func (c *clientImpl) Create(ctx context.Context, Req *auth.CreateReq, callOptions ...callopt.Option) (r *auth.CreateResp, err error) {
+	return c.kitexClient.Create(ctx, Req, callOptions...)
 }
 
-func (c *clientImpl) VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyResp, err error) {
-	return c.kitexClient.VerifyTokenByRPC(ctx, Req, callOptions...)
+func (c *clientImpl) List(ctx context.Context, Req *auth.ListReq, callOptions ...callopt.Option) (r *auth.ListResp, err error) {
+	return c.kitexClient.List(ctx, Req, callOptions...)
 }
 
-func (c *clientImpl) GetPayload(ctx context.Context, Req *auth.GetPayloadReq, callOptions ...callopt.Option) (r *auth.GetPayloadResp, err error) {
-	return c.kitexClient.GetPayload(ctx, Req, callOptions...)
+func (c *clientImpl) Delete(ctx context.Context, Req *auth.DeleteReq, callOptions ...callopt.Option) (r *auth.DeleteResp, err error) {
+	return c.kitexClient.Delete(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) Get(ctx context.Context, Req *auth.GetReq, callOptions ...callopt.Option) (r *auth.GetResp, err error) {
+	return c.kitexClient.Get(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) Update(ctx context.Context, Req *auth.UpdateReq, callOptions ...callopt.Option) (r *auth.UpdateResp, err error) {
+	return c.kitexClient.Update(ctx, Req, callOptions...)
 }

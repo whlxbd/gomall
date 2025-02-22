@@ -8,6 +8,21 @@ service AuthService {
     rpc DeliverTokenByRPC(DeliverTokenReq) returns (DeliveryResp) {}
     rpc VerifyTokenByRPC(VerifyTokenReq) returns (VerifyResp) {}
     rpc GetPayload(GetPayloadReq) returns (GetPayloadResp) {}
+    rpc Authenticate(AuthenticateReq) returns (AuthenticateResp) {}
+}
+
+service RuleService {
+    rpc Create(CreateReq) returns (CreateResp) {}
+    rpc List(ListReq) returns (ListResp) {}
+    rpc Delete(DeleteReq) returns (DeleteResp) {}
+    rpc Get(GetReq) returns (GetResp) {}
+    rpc Update(UpdateReq) returns (UpdateResp) {}
+}
+
+message Rule {
+    int32 id = 1;
+    string role = 2;
+    string touter = 3;
 }
 
 message DeliverTokenReq {
@@ -34,3 +49,48 @@ message GetPayloadResp {
     int32 user_id = 1;
     string type = 2;
 }
+
+message AuthenticateReq {
+    string role = 1;
+    string router = 2;
+}
+
+message AuthenticateResp {
+    bool ok = 1;
+}
+
+message CreateReq {
+    string role = 1;
+    string router = 2;
+}
+
+message CreateResp {}
+
+message ListReq {
+    int32 page = 1;
+    int32 pagesize = 2;
+}
+
+message ListResp {
+    repeated Rule rule = 1;
+}
+
+message DeleteReq {
+    int32 id = 1;
+}
+
+message DeleteResp {}
+
+message GetReq {
+    int32 id = 1;
+}
+
+message GetResp {
+    Rule rule = 1;
+}
+
+message UpdateReq {
+    Rule rule = 1;
+}
+
+message UpdateResp {}

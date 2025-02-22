@@ -7,28 +7,46 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
-func DeliverTokenByRPC(ctx context.Context, req *auth.DeliverTokenReq, callOptions ...callopt.Option) (resp *auth.DeliveryResp, err error) {
-	resp, err = defaultClient.DeliverTokenByRPC(ctx, req, callOptions...)
+func Create(ctx context.Context, req *auth.CreateReq, callOptions ...callopt.Option) (resp *auth.CreateResp, err error) {
+	resp, err = defaultClient.Create(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "DeliverTokenByRPC call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "Create call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func VerifyTokenByRPC(ctx context.Context, req *auth.VerifyTokenReq, callOptions ...callopt.Option) (resp *auth.VerifyResp, err error) {
-	resp, err = defaultClient.VerifyTokenByRPC(ctx, req, callOptions...)
+func List(ctx context.Context, req *auth.ListReq, callOptions ...callopt.Option) (resp *auth.ListResp, err error) {
+	resp, err = defaultClient.List(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "VerifyTokenByRPC call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "List call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func GetPayload(ctx context.Context, req *auth.GetPayloadReq, callOptions ...callopt.Option) (resp *auth.GetPayloadResp, err error) {
-	resp, err = defaultClient.GetPayload(ctx, req, callOptions...)
+func Delete(ctx context.Context, req *auth.DeleteReq, callOptions ...callopt.Option) (resp *auth.DeleteResp, err error) {
+	resp, err = defaultClient.Delete(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "GetPayload call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "Delete call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func Get(ctx context.Context, req *auth.GetReq, callOptions ...callopt.Option) (resp *auth.GetResp, err error) {
+	resp, err = defaultClient.Get(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "Get call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func Update(ctx context.Context, req *auth.UpdateReq, callOptions ...callopt.Option) (resp *auth.UpdateResp, err error) {
+	resp, err = defaultClient.Update(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "Update call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

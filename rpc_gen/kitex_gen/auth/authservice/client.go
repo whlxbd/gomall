@@ -14,6 +14,7 @@ type Client interface {
 	DeliverTokenByRPC(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryResp, err error)
 	VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyResp, err error)
 	GetPayload(ctx context.Context, Req *auth.GetPayloadReq, callOptions ...callopt.Option) (r *auth.GetPayloadResp, err error)
+	Authenticate(ctx context.Context, Req *auth.AuthenticateReq, callOptions ...callopt.Option) (r *auth.AuthenticateResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -58,4 +59,9 @@ func (p *kAuthServiceClient) VerifyTokenByRPC(ctx context.Context, Req *auth.Ver
 func (p *kAuthServiceClient) GetPayload(ctx context.Context, Req *auth.GetPayloadReq, callOptions ...callopt.Option) (r *auth.GetPayloadResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetPayload(ctx, Req)
+}
+
+func (p *kAuthServiceClient) Authenticate(ctx context.Context, Req *auth.AuthenticateReq, callOptions ...callopt.Option) (r *auth.AuthenticateResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.Authenticate(ctx, Req)
 }
