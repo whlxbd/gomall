@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"testing"
-	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
+	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
 
 func TestCreate_Run(t *testing.T) {
@@ -11,7 +11,7 @@ func TestCreate_Run(t *testing.T) {
 	s := NewCreateService(ctx)
 	// init req and assert value
 
-	req := &auth.CreateReq{}
+	req := &rule.CreateReq{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)

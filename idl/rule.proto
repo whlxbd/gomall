@@ -1,0 +1,55 @@
+syntax="proto3";
+
+package rule;
+
+option go_package="/rule";
+
+service RuleService {
+    rpc Create(CreateReq) returns (CreateResp) {}
+    rpc List(ListReq) returns (ListResp) {}
+    rpc Delete(DeleteReq) returns (DeleteResp) {}
+    rpc Get(GetReq) returns (GetResp) {}
+    rpc Update(UpdateReq) returns (UpdateResp) {}
+}
+
+message Rule {
+    int32 id = 1;
+    string role = 2;
+    string router = 3;
+}
+
+message CreateReq {
+    string role = 1;
+    string router = 2;
+}
+
+message CreateResp {}
+
+message ListReq {
+    int32 page = 1;
+    int32 page_size = 2;
+}
+
+message ListResp {
+    repeated Rule rules = 1;
+}
+
+message DeleteReq {
+    int32 id = 1;
+}
+
+message DeleteResp {}
+
+message GetReq {
+    int32 id = 1;
+}
+
+message GetResp {
+    Rule rule = 1;
+}
+
+message UpdateReq {
+    Rule rule = 1;
+}
+
+message UpdateResp {}

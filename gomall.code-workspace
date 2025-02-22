@@ -1,38 +1,38 @@
 {
-    "folders": [
-      {
-        "path": "."
-      },
-      {
-        "path": "app/aiorder"
-      },
-      {
-        "path": "app/auth"
-      },
-      {
-        "path": "app/frontend"
-      },
-      {
-        "path": "app/product"
-      },
-      {
-        "path": "app/user"
-      },
-      {
-        "path": "app/payment"
-      },
-      {
-        "path": "app/order"
-      },
-      {
-        "path": "app/checkout"
-      },
-      {
-        "path": "app/cart"
-      },
-      {
-        "path": "idl"
-      }
-    ],
-    "settings": {}
-  }
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "app/aiorder"
+    },
+    {
+      "path": "app/product"
+    },
+    {
+      "path": "app/order"
+    },
+    {
+      "path": "app/cart"
+    },
+    {
+      "path": "app/auth"
+    },
+    {
+      "path": "app/rule"
+    },
+    {
+      "path": "app/user"
+    },
+    {
+      "path": "app/payment"
+    },
+    {
+      "path": "app/checkout"
+    },
+    {
+      "path": "idl"
+    }
+  ],
+  "settings": {}
+}

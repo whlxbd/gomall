@@ -3,15 +3,15 @@ package service
 import (
 	"context"
 	"testing"
-	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
+	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
 
-func TestList_Run(t *testing.T) {
+func TestUpdate_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewListService(ctx)
+	s := NewUpdateService(ctx)
 	// init req and assert value
 
-	req := &auth.ListReq{}
+	req := &rule.UpdateReq{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)
