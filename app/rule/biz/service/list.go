@@ -26,8 +26,18 @@ func (s *ListService) Run(req *rule.ListReq) (resp *rule.ListResp, err error) {
 		return nil, kerrors.NewBizStatusError(400, "get rule list failed")
 	}
 
+	klog.Infof("get rule list: %v", ruleRows)
+
 	resp = &rule.ListResp{
 		Rules: make([]*rule.Rule, 0, len(ruleRows)),
+	}
+
+	for _, ruleRow := range ruleRows {
+		resp.Rules = append(resp.Rules, &rule.Rule{
+			Id:     int32(ruleRow.ID),
+			Role:   ruleRow.Role,
+			Router: ruleRow.Router,
+		})
 	}
 	return
 }

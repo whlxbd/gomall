@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
 	"github.com/whlxbd/gomall/app/rule/conf"
 
 	"gorm.io/driver/mysql"
@@ -18,7 +18,7 @@ var (
 
 func Init() {
 	dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_PORT"), os.Getenv("MYSQL_DATABASE"))
-	klog.Infof("dsn: %s", dsn)
+	fmt.Printf("dsn: %s\n", dsn)
 	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt:            true,
@@ -28,4 +28,6 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+
+	DB.AutoMigrate(&model.Rule{})
 }

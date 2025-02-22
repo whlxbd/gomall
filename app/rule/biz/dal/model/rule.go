@@ -54,7 +54,7 @@ func Delete(db *gorm.DB, ctx context.Context, id int32) error {
 
 func GetPage(db *gorm.DB, ctx context.Context, page, pageSize int32) ([]*Rule, error) {
 	var rules []*Rule
-	err := db.WithContext(ctx).Limit(int(pageSize)).Offset(int(page * pageSize)).Find(&rules).Error
+	err := db.WithContext(ctx).Offset(int((page - 1) * pageSize)).Limit(int(pageSize)).Find(&rules).Error
 	return rules, err
 }
 

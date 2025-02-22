@@ -10,7 +10,7 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	redisadapter "github.com/casbin/redis-adapter/v3"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/whlxbd/gomall/app/checkout/biz/dal/mysql"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
 	"gorm.io/gorm"
 
 	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model"
@@ -47,7 +47,7 @@ func Init() {
 			panic(err)
 		}
 
-		err = casbinEnf.LoadPolicy()
+		err = ReadPolicyFromDB()
 		if err != nil {
 			panic(err)
 		}
@@ -55,7 +55,6 @@ func Init() {
 }
 
 func ReadPolicyFromDB() error {
-	Init()
 	rules, err := rulemodel.GetAll(mysql.DB, context.Background())
 	if err != nil {
 		return err

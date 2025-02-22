@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/app/rule/biz/cas"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
@@ -19,7 +20,11 @@ func (s *CheckPermissionService) Run(req *rule.CheckPermissionReq) (resp *rule.C
 	// Finish your business logic.
 	err = cas.CheckPolicy(req.Role, req.Router)
 	if err != nil {
+		klog.Errorf("check permission failed: %v", err)
 		return nil, err
 	}
-	return
+	resp = &rule.CheckPermissionResp{
+		Ok: true,
+	}
+	return resp, nil
 }

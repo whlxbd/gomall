@@ -53,7 +53,7 @@ func Get(ctx context.Context) (payload *auth.GetPayloadResp, err error) {
 	klog.Infof("service: %s, method: %s, payload: %v", serviceName, methodName, payload)
 	checkPermissionResp, err := rpc.RuleClient.CheckPermission(ctx, &rule.CheckPermissionReq{
 		Role:   payload.Type,
-		Router: serviceName + "/" + methodName,
+		Router: serviceName + "." + methodName,
 	})
 	if err != nil {
 		klog.Errorf("check permission failed: %v", err)
