@@ -2,12 +2,16 @@ package main
 
 import (
 	"net"
+	"os"
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
+	consul "github.com/kitex-contrib/registry-consul"
+	"github.com/whlxbd/gomall/app/rule/biz/dal"
 	"github.com/whlxbd/gomall/app/rule/conf"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule/ruleservice"
 	"go.uber.org/zap/zapcore"
@@ -15,7 +19,9 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
 	opts := kitexInit()
+	dal.Init()
 
 	svr := ruleservice.NewServer(new(RuleServiceImpl), opts...)
 
@@ -38,6 +44,13 @@ func kitexInit() (opts []server.Option) {
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
 
+	// consul
+	r, err := consul.NewConsulRegister(os.Getenv("REGISTRY_ADDR")) // 使用配置中的 Consul 地址
+	if err != nil {
+		klog.Fatal(err)
+	}
+	opts = append(opts, server.WithRegistry(r))
+
 	// klog
 	logger := kitexlogrus.NewLogger()
 	klog.SetLogger(logger)
@@ -49,7 +62,7 @@ func kitexInit() (opts []server.Option) {
 			MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
 			MaxAge:     conf.GetConf().Kitex.LogMaxAge,
 		}),
-		FlushInterval: time.Minute,
+		FlushInterval: time.Second,
 	}
 	klog.SetOutput(asyncWriter)
 	server.RegisterShutdownHook(func() {

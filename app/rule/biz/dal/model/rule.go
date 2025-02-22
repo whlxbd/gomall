@@ -38,6 +38,12 @@ func GetByRouter(db *gorm.DB, ctx context.Context, router string) (*Rule, error)
 	return &rule, err
 }
 
+func GetByRoleAndRouter(db *gorm.DB, ctx context.Context, role, router string) (*Rule, error) {
+	var rule Rule
+	err := db.WithContext(ctx).Where("role = ? AND router = ?", role, router).First(&rule).Error
+	return &rule, err
+}
+
 func Update(db *gorm.DB, ctx context.Context, rule *Rule) error {
 	return db.WithContext(ctx).Model(rule).Updates(rule).Error
 }
