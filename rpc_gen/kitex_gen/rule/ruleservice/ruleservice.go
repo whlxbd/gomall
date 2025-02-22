@@ -50,6 +50,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"CheckPermission": kitex.NewMethodInfo(
+		checkPermissionHandler,
+		newCheckPermissionArgs,
+		newCheckPermissionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -881,6 +888,159 @@ func (p *UpdateResult) GetResult() interface{} {
 	return p.Success
 }
 
+func checkPermissionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(rule.CheckPermissionReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(rule.RuleService).CheckPermission(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CheckPermissionArgs:
+		success, err := handler.(rule.RuleService).CheckPermission(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CheckPermissionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newCheckPermissionArgs() interface{} {
+	return &CheckPermissionArgs{}
+}
+
+func newCheckPermissionResult() interface{} {
+	return &CheckPermissionResult{}
+}
+
+type CheckPermissionArgs struct {
+	Req *rule.CheckPermissionReq
+}
+
+func (p *CheckPermissionArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(rule.CheckPermissionReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *CheckPermissionArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *CheckPermissionArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *CheckPermissionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CheckPermissionArgs) Unmarshal(in []byte) error {
+	msg := new(rule.CheckPermissionReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckPermissionArgs_Req_DEFAULT *rule.CheckPermissionReq
+
+func (p *CheckPermissionArgs) GetReq() *rule.CheckPermissionReq {
+	if !p.IsSetReq() {
+		return CheckPermissionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckPermissionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CheckPermissionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CheckPermissionResult struct {
+	Success *rule.CheckPermissionResp
+}
+
+var CheckPermissionResult_Success_DEFAULT *rule.CheckPermissionResp
+
+func (p *CheckPermissionResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(rule.CheckPermissionResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *CheckPermissionResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *CheckPermissionResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *CheckPermissionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CheckPermissionResult) Unmarshal(in []byte) error {
+	msg := new(rule.CheckPermissionResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckPermissionResult) GetSuccess() *rule.CheckPermissionResp {
+	if !p.IsSetSuccess() {
+		return CheckPermissionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckPermissionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*rule.CheckPermissionResp)
+}
+
+func (p *CheckPermissionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckPermissionResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -936,6 +1096,16 @@ func (p *kClient) Update(ctx context.Context, Req *rule.UpdateReq) (r *rule.Upda
 	_args.Req = Req
 	var _result UpdateResult
 	if err = p.c.Call(ctx, "Update", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq) (r *rule.CheckPermissionResp, err error) {
+	var _args CheckPermissionArgs
+	_args.Req = Req
+	var _result CheckPermissionResult
+	if err = p.c.Call(ctx, "CheckPermission", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

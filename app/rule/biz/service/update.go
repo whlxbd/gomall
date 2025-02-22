@@ -5,8 +5,6 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
-	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
 	"github.com/whlxbd/gomall/common/utils/authpayload"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
@@ -32,13 +30,15 @@ func (s *UpdateService) Run(req *rule.UpdateReq) (resp *rule.UpdateResp, err err
 		return nil, kerrors.NewBizStatusError(400, "only admin can update rule")
 	}
 
-	rule := &model.Rule{
-		Role:   req.Rule.Role,
-		Router: req.Rule.Router,
-	}
+	return nil, kerrors.NewBizStatusError(400, "update rule does not support")
 
-	rule.ID = uint(req.Rule.Id)
+	// rule := &model.Rule{
+	// 	Role:   req.Rule.Role,
+	// 	Router: req.Rule.Router,
+	// }
 
-	err = model.Update(mysql.DB, s.ctx, rule)
-	return
+	// rule.ID = uint(req.Rule.Id)
+
+	// err = model.Update(mysql.DB, s.ctx, rule)
+	// return
 }

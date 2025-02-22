@@ -5,8 +5,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
-	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
+	"github.com/whlxbd/gomall/app/rule/biz/cas"
 	"github.com/whlxbd/gomall/common/utils/authpayload"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
@@ -32,10 +31,7 @@ func (s *CreateService) Run(req *rule.CreateReq) (resp *rule.CreateResp, err err
 		return nil, kerrors.NewBizStatusError(400, "only admin can create rule")
 	}
 
-	err = model.Create(mysql.DB, s.ctx, &model.Rule{
-		Role:   req.Role,
-		Router: req.Router,
-	})
+	err = cas.AddPolicy(req.Role, req.Router)
 	if err != nil {
 		klog.Errorf("create rule failed: %v", err)
 		return nil, kerrors.NewBizStatusError(500, "create rule failed")

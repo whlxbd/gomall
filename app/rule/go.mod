@@ -9,11 +9,16 @@ replace (
 )
 
 require (
+	github.com/casbin/casbin/v2 v2.103.0
+	github.com/casbin/redis-adapter/v3 v3.5.0
 	github.com/cloudwego/kitex v0.12.2
+	github.com/go-sql-driver/mysql v1.7.0
+	github.com/joho/godotenv v1.5.1
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241120035129-55da83caab1b
+	github.com/kitex-contrib/registry-consul v0.1.0
 	github.com/kr/pretty v0.3.1
 	github.com/redis/go-redis/v9 v9.7.1
-	github.com/whlxbd/gomall/app/user v0.0.0-20250221151427-3126699b53ae
+	github.com/whlxbd/gomall/app/checkout v0.0.0-20250221151427-3126699b53ae
 	github.com/whlxbd/gomall/common v0.0.0-00010101000000-000000000000
 	github.com/whlxbd/gomall/rpc_gen v0.0.0-00010101000000-000000000000
 	go.uber.org/zap v1.27.0
@@ -30,9 +35,7 @@ require (
 	github.com/bytedance/gopkg v0.1.1 // indirect
 	github.com/bytedance/sonic v1.12.7 // indirect
 	github.com/bytedance/sonic/loader v0.2.2 // indirect
-	github.com/casbin/casbin/v2 v2.103.0 // indirect
 	github.com/casbin/govaluate v1.3.0 // indirect
-	github.com/casbin/redis-adapter/v3 v3.5.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/configmanager v0.2.2 // indirect
@@ -51,7 +54,6 @@ require (
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
@@ -70,7 +72,6 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kitex-contrib/obs-opentelemetry v0.2.6 // indirect
-	github.com/kitex-contrib/registry-consul v0.1.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -87,7 +88,6 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
-	github.com/whlxbd/gomall/app/checkout v0.0.0-20250221151427-3126699b53ae // indirect
 	go.opentelemetry.io/otel v1.25.0 // indirect
 	go.opentelemetry.io/otel/metric v1.25.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.25.0 // indirect

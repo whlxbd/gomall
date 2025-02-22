@@ -43,3 +43,10 @@ func (s *RuleServiceImpl) Update(ctx context.Context, req *rule.UpdateReq) (resp
 
 	return resp, err
 }
+
+// CheckPermission implements the RuleServiceImpl interface.
+func (s *RuleServiceImpl) CheckPermission(ctx context.Context, req *rule.CheckPermissionReq) (resp *rule.CheckPermissionResp, err error) {
+	resp, err = service.NewCheckPermissionService(ctx).Run(req)
+
+	return resp, err
+}

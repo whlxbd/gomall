@@ -5,8 +5,9 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/whlxbd/gomall/app/rule/biz/cas"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
-	"github.com/whlxbd/gomall/app/user/biz/dal/model"
 	"github.com/whlxbd/gomall/common/utils/authpayload"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
@@ -32,7 +33,9 @@ func (s *DeleteService) Run(req *rule.DeleteReq) (resp *rule.DeleteResp, err err
 		return nil, kerrors.NewBizStatusError(400, "only admin can delete rule")
 	}
 
-	err = model.Delete(mysql.DB, s.ctx, req.Id)
+	ruleRow, err := model.GetByID(mysql.DB, s.ctx, req.Id)
+
+	err = cas.RemovePolicy(ruleRow.Role, ruleRow.Router)
 	if err != nil {
 		klog.Errorf("delete rule failed: %v", err)
 		return nil, kerrors.NewBizStatusError(500, "delete rule failed")

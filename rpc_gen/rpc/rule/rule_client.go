@@ -17,6 +17,7 @@ type RPCClient interface {
 	Delete(ctx context.Context, Req *rule.DeleteReq, callOptions ...callopt.Option) (r *rule.DeleteResp, err error)
 	Get(ctx context.Context, Req *rule.GetReq, callOptions ...callopt.Option) (r *rule.GetResp, err error)
 	Update(ctx context.Context, Req *rule.UpdateReq, callOptions ...callopt.Option) (r *rule.UpdateResp, err error)
+	CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq, callOptions ...callopt.Option) (r *rule.CheckPermissionResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -63,4 +64,8 @@ func (c *clientImpl) Get(ctx context.Context, Req *rule.GetReq, callOptions ...c
 
 func (c *clientImpl) Update(ctx context.Context, Req *rule.UpdateReq, callOptions ...callopt.Option) (r *rule.UpdateResp, err error) {
 	return c.kitexClient.Update(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq, callOptions ...callopt.Option) (r *rule.CheckPermissionResp, err error) {
+	return c.kitexClient.CheckPermission(ctx, Req, callOptions...)
 }

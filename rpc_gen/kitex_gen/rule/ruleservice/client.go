@@ -16,6 +16,7 @@ type Client interface {
 	Delete(ctx context.Context, Req *rule.DeleteReq, callOptions ...callopt.Option) (r *rule.DeleteResp, err error)
 	Get(ctx context.Context, Req *rule.GetReq, callOptions ...callopt.Option) (r *rule.GetResp, err error)
 	Update(ctx context.Context, Req *rule.UpdateReq, callOptions ...callopt.Option) (r *rule.UpdateResp, err error)
+	CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq, callOptions ...callopt.Option) (r *rule.CheckPermissionResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -70,4 +71,9 @@ func (p *kRuleServiceClient) Get(ctx context.Context, Req *rule.GetReq, callOpti
 func (p *kRuleServiceClient) Update(ctx context.Context, Req *rule.UpdateReq, callOptions ...callopt.Option) (r *rule.UpdateResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Update(ctx, Req)
+}
+
+func (p *kRuleServiceClient) CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq, callOptions ...callopt.Option) (r *rule.CheckPermissionResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CheckPermission(ctx, Req)
 }

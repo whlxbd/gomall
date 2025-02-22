@@ -306,6 +306,66 @@ SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 }
 
+func (x *CheckPermissionReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_CheckPermissionReq[number], err)
+}
+
+func (x *CheckPermissionReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Role, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *CheckPermissionReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.Router, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *CheckPermissionResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_CheckPermissionResp[number], err)
+}
+
+func (x *CheckPermissionResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Ok, offset, err = fastpb.ReadBool(buf, _type)
+	return offset, err
+}
+
 func (x *Rule) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
@@ -490,6 +550,47 @@ func (x *UpdateResp) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
+	return offset
+}
+
+func (x *CheckPermissionReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	return offset
+}
+
+func (x *CheckPermissionReq) fastWriteField1(buf []byte) (offset int) {
+	if x.Role == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetRole())
+	return offset
+}
+
+func (x *CheckPermissionReq) fastWriteField2(buf []byte) (offset int) {
+	if x.Router == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetRouter())
+	return offset
+}
+
+func (x *CheckPermissionResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *CheckPermissionResp) fastWriteField1(buf []byte) (offset int) {
+	if !x.Ok {
+		return offset
+	}
+	offset += fastpb.WriteBool(buf[offset:], 1, x.GetOk())
 	return offset
 }
 
@@ -680,6 +781,47 @@ func (x *UpdateResp) Size() (n int) {
 	return n
 }
 
+func (x *CheckPermissionReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	return n
+}
+
+func (x *CheckPermissionReq) sizeField1() (n int) {
+	if x.Role == "" {
+		return n
+	}
+	n += fastpb.SizeString(1, x.GetRole())
+	return n
+}
+
+func (x *CheckPermissionReq) sizeField2() (n int) {
+	if x.Router == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetRouter())
+	return n
+}
+
+func (x *CheckPermissionResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *CheckPermissionResp) sizeField1() (n int) {
+	if !x.Ok {
+		return n
+	}
+	n += fastpb.SizeBool(1, x.GetOk())
+	return n
+}
+
 var fieldIDToName_Rule = map[int32]string{
 	1: "Id",
 	2: "Role",
@@ -721,3 +863,12 @@ var fieldIDToName_UpdateReq = map[int32]string{
 }
 
 var fieldIDToName_UpdateResp = map[int32]string{}
+
+var fieldIDToName_CheckPermissionReq = map[int32]string{
+	1: "Role",
+	2: "Router",
+}
+
+var fieldIDToName_CheckPermissionResp = map[int32]string{
+	1: "Ok",
+}

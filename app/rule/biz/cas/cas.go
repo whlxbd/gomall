@@ -54,14 +54,13 @@ func Init() {
 	})
 }
 
-
 func ReadPolicyFromDB() error {
 	Init()
 	rules, err := rulemodel.GetAll(mysql.DB, context.Background())
 	if err != nil {
 		return err
 	}
-	
+
 	for _, rule := range rules {
 		ok, err := casbinEnf.AddPolicy(rule.Role, rule.Router)
 		if err != nil {
@@ -124,4 +123,16 @@ func RemovePolicy(sub string, act string) error {
 		}
 		return nil
 	})
+}
+
+func CheckPolicy(sub string, act string) error {
+	Init()
+	ok, err := casbinEnf.Enforce(sub, act)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New("permission denied")
+	}
+	return nil
 }

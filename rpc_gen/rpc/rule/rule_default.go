@@ -51,3 +51,12 @@ func Update(ctx context.Context, req *rule.UpdateReq, callOptions ...callopt.Opt
 	}
 	return resp, nil
 }
+
+func CheckPermission(ctx context.Context, req *rule.CheckPermissionReq, callOptions ...callopt.Option) (resp *rule.CheckPermissionResp, err error) {
+	resp, err = defaultClient.CheckPermission(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "CheckPermission call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

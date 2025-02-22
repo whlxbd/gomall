@@ -10,6 +10,7 @@ service RuleService {
     rpc Delete(DeleteReq) returns (DeleteResp) {}
     rpc Get(GetReq) returns (GetResp) {}
     rpc Update(UpdateReq) returns (UpdateResp) {}
+    rpc CheckPermission(CheckPermissionReq) returns (CheckPermissionResp) {}
 }
 
 message Rule {
@@ -53,3 +54,12 @@ message UpdateReq {
 }
 
 message UpdateResp {}
+
+message CheckPermissionReq {
+    string role = 1;
+    string router = 2;
+}
+
+message CheckPermissionResp {
+    bool ok = 1;
+}
