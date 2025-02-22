@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
+	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model/rule"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
@@ -18,7 +18,7 @@ func NewGetService(ctx context.Context) *GetService {
 // Run create note info
 func (s *GetService) Run(req *rule.GetReq) (resp *rule.GetResp, err error) {
 	// Finish your business logic.
-	ruleRow, err := model.GetByID(mysql.DB, s.ctx, req.Id)
+	ruleRow, err := rulemodel.GetByID(mysql.DB, s.ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}

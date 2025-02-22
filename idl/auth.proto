@@ -8,7 +8,11 @@ service AuthService {
     rpc DeliverTokenByRPC(DeliverTokenReq) returns (DeliveryResp) {}
     rpc VerifyTokenByRPC(VerifyTokenReq) returns (VerifyResp) {}
     rpc GetPayload(GetPayloadReq) returns (GetPayloadResp) {}
-    rpc Authenticate(AuthenticateReq) returns (AuthenticateResp) {}
+
+    rpc CheckPermission(CheckPermissionReq) returns (CheckPermissionResp) {}
+    rpc CheckWhite(CheckWhiteReq) returns (CheckWhiteResp) {}
+    rpc LoadPolicy(LoadPolicyReq) returns (LoadPolicyResp) {}
+    rpc RemovePolicy(RemovePolicyReq) returns (RemovePolicyResp) {}
 }
 
 message DeliverTokenReq {
@@ -36,11 +40,33 @@ message GetPayloadResp {
     string type = 2;
 }
 
-message AuthenticateReq {
+message CheckPermissionReq {
     string role = 1;
     string router = 2;
 }
 
-message AuthenticateResp {
+message CheckPermissionResp {
     bool ok = 1;
 }
+
+message CheckWhiteReq {
+    string router = 1;
+}
+
+message CheckWhiteResp {
+    bool ok = 1;
+}
+
+message LoadPolicyReq {
+    string role = 1;
+    string router = 2;
+}
+
+message LoadPolicyResp {}
+
+message RemovePolicyReq {
+    string role = 1;
+    string router = 2;
+}
+
+message RemovePolicyResp {}

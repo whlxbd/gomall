@@ -5,7 +5,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
+	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model/rule"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 )
@@ -20,7 +20,7 @@ func NewListService(ctx context.Context) *ListService {
 // Run create note info
 func (s *ListService) Run(req *rule.ListReq) (resp *rule.ListResp, err error) {
 	// Finish your business logic.
-	ruleRows, err := model.GetPage(mysql.DB, s.ctx, req.Page, req.PageSize)
+	ruleRows, err := rulemodel.GetPage(mysql.DB, s.ctx, req.Page, req.PageSize)
 	if err != nil {
 		klog.Errorf("get rule list failed: %v", err)
 		return nil, kerrors.NewBizStatusError(400, "get rule list failed")

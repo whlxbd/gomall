@@ -7,46 +7,64 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
-func Create(ctx context.Context, req *auth.CreateReq, callOptions ...callopt.Option) (resp *auth.CreateResp, err error) {
-	resp, err = defaultClient.Create(ctx, req, callOptions...)
+func DeliverTokenByRPC(ctx context.Context, req *auth.DeliverTokenReq, callOptions ...callopt.Option) (resp *auth.DeliveryResp, err error) {
+	resp, err = defaultClient.DeliverTokenByRPC(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "Create call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "DeliverTokenByRPC call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func List(ctx context.Context, req *auth.ListReq, callOptions ...callopt.Option) (resp *auth.ListResp, err error) {
-	resp, err = defaultClient.List(ctx, req, callOptions...)
+func VerifyTokenByRPC(ctx context.Context, req *auth.VerifyTokenReq, callOptions ...callopt.Option) (resp *auth.VerifyResp, err error) {
+	resp, err = defaultClient.VerifyTokenByRPC(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "List call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "VerifyTokenByRPC call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func Delete(ctx context.Context, req *auth.DeleteReq, callOptions ...callopt.Option) (resp *auth.DeleteResp, err error) {
-	resp, err = defaultClient.Delete(ctx, req, callOptions...)
+func GetPayload(ctx context.Context, req *auth.GetPayloadReq, callOptions ...callopt.Option) (resp *auth.GetPayloadResp, err error) {
+	resp, err = defaultClient.GetPayload(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "Delete call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "GetPayload call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func Get(ctx context.Context, req *auth.GetReq, callOptions ...callopt.Option) (resp *auth.GetResp, err error) {
-	resp, err = defaultClient.Get(ctx, req, callOptions...)
+func CheckPermission(ctx context.Context, req *auth.CheckPermissionReq, callOptions ...callopt.Option) (resp *auth.CheckPermissionResp, err error) {
+	resp, err = defaultClient.CheckPermission(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "Get call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "CheckPermission call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func Update(ctx context.Context, req *auth.UpdateReq, callOptions ...callopt.Option) (resp *auth.UpdateResp, err error) {
-	resp, err = defaultClient.Update(ctx, req, callOptions...)
+func CheckWhite(ctx context.Context, req *auth.CheckWhiteReq, callOptions ...callopt.Option) (resp *auth.CheckWhiteResp, err error) {
+	resp, err = defaultClient.CheckWhite(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "Update call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "CheckWhite call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func LoadPolicy(ctx context.Context, req *auth.LoadPolicyReq, callOptions ...callopt.Option) (resp *auth.LoadPolicyResp, err error) {
+	resp, err = defaultClient.LoadPolicy(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "LoadPolicy call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func RemovePolicy(ctx context.Context, req *auth.RemovePolicyReq, callOptions ...callopt.Option) (resp *auth.RemovePolicyResp, err error) {
+	resp, err = defaultClient.RemovePolicy(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "RemovePolicy call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

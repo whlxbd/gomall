@@ -36,10 +36,31 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"Authenticate": kitex.NewMethodInfo(
-		authenticateHandler,
-		newAuthenticateArgs,
-		newAuthenticateResult,
+	"CheckPermission": kitex.NewMethodInfo(
+		checkPermissionHandler,
+		newCheckPermissionArgs,
+		newCheckPermissionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"CheckWhite": kitex.NewMethodInfo(
+		checkWhiteHandler,
+		newCheckWhiteArgs,
+		newCheckWhiteResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"LoadPolicy": kitex.NewMethodInfo(
+		loadPolicyHandler,
+		newLoadPolicyArgs,
+		newLoadPolicyResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"RemovePolicy": kitex.NewMethodInfo(
+		removePolicyHandler,
+		newRemovePolicyArgs,
+		newRemovePolicyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
@@ -568,73 +589,73 @@ func (p *GetPayloadResult) GetResult() interface{} {
 	return p.Success
 }
 
-func authenticateHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func checkPermissionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
 		st := s.Stream
-		req := new(auth.AuthenticateReq)
+		req := new(auth.CheckPermissionReq)
 		if err := st.RecvMsg(req); err != nil {
 			return err
 		}
-		resp, err := handler.(auth.AuthService).Authenticate(ctx, req)
+		resp, err := handler.(auth.AuthService).CheckPermission(ctx, req)
 		if err != nil {
 			return err
 		}
 		return st.SendMsg(resp)
-	case *AuthenticateArgs:
-		success, err := handler.(auth.AuthService).Authenticate(ctx, s.Req)
+	case *CheckPermissionArgs:
+		success, err := handler.(auth.AuthService).CheckPermission(ctx, s.Req)
 		if err != nil {
 			return err
 		}
-		realResult := result.(*AuthenticateResult)
+		realResult := result.(*CheckPermissionResult)
 		realResult.Success = success
 		return nil
 	default:
 		return errInvalidMessageType
 	}
 }
-func newAuthenticateArgs() interface{} {
-	return &AuthenticateArgs{}
+func newCheckPermissionArgs() interface{} {
+	return &CheckPermissionArgs{}
 }
 
-func newAuthenticateResult() interface{} {
-	return &AuthenticateResult{}
+func newCheckPermissionResult() interface{} {
+	return &CheckPermissionResult{}
 }
 
-type AuthenticateArgs struct {
-	Req *auth.AuthenticateReq
+type CheckPermissionArgs struct {
+	Req *auth.CheckPermissionReq
 }
 
-func (p *AuthenticateArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *CheckPermissionArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetReq() {
-		p.Req = new(auth.AuthenticateReq)
+		p.Req = new(auth.CheckPermissionReq)
 	}
 	return p.Req.FastRead(buf, _type, number)
 }
 
-func (p *AuthenticateArgs) FastWrite(buf []byte) (n int) {
+func (p *CheckPermissionArgs) FastWrite(buf []byte) (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.FastWrite(buf)
 }
 
-func (p *AuthenticateArgs) Size() (n int) {
+func (p *CheckPermissionArgs) Size() (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.Size()
 }
 
-func (p *AuthenticateArgs) Marshal(out []byte) ([]byte, error) {
+func (p *CheckPermissionArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
 		return out, nil
 	}
 	return proto.Marshal(p.Req)
 }
 
-func (p *AuthenticateArgs) Unmarshal(in []byte) error {
-	msg := new(auth.AuthenticateReq)
+func (p *CheckPermissionArgs) Unmarshal(in []byte) error {
+	msg := new(auth.CheckPermissionReq)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -642,59 +663,59 @@ func (p *AuthenticateArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-var AuthenticateArgs_Req_DEFAULT *auth.AuthenticateReq
+var CheckPermissionArgs_Req_DEFAULT *auth.CheckPermissionReq
 
-func (p *AuthenticateArgs) GetReq() *auth.AuthenticateReq {
+func (p *CheckPermissionArgs) GetReq() *auth.CheckPermissionReq {
 	if !p.IsSetReq() {
-		return AuthenticateArgs_Req_DEFAULT
+		return CheckPermissionArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *AuthenticateArgs) IsSetReq() bool {
+func (p *CheckPermissionArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *AuthenticateArgs) GetFirstArgument() interface{} {
+func (p *CheckPermissionArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-type AuthenticateResult struct {
-	Success *auth.AuthenticateResp
+type CheckPermissionResult struct {
+	Success *auth.CheckPermissionResp
 }
 
-var AuthenticateResult_Success_DEFAULT *auth.AuthenticateResp
+var CheckPermissionResult_Success_DEFAULT *auth.CheckPermissionResp
 
-func (p *AuthenticateResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *CheckPermissionResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetSuccess() {
-		p.Success = new(auth.AuthenticateResp)
+		p.Success = new(auth.CheckPermissionResp)
 	}
 	return p.Success.FastRead(buf, _type, number)
 }
 
-func (p *AuthenticateResult) FastWrite(buf []byte) (n int) {
+func (p *CheckPermissionResult) FastWrite(buf []byte) (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.FastWrite(buf)
 }
 
-func (p *AuthenticateResult) Size() (n int) {
+func (p *CheckPermissionResult) Size() (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.Size()
 }
 
-func (p *AuthenticateResult) Marshal(out []byte) ([]byte, error) {
+func (p *CheckPermissionResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
 		return out, nil
 	}
 	return proto.Marshal(p.Success)
 }
 
-func (p *AuthenticateResult) Unmarshal(in []byte) error {
-	msg := new(auth.AuthenticateResp)
+func (p *CheckPermissionResult) Unmarshal(in []byte) error {
+	msg := new(auth.CheckPermissionResp)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -702,22 +723,481 @@ func (p *AuthenticateResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *AuthenticateResult) GetSuccess() *auth.AuthenticateResp {
+func (p *CheckPermissionResult) GetSuccess() *auth.CheckPermissionResp {
 	if !p.IsSetSuccess() {
-		return AuthenticateResult_Success_DEFAULT
+		return CheckPermissionResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *AuthenticateResult) SetSuccess(x interface{}) {
-	p.Success = x.(*auth.AuthenticateResp)
+func (p *CheckPermissionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*auth.CheckPermissionResp)
 }
 
-func (p *AuthenticateResult) IsSetSuccess() bool {
+func (p *CheckPermissionResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *AuthenticateResult) GetResult() interface{} {
+func (p *CheckPermissionResult) GetResult() interface{} {
+	return p.Success
+}
+
+func checkWhiteHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(auth.CheckWhiteReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(auth.AuthService).CheckWhite(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CheckWhiteArgs:
+		success, err := handler.(auth.AuthService).CheckWhite(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CheckWhiteResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newCheckWhiteArgs() interface{} {
+	return &CheckWhiteArgs{}
+}
+
+func newCheckWhiteResult() interface{} {
+	return &CheckWhiteResult{}
+}
+
+type CheckWhiteArgs struct {
+	Req *auth.CheckWhiteReq
+}
+
+func (p *CheckWhiteArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(auth.CheckWhiteReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *CheckWhiteArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *CheckWhiteArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *CheckWhiteArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CheckWhiteArgs) Unmarshal(in []byte) error {
+	msg := new(auth.CheckWhiteReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckWhiteArgs_Req_DEFAULT *auth.CheckWhiteReq
+
+func (p *CheckWhiteArgs) GetReq() *auth.CheckWhiteReq {
+	if !p.IsSetReq() {
+		return CheckWhiteArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckWhiteArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CheckWhiteArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CheckWhiteResult struct {
+	Success *auth.CheckWhiteResp
+}
+
+var CheckWhiteResult_Success_DEFAULT *auth.CheckWhiteResp
+
+func (p *CheckWhiteResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(auth.CheckWhiteResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *CheckWhiteResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *CheckWhiteResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *CheckWhiteResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CheckWhiteResult) Unmarshal(in []byte) error {
+	msg := new(auth.CheckWhiteResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckWhiteResult) GetSuccess() *auth.CheckWhiteResp {
+	if !p.IsSetSuccess() {
+		return CheckWhiteResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckWhiteResult) SetSuccess(x interface{}) {
+	p.Success = x.(*auth.CheckWhiteResp)
+}
+
+func (p *CheckWhiteResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckWhiteResult) GetResult() interface{} {
+	return p.Success
+}
+
+func loadPolicyHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(auth.LoadPolicyReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(auth.AuthService).LoadPolicy(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *LoadPolicyArgs:
+		success, err := handler.(auth.AuthService).LoadPolicy(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*LoadPolicyResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newLoadPolicyArgs() interface{} {
+	return &LoadPolicyArgs{}
+}
+
+func newLoadPolicyResult() interface{} {
+	return &LoadPolicyResult{}
+}
+
+type LoadPolicyArgs struct {
+	Req *auth.LoadPolicyReq
+}
+
+func (p *LoadPolicyArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(auth.LoadPolicyReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *LoadPolicyArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *LoadPolicyArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *LoadPolicyArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *LoadPolicyArgs) Unmarshal(in []byte) error {
+	msg := new(auth.LoadPolicyReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var LoadPolicyArgs_Req_DEFAULT *auth.LoadPolicyReq
+
+func (p *LoadPolicyArgs) GetReq() *auth.LoadPolicyReq {
+	if !p.IsSetReq() {
+		return LoadPolicyArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *LoadPolicyArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *LoadPolicyArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type LoadPolicyResult struct {
+	Success *auth.LoadPolicyResp
+}
+
+var LoadPolicyResult_Success_DEFAULT *auth.LoadPolicyResp
+
+func (p *LoadPolicyResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(auth.LoadPolicyResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *LoadPolicyResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *LoadPolicyResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *LoadPolicyResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *LoadPolicyResult) Unmarshal(in []byte) error {
+	msg := new(auth.LoadPolicyResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *LoadPolicyResult) GetSuccess() *auth.LoadPolicyResp {
+	if !p.IsSetSuccess() {
+		return LoadPolicyResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *LoadPolicyResult) SetSuccess(x interface{}) {
+	p.Success = x.(*auth.LoadPolicyResp)
+}
+
+func (p *LoadPolicyResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *LoadPolicyResult) GetResult() interface{} {
+	return p.Success
+}
+
+func removePolicyHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(auth.RemovePolicyReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(auth.AuthService).RemovePolicy(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *RemovePolicyArgs:
+		success, err := handler.(auth.AuthService).RemovePolicy(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*RemovePolicyResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newRemovePolicyArgs() interface{} {
+	return &RemovePolicyArgs{}
+}
+
+func newRemovePolicyResult() interface{} {
+	return &RemovePolicyResult{}
+}
+
+type RemovePolicyArgs struct {
+	Req *auth.RemovePolicyReq
+}
+
+func (p *RemovePolicyArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(auth.RemovePolicyReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *RemovePolicyArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *RemovePolicyArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *RemovePolicyArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *RemovePolicyArgs) Unmarshal(in []byte) error {
+	msg := new(auth.RemovePolicyReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var RemovePolicyArgs_Req_DEFAULT *auth.RemovePolicyReq
+
+func (p *RemovePolicyArgs) GetReq() *auth.RemovePolicyReq {
+	if !p.IsSetReq() {
+		return RemovePolicyArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *RemovePolicyArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *RemovePolicyArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type RemovePolicyResult struct {
+	Success *auth.RemovePolicyResp
+}
+
+var RemovePolicyResult_Success_DEFAULT *auth.RemovePolicyResp
+
+func (p *RemovePolicyResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(auth.RemovePolicyResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *RemovePolicyResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *RemovePolicyResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *RemovePolicyResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *RemovePolicyResult) Unmarshal(in []byte) error {
+	msg := new(auth.RemovePolicyResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *RemovePolicyResult) GetSuccess() *auth.RemovePolicyResp {
+	if !p.IsSetSuccess() {
+		return RemovePolicyResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *RemovePolicyResult) SetSuccess(x interface{}) {
+	p.Success = x.(*auth.RemovePolicyResp)
+}
+
+func (p *RemovePolicyResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *RemovePolicyResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -761,11 +1241,41 @@ func (p *kClient) GetPayload(ctx context.Context, Req *auth.GetPayloadReq) (r *a
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) Authenticate(ctx context.Context, Req *auth.AuthenticateReq) (r *auth.AuthenticateResp, err error) {
-	var _args AuthenticateArgs
+func (p *kClient) CheckPermission(ctx context.Context, Req *auth.CheckPermissionReq) (r *auth.CheckPermissionResp, err error) {
+	var _args CheckPermissionArgs
 	_args.Req = Req
-	var _result AuthenticateResult
-	if err = p.c.Call(ctx, "Authenticate", &_args, &_result); err != nil {
+	var _result CheckPermissionResult
+	if err = p.c.Call(ctx, "CheckPermission", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CheckWhite(ctx context.Context, Req *auth.CheckWhiteReq) (r *auth.CheckWhiteResp, err error) {
+	var _args CheckWhiteArgs
+	_args.Req = Req
+	var _result CheckWhiteResult
+	if err = p.c.Call(ctx, "CheckWhite", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) LoadPolicy(ctx context.Context, Req *auth.LoadPolicyReq) (r *auth.LoadPolicyResp, err error) {
+	var _args LoadPolicyArgs
+	_args.Req = Req
+	var _result LoadPolicyResult
+	if err = p.c.Call(ctx, "LoadPolicy", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) RemovePolicy(ctx context.Context, Req *auth.RemovePolicyReq) (r *auth.RemovePolicyResp, err error) {
+	var _args RemovePolicyArgs
+	_args.Req = Req
+	var _result RemovePolicyResult
+	if err = p.c.Call(ctx, "RemovePolicy", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -52,10 +52,28 @@ func Update(ctx context.Context, req *rule.UpdateReq, callOptions ...callopt.Opt
 	return resp, nil
 }
 
-func CheckPermission(ctx context.Context, req *rule.CheckPermissionReq, callOptions ...callopt.Option) (resp *rule.CheckPermissionResp, err error) {
-	resp, err = defaultClient.CheckPermission(ctx, req, callOptions...)
+func AddWhiteRouter(ctx context.Context, req *rule.AddWhiteRouterReq, callOptions ...callopt.Option) (resp *rule.AddWhiteRouterResp, err error) {
+	resp, err = defaultClient.AddWhiteRouter(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "CheckPermission call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "AddWhiteRouter call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetWhiteList(ctx context.Context, req *rule.GetWhiteListReq, callOptions ...callopt.Option) (resp *rule.GetWhiteListResp, err error) {
+	resp, err = defaultClient.GetWhiteList(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "GetWhiteList call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func DeleteWhiteRouter(ctx context.Context, req *rule.DeleteWhiteRouterReq, callOptions ...callopt.Option) (resp *rule.DeleteWhiteRouterResp, err error) {
+	resp, err = defaultClient.DeleteWhiteRouter(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "DeleteWhiteRouter call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

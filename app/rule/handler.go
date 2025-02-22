@@ -44,9 +44,23 @@ func (s *RuleServiceImpl) Update(ctx context.Context, req *rule.UpdateReq) (resp
 	return resp, err
 }
 
-// CheckPermission implements the RuleServiceImpl interface.
-func (s *RuleServiceImpl) CheckPermission(ctx context.Context, req *rule.CheckPermissionReq) (resp *rule.CheckPermissionResp, err error) {
-	resp, err = service.NewCheckPermissionService(ctx).Run(req)
+// GetWhiteList implements the RuleServiceImpl interface.
+func (s *RuleServiceImpl) GetWhiteList(ctx context.Context, req *rule.GetWhiteListReq) (resp *rule.GetWhiteListResp, err error) {
+	resp, err = service.NewGetWhiteListService(ctx).Run(req)
+
+	return resp, err
+}
+
+// AddWhiteRouter implements the RuleServiceImpl interface.
+func (s *RuleServiceImpl) AddWhiteRouter(ctx context.Context, req *rule.AddWhiteRouterReq) (resp *rule.AddWhiteRouterResp, err error) {
+	resp, err = service.NewAddWhiteRouterService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DeleteWhiteRouter implements the RuleServiceImpl interface.
+func (s *RuleServiceImpl) DeleteWhiteRouter(ctx context.Context, req *rule.DeleteWhiteRouterReq) (resp *rule.DeleteWhiteRouterResp, err error) {
+	resp, err = service.NewDeleteWhiteRouterService(ctx).Run(req)
 
 	return resp, err
 }

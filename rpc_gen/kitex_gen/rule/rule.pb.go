@@ -84,6 +84,61 @@ func (x *Rule) GetRouter() string {
 	return ""
 }
 
+type WhiteRouter struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id     int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Router string `protobuf:"bytes,2,opt,name=router,proto3" json:"router,omitempty"`
+}
+
+func (x *WhiteRouter) Reset() {
+	*x = WhiteRouter{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rule_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *WhiteRouter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WhiteRouter) ProtoMessage() {}
+
+func (x *WhiteRouter) ProtoReflect() protoreflect.Message {
+	mi := &file_rule_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WhiteRouter.ProtoReflect.Descriptor instead.
+func (*WhiteRouter) Descriptor() ([]byte, []int) {
+	return file_rule_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *WhiteRouter) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *WhiteRouter) GetRouter() string {
+	if x != nil {
+		return x.Router
+	}
+	return ""
+}
+
 type CreateReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -96,7 +151,7 @@ type CreateReq struct {
 func (x *CreateReq) Reset() {
 	*x = CreateReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[1]
+		mi := &file_rule_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -109,7 +164,7 @@ func (x *CreateReq) String() string {
 func (*CreateReq) ProtoMessage() {}
 
 func (x *CreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[1]
+	mi := &file_rule_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -122,7 +177,7 @@ func (x *CreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateReq.ProtoReflect.Descriptor instead.
 func (*CreateReq) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{1}
+	return file_rule_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateReq) GetRole() string {
@@ -148,7 +203,7 @@ type CreateResp struct {
 func (x *CreateResp) Reset() {
 	*x = CreateResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[2]
+		mi := &file_rule_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -161,7 +216,7 @@ func (x *CreateResp) String() string {
 func (*CreateResp) ProtoMessage() {}
 
 func (x *CreateResp) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[2]
+	mi := &file_rule_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -174,7 +229,7 @@ func (x *CreateResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateResp.ProtoReflect.Descriptor instead.
 func (*CreateResp) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{2}
+	return file_rule_proto_rawDescGZIP(), []int{3}
 }
 
 type ListReq struct {
@@ -189,7 +244,7 @@ type ListReq struct {
 func (x *ListReq) Reset() {
 	*x = ListReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[3]
+		mi := &file_rule_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -202,7 +257,7 @@ func (x *ListReq) String() string {
 func (*ListReq) ProtoMessage() {}
 
 func (x *ListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[3]
+	mi := &file_rule_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -215,7 +270,7 @@ func (x *ListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListReq.ProtoReflect.Descriptor instead.
 func (*ListReq) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{3}
+	return file_rule_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListReq) GetPage() int32 {
@@ -243,7 +298,7 @@ type ListResp struct {
 func (x *ListResp) Reset() {
 	*x = ListResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[4]
+		mi := &file_rule_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -256,7 +311,7 @@ func (x *ListResp) String() string {
 func (*ListResp) ProtoMessage() {}
 
 func (x *ListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[4]
+	mi := &file_rule_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -269,7 +324,7 @@ func (x *ListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListResp.ProtoReflect.Descriptor instead.
 func (*ListResp) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{4}
+	return file_rule_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListResp) GetRules() []*Rule {
@@ -290,7 +345,7 @@ type DeleteReq struct {
 func (x *DeleteReq) Reset() {
 	*x = DeleteReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[5]
+		mi := &file_rule_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -303,7 +358,7 @@ func (x *DeleteReq) String() string {
 func (*DeleteReq) ProtoMessage() {}
 
 func (x *DeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[5]
+	mi := &file_rule_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -316,7 +371,7 @@ func (x *DeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteReq.ProtoReflect.Descriptor instead.
 func (*DeleteReq) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{5}
+	return file_rule_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteReq) GetId() int32 {
@@ -335,7 +390,7 @@ type DeleteResp struct {
 func (x *DeleteResp) Reset() {
 	*x = DeleteResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[6]
+		mi := &file_rule_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -348,7 +403,7 @@ func (x *DeleteResp) String() string {
 func (*DeleteResp) ProtoMessage() {}
 
 func (x *DeleteResp) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[6]
+	mi := &file_rule_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -361,7 +416,7 @@ func (x *DeleteResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteResp.ProtoReflect.Descriptor instead.
 func (*DeleteResp) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{6}
+	return file_rule_proto_rawDescGZIP(), []int{7}
 }
 
 type GetReq struct {
@@ -375,7 +430,7 @@ type GetReq struct {
 func (x *GetReq) Reset() {
 	*x = GetReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[7]
+		mi := &file_rule_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -388,7 +443,7 @@ func (x *GetReq) String() string {
 func (*GetReq) ProtoMessage() {}
 
 func (x *GetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[7]
+	mi := &file_rule_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -401,7 +456,7 @@ func (x *GetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReq.ProtoReflect.Descriptor instead.
 func (*GetReq) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{7}
+	return file_rule_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetReq) GetId() int32 {
@@ -422,7 +477,7 @@ type GetResp struct {
 func (x *GetResp) Reset() {
 	*x = GetResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[8]
+		mi := &file_rule_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -435,7 +490,7 @@ func (x *GetResp) String() string {
 func (*GetResp) ProtoMessage() {}
 
 func (x *GetResp) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[8]
+	mi := &file_rule_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -448,7 +503,7 @@ func (x *GetResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetResp.ProtoReflect.Descriptor instead.
 func (*GetResp) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{8}
+	return file_rule_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetResp) GetRule() *Rule {
@@ -469,7 +524,7 @@ type UpdateReq struct {
 func (x *UpdateReq) Reset() {
 	*x = UpdateReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[9]
+		mi := &file_rule_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -482,7 +537,7 @@ func (x *UpdateReq) String() string {
 func (*UpdateReq) ProtoMessage() {}
 
 func (x *UpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[9]
+	mi := &file_rule_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -495,7 +550,7 @@ func (x *UpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateReq.ProtoReflect.Descriptor instead.
 func (*UpdateReq) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{9}
+	return file_rule_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UpdateReq) GetRule() *Rule {
@@ -514,7 +569,7 @@ type UpdateResp struct {
 func (x *UpdateResp) Reset() {
 	*x = UpdateResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[10]
+		mi := &file_rule_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -527,7 +582,7 @@ func (x *UpdateResp) String() string {
 func (*UpdateResp) ProtoMessage() {}
 
 func (x *UpdateResp) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[10]
+	mi := &file_rule_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -540,74 +595,19 @@ func (x *UpdateResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateResp.ProtoReflect.Descriptor instead.
 func (*UpdateResp) Descriptor() ([]byte, []int) {
-	return file_rule_proto_rawDescGZIP(), []int{10}
-}
-
-type CheckPermissionReq struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Role   string `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
-	Router string `protobuf:"bytes,2,opt,name=router,proto3" json:"router,omitempty"`
-}
-
-func (x *CheckPermissionReq) Reset() {
-	*x = CheckPermissionReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_rule_proto_msgTypes[11]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CheckPermissionReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CheckPermissionReq) ProtoMessage() {}
-
-func (x *CheckPermissionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rule_proto_msgTypes[11]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CheckPermissionReq.ProtoReflect.Descriptor instead.
-func (*CheckPermissionReq) Descriptor() ([]byte, []int) {
 	return file_rule_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *CheckPermissionReq) GetRole() string {
-	if x != nil {
-		return x.Role
-	}
-	return ""
-}
-
-func (x *CheckPermissionReq) GetRouter() string {
-	if x != nil {
-		return x.Router
-	}
-	return ""
-}
-
-type CheckPermissionResp struct {
+type AddWhiteRouterReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ok bool `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	Router string `protobuf:"bytes,1,opt,name=router,proto3" json:"router,omitempty"`
 }
 
-func (x *CheckPermissionResp) Reset() {
-	*x = CheckPermissionResp{}
+func (x *AddWhiteRouterReq) Reset() {
+	*x = AddWhiteRouterReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_rule_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -615,13 +615,13 @@ func (x *CheckPermissionResp) Reset() {
 	}
 }
 
-func (x *CheckPermissionResp) String() string {
+func (x *AddWhiteRouterReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckPermissionResp) ProtoMessage() {}
+func (*AddWhiteRouterReq) ProtoMessage() {}
 
-func (x *CheckPermissionResp) ProtoReflect() protoreflect.Message {
+func (x *AddWhiteRouterReq) ProtoReflect() protoreflect.Message {
 	mi := &file_rule_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -633,16 +633,241 @@ func (x *CheckPermissionResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckPermissionResp.ProtoReflect.Descriptor instead.
-func (*CheckPermissionResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use AddWhiteRouterReq.ProtoReflect.Descriptor instead.
+func (*AddWhiteRouterReq) Descriptor() ([]byte, []int) {
 	return file_rule_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *CheckPermissionResp) GetOk() bool {
+func (x *AddWhiteRouterReq) GetRouter() string {
 	if x != nil {
-		return x.Ok
+		return x.Router
 	}
-	return false
+	return ""
+}
+
+type AddWhiteRouterResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *AddWhiteRouterResp) Reset() {
+	*x = AddWhiteRouterResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rule_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddWhiteRouterResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddWhiteRouterResp) ProtoMessage() {}
+
+func (x *AddWhiteRouterResp) ProtoReflect() protoreflect.Message {
+	mi := &file_rule_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddWhiteRouterResp.ProtoReflect.Descriptor instead.
+func (*AddWhiteRouterResp) Descriptor() ([]byte, []int) {
+	return file_rule_proto_rawDescGZIP(), []int{13}
+}
+
+type GetWhiteListReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page     int32 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+}
+
+func (x *GetWhiteListReq) Reset() {
+	*x = GetWhiteListReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rule_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetWhiteListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWhiteListReq) ProtoMessage() {}
+
+func (x *GetWhiteListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_rule_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWhiteListReq.ProtoReflect.Descriptor instead.
+func (*GetWhiteListReq) Descriptor() ([]byte, []int) {
+	return file_rule_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *GetWhiteListReq) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *GetWhiteListReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type GetWhiteListResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	List []*WhiteRouter `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+}
+
+func (x *GetWhiteListResp) Reset() {
+	*x = GetWhiteListResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rule_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetWhiteListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWhiteListResp) ProtoMessage() {}
+
+func (x *GetWhiteListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_rule_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWhiteListResp.ProtoReflect.Descriptor instead.
+func (*GetWhiteListResp) Descriptor() ([]byte, []int) {
+	return file_rule_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetWhiteListResp) GetList() []*WhiteRouter {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+type DeleteWhiteRouterReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id int32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *DeleteWhiteRouterReq) Reset() {
+	*x = DeleteWhiteRouterReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rule_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteWhiteRouterReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteWhiteRouterReq) ProtoMessage() {}
+
+func (x *DeleteWhiteRouterReq) ProtoReflect() protoreflect.Message {
+	mi := &file_rule_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteWhiteRouterReq.ProtoReflect.Descriptor instead.
+func (*DeleteWhiteRouterReq) Descriptor() ([]byte, []int) {
+	return file_rule_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *DeleteWhiteRouterReq) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteWhiteRouterResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DeleteWhiteRouterResp) Reset() {
+	*x = DeleteWhiteRouterResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rule_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteWhiteRouterResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteWhiteRouterResp) ProtoMessage() {}
+
+func (x *DeleteWhiteRouterResp) ProtoReflect() protoreflect.Message {
+	mi := &file_rule_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteWhiteRouterResp.ProtoReflect.Descriptor instead.
+func (*DeleteWhiteRouterResp) Descriptor() ([]byte, []int) {
+	return file_rule_proto_rawDescGZIP(), []int{17}
 }
 
 var File_rule_proto protoreflect.FileDescriptor
@@ -653,58 +878,80 @@ var file_rule_proto_rawDesc = []byte{
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f,
 	0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x16,
 	0x0a, 0x06, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
-	0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x22, 0x37, 0x0a, 0x09, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
-	0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x6f, 0x75, 0x74, 0x65,
-	0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x22,
-	0x0c, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x22, 0x3a, 0x0a,
-	0x07, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x0a, 0x09,
-	0x70, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52,
-	0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x22, 0x2c, 0x0a, 0x08, 0x4c, 0x69, 0x73,
-	0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x20, 0x0a, 0x05, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x52, 0x75, 0x6c, 0x65,
-	0x52, 0x05, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x22, 0x1b, 0x0a, 0x09, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
-	0x52, 0x02, 0x69, 0x64, 0x22, 0x0c, 0x0a, 0x0a, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x22, 0x18, 0x0a, 0x06, 0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x22, 0x29, 0x0a, 0x07,
-	0x47, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1e, 0x0a, 0x04, 0x72, 0x75, 0x6c, 0x65, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x52, 0x75, 0x6c,
-	0x65, 0x52, 0x04, 0x72, 0x75, 0x6c, 0x65, 0x22, 0x2b, 0x0a, 0x09, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x52, 0x65, 0x71, 0x12, 0x1e, 0x0a, 0x04, 0x72, 0x75, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x04,
-	0x72, 0x75, 0x6c, 0x65, 0x22, 0x0c, 0x0a, 0x0a, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x22, 0x40, 0x0a, 0x12, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x50, 0x65, 0x72, 0x6d, 0x69,
-	0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x16, 0x0a, 0x06,
-	0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x6f,
-	0x75, 0x74, 0x65, 0x72, 0x22, 0x25, 0x0a, 0x13, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x50, 0x65, 0x72,
-	0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x12, 0x0e, 0x0a, 0x02, 0x6f,
-	0x6b, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x32, 0xb3, 0x02, 0x0a, 0x0b,
-	0x52, 0x75, 0x6c, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2d, 0x0a, 0x06, 0x43,
-	0x72, 0x65, 0x61, 0x74, 0x65, 0x12, 0x0f, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x43, 0x72, 0x65,
-	0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x10, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x27, 0x0a, 0x04, 0x4c, 0x69,
-	0x73, 0x74, 0x12, 0x0d, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65,
-	0x71, 0x1a, 0x0e, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73,
-	0x70, 0x22, 0x00, 0x12, 0x2d, 0x0a, 0x06, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x12, 0x0f, 0x2e,
-	0x72, 0x75, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x10,
-	0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70,
-	0x22, 0x00, 0x12, 0x24, 0x0a, 0x03, 0x47, 0x65, 0x74, 0x12, 0x0c, 0x2e, 0x72, 0x75, 0x6c, 0x65,
-	0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x0d, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x47,
-	0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x2d, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x12, 0x0f, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x52, 0x65, 0x71, 0x1a, 0x10, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x48, 0x0a, 0x0f, 0x43, 0x68, 0x65, 0x63, 0x6b,
-	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x18, 0x2e, 0x72, 0x75, 0x6c,
-	0x65, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f,
-	0x6e, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x43, 0x68, 0x65, 0x63,
-	0x6b, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22,
-	0x00, 0x42, 0x31, 0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x77, 0x68, 0x6c, 0x78, 0x62, 0x64, 0x2f, 0x67, 0x6f, 0x6d, 0x61, 0x6c, 0x6c, 0x2f, 0x72, 0x70,
-	0x63, 0x5f, 0x67, 0x65, 0x6e, 0x2f, 0x6b, 0x69, 0x74, 0x65, 0x78, 0x5f, 0x67, 0x65, 0x6e, 0x2f,
-	0x72, 0x75, 0x6c, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x22, 0x35, 0x0a, 0x0b, 0x57, 0x68, 0x69, 0x74, 0x65, 0x52,
+	0x6f, 0x75, 0x74, 0x65, 0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x02, 0x69, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x22, 0x37, 0x0a,
+	0x09, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f,
+	0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x22, 0x0c, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x52, 0x65, 0x73, 0x70, 0x22, 0x3a, 0x0a, 0x07, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x12,
+	0x12, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x70,
+	0x61, 0x67, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65,
+	0x22, 0x2c, 0x0a, 0x08, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x20, 0x0a, 0x05,
+	0x72, 0x75, 0x6c, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x72, 0x75,
+	0x6c, 0x65, 0x2e, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x05, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x22, 0x1b,
+	0x0a, 0x09, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x22, 0x0c, 0x0a, 0x0a, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x22, 0x18, 0x0a, 0x06, 0x47, 0x65, 0x74,
+	0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x02, 0x69, 0x64, 0x22, 0x29, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1e,
+	0x0a, 0x04, 0x72, 0x75, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x72,
+	0x75, 0x6c, 0x65, 0x2e, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x04, 0x72, 0x75, 0x6c, 0x65, 0x22, 0x2b,
+	0x0a, 0x09, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x12, 0x1e, 0x0a, 0x04, 0x72,
+	0x75, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x72, 0x75, 0x6c, 0x65,
+	0x2e, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x04, 0x72, 0x75, 0x6c, 0x65, 0x22, 0x0c, 0x0a, 0x0a, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x22, 0x2b, 0x0a, 0x11, 0x41, 0x64, 0x64,
+	0x57, 0x68, 0x69, 0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x12, 0x16,
+	0x0a, 0x06, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x72, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x22, 0x14, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x57, 0x68, 0x69,
+	0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x22, 0x42, 0x0a, 0x0f,
+	0x47, 0x65, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x12,
+	0x12, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x70,
+	0x61, 0x67, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65,
+	0x22, 0x39, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x4c, 0x69, 0x73, 0x74,
+	0x52, 0x65, 0x73, 0x70, 0x12, 0x25, 0x0a, 0x04, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x01, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x11, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x57, 0x68, 0x69, 0x74, 0x65, 0x52,
+	0x6f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x04, 0x6c, 0x69, 0x73, 0x74, 0x22, 0x26, 0x0a, 0x14, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x57, 0x68, 0x69, 0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72,
+	0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x02, 0x69, 0x64, 0x22, 0x17, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x57, 0x68, 0x69,
+	0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x32, 0xc1, 0x03, 0x0a,
+	0x0b, 0x52, 0x75, 0x6c, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2d, 0x0a, 0x06,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x12, 0x0f, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x10, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x27, 0x0a, 0x04, 0x4c,
+	0x69, 0x73, 0x74, 0x12, 0x0d, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52,
+	0x65, 0x71, 0x1a, 0x0e, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x22, 0x00, 0x12, 0x2d, 0x0a, 0x06, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x12, 0x0f,
+	0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x1a,
+	0x10, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x22, 0x00, 0x12, 0x24, 0x0a, 0x03, 0x47, 0x65, 0x74, 0x12, 0x0c, 0x2e, 0x72, 0x75, 0x6c,
+	0x65, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x0d, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e,
+	0x47, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x2d, 0x0a, 0x06, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x12, 0x0f, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x52, 0x65, 0x71, 0x1a, 0x10, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x45, 0x0a, 0x0e, 0x41, 0x64, 0x64, 0x57,
+	0x68, 0x69, 0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x12, 0x17, 0x2e, 0x72, 0x75, 0x6c,
+	0x65, 0x2e, 0x41, 0x64, 0x64, 0x57, 0x68, 0x69, 0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72,
+	0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x41, 0x64, 0x64, 0x57, 0x68,
+	0x69, 0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12,
+	0x3f, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12,
+	0x15, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x4c,
+	0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x47, 0x65,
+	0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00,
+	0x12, 0x4e, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x57, 0x68, 0x69, 0x74, 0x65, 0x52,
+	0x6f, 0x75, 0x74, 0x65, 0x72, 0x12, 0x1a, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x57, 0x68, 0x69, 0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x65,
+	0x71, 0x1a, 0x1b, 0x2e, 0x72, 0x75, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x57,
+	0x68, 0x69, 0x74, 0x65, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00,
+	0x42, 0x31, 0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77,
+	0x68, 0x6c, 0x78, 0x62, 0x64, 0x2f, 0x67, 0x6f, 0x6d, 0x61, 0x6c, 0x6c, 0x2f, 0x72, 0x70, 0x63,
+	0x5f, 0x67, 0x65, 0x6e, 0x2f, 0x6b, 0x69, 0x74, 0x65, 0x78, 0x5f, 0x67, 0x65, 0x6e, 0x2f, 0x72,
+	0x75, 0x6c, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -719,43 +966,53 @@ func file_rule_proto_rawDescGZIP() []byte {
 	return file_rule_proto_rawDescData
 }
 
-var file_rule_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_rule_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_rule_proto_goTypes = []interface{}{
-	(*Rule)(nil),                // 0: rule.Rule
-	(*CreateReq)(nil),           // 1: rule.CreateReq
-	(*CreateResp)(nil),          // 2: rule.CreateResp
-	(*ListReq)(nil),             // 3: rule.ListReq
-	(*ListResp)(nil),            // 4: rule.ListResp
-	(*DeleteReq)(nil),           // 5: rule.DeleteReq
-	(*DeleteResp)(nil),          // 6: rule.DeleteResp
-	(*GetReq)(nil),              // 7: rule.GetReq
-	(*GetResp)(nil),             // 8: rule.GetResp
-	(*UpdateReq)(nil),           // 9: rule.UpdateReq
-	(*UpdateResp)(nil),          // 10: rule.UpdateResp
-	(*CheckPermissionReq)(nil),  // 11: rule.CheckPermissionReq
-	(*CheckPermissionResp)(nil), // 12: rule.CheckPermissionResp
+	(*Rule)(nil),                  // 0: rule.Rule
+	(*WhiteRouter)(nil),           // 1: rule.WhiteRouter
+	(*CreateReq)(nil),             // 2: rule.CreateReq
+	(*CreateResp)(nil),            // 3: rule.CreateResp
+	(*ListReq)(nil),               // 4: rule.ListReq
+	(*ListResp)(nil),              // 5: rule.ListResp
+	(*DeleteReq)(nil),             // 6: rule.DeleteReq
+	(*DeleteResp)(nil),            // 7: rule.DeleteResp
+	(*GetReq)(nil),                // 8: rule.GetReq
+	(*GetResp)(nil),               // 9: rule.GetResp
+	(*UpdateReq)(nil),             // 10: rule.UpdateReq
+	(*UpdateResp)(nil),            // 11: rule.UpdateResp
+	(*AddWhiteRouterReq)(nil),     // 12: rule.AddWhiteRouterReq
+	(*AddWhiteRouterResp)(nil),    // 13: rule.AddWhiteRouterResp
+	(*GetWhiteListReq)(nil),       // 14: rule.GetWhiteListReq
+	(*GetWhiteListResp)(nil),      // 15: rule.GetWhiteListResp
+	(*DeleteWhiteRouterReq)(nil),  // 16: rule.DeleteWhiteRouterReq
+	(*DeleteWhiteRouterResp)(nil), // 17: rule.DeleteWhiteRouterResp
 }
 var file_rule_proto_depIdxs = []int32{
 	0,  // 0: rule.ListResp.rules:type_name -> rule.Rule
 	0,  // 1: rule.GetResp.rule:type_name -> rule.Rule
 	0,  // 2: rule.UpdateReq.rule:type_name -> rule.Rule
-	1,  // 3: rule.RuleService.Create:input_type -> rule.CreateReq
-	3,  // 4: rule.RuleService.List:input_type -> rule.ListReq
-	5,  // 5: rule.RuleService.Delete:input_type -> rule.DeleteReq
-	7,  // 6: rule.RuleService.Get:input_type -> rule.GetReq
-	9,  // 7: rule.RuleService.Update:input_type -> rule.UpdateReq
-	11, // 8: rule.RuleService.CheckPermission:input_type -> rule.CheckPermissionReq
-	2,  // 9: rule.RuleService.Create:output_type -> rule.CreateResp
-	4,  // 10: rule.RuleService.List:output_type -> rule.ListResp
-	6,  // 11: rule.RuleService.Delete:output_type -> rule.DeleteResp
-	8,  // 12: rule.RuleService.Get:output_type -> rule.GetResp
-	10, // 13: rule.RuleService.Update:output_type -> rule.UpdateResp
-	12, // 14: rule.RuleService.CheckPermission:output_type -> rule.CheckPermissionResp
-	9,  // [9:15] is the sub-list for method output_type
-	3,  // [3:9] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	1,  // 3: rule.GetWhiteListResp.list:type_name -> rule.WhiteRouter
+	2,  // 4: rule.RuleService.Create:input_type -> rule.CreateReq
+	4,  // 5: rule.RuleService.List:input_type -> rule.ListReq
+	6,  // 6: rule.RuleService.Delete:input_type -> rule.DeleteReq
+	8,  // 7: rule.RuleService.Get:input_type -> rule.GetReq
+	10, // 8: rule.RuleService.Update:input_type -> rule.UpdateReq
+	12, // 9: rule.RuleService.AddWhiteRouter:input_type -> rule.AddWhiteRouterReq
+	14, // 10: rule.RuleService.GetWhiteList:input_type -> rule.GetWhiteListReq
+	16, // 11: rule.RuleService.DeleteWhiteRouter:input_type -> rule.DeleteWhiteRouterReq
+	3,  // 12: rule.RuleService.Create:output_type -> rule.CreateResp
+	5,  // 13: rule.RuleService.List:output_type -> rule.ListResp
+	7,  // 14: rule.RuleService.Delete:output_type -> rule.DeleteResp
+	9,  // 15: rule.RuleService.Get:output_type -> rule.GetResp
+	11, // 16: rule.RuleService.Update:output_type -> rule.UpdateResp
+	13, // 17: rule.RuleService.AddWhiteRouter:output_type -> rule.AddWhiteRouterResp
+	15, // 18: rule.RuleService.GetWhiteList:output_type -> rule.GetWhiteListResp
+	17, // 19: rule.RuleService.DeleteWhiteRouter:output_type -> rule.DeleteWhiteRouterResp
+	12, // [12:20] is the sub-list for method output_type
+	4,  // [4:12] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_rule_proto_init() }
@@ -777,7 +1034,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateReq); i {
+			switch v := v.(*WhiteRouter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -789,7 +1046,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateResp); i {
+			switch v := v.(*CreateReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -801,7 +1058,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListReq); i {
+			switch v := v.(*CreateResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -813,7 +1070,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListResp); i {
+			switch v := v.(*ListReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -825,7 +1082,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteReq); i {
+			switch v := v.(*ListResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -837,7 +1094,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteResp); i {
+			switch v := v.(*DeleteReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -849,7 +1106,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetReq); i {
+			switch v := v.(*DeleteResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -861,7 +1118,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetResp); i {
+			switch v := v.(*GetReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -873,7 +1130,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateReq); i {
+			switch v := v.(*GetResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -885,7 +1142,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateResp); i {
+			switch v := v.(*UpdateReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -897,7 +1154,7 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckPermissionReq); i {
+			switch v := v.(*UpdateResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -909,7 +1166,67 @@ func file_rule_proto_init() {
 			}
 		}
 		file_rule_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckPermissionResp); i {
+			switch v := v.(*AddWhiteRouterReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rule_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddWhiteRouterResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rule_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetWhiteListReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rule_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetWhiteListResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rule_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteWhiteRouterReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rule_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteWhiteRouterResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -927,7 +1244,7 @@ func file_rule_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rule_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -951,5 +1268,7 @@ type RuleService interface {
 	Delete(ctx context.Context, req *DeleteReq) (res *DeleteResp, err error)
 	Get(ctx context.Context, req *GetReq) (res *GetResp, err error)
 	Update(ctx context.Context, req *UpdateReq) (res *UpdateResp, err error)
-	CheckPermission(ctx context.Context, req *CheckPermissionReq) (res *CheckPermissionResp, err error)
+	AddWhiteRouter(ctx context.Context, req *AddWhiteRouterReq) (res *AddWhiteRouterResp, err error)
+	GetWhiteList(ctx context.Context, req *GetWhiteListReq) (res *GetWhiteListResp, err error)
+	DeleteWhiteRouter(ctx context.Context, req *DeleteWhiteRouterReq) (res *DeleteWhiteRouterResp, err error)
 }

@@ -50,10 +50,24 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"CheckPermission": kitex.NewMethodInfo(
-		checkPermissionHandler,
-		newCheckPermissionArgs,
-		newCheckPermissionResult,
+	"AddWhiteRouter": kitex.NewMethodInfo(
+		addWhiteRouterHandler,
+		newAddWhiteRouterArgs,
+		newAddWhiteRouterResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"GetWhiteList": kitex.NewMethodInfo(
+		getWhiteListHandler,
+		newGetWhiteListArgs,
+		newGetWhiteListResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"DeleteWhiteRouter": kitex.NewMethodInfo(
+		deleteWhiteRouterHandler,
+		newDeleteWhiteRouterArgs,
+		newDeleteWhiteRouterResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
@@ -888,73 +902,73 @@ func (p *UpdateResult) GetResult() interface{} {
 	return p.Success
 }
 
-func checkPermissionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func addWhiteRouterHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
 		st := s.Stream
-		req := new(rule.CheckPermissionReq)
+		req := new(rule.AddWhiteRouterReq)
 		if err := st.RecvMsg(req); err != nil {
 			return err
 		}
-		resp, err := handler.(rule.RuleService).CheckPermission(ctx, req)
+		resp, err := handler.(rule.RuleService).AddWhiteRouter(ctx, req)
 		if err != nil {
 			return err
 		}
 		return st.SendMsg(resp)
-	case *CheckPermissionArgs:
-		success, err := handler.(rule.RuleService).CheckPermission(ctx, s.Req)
+	case *AddWhiteRouterArgs:
+		success, err := handler.(rule.RuleService).AddWhiteRouter(ctx, s.Req)
 		if err != nil {
 			return err
 		}
-		realResult := result.(*CheckPermissionResult)
+		realResult := result.(*AddWhiteRouterResult)
 		realResult.Success = success
 		return nil
 	default:
 		return errInvalidMessageType
 	}
 }
-func newCheckPermissionArgs() interface{} {
-	return &CheckPermissionArgs{}
+func newAddWhiteRouterArgs() interface{} {
+	return &AddWhiteRouterArgs{}
 }
 
-func newCheckPermissionResult() interface{} {
-	return &CheckPermissionResult{}
+func newAddWhiteRouterResult() interface{} {
+	return &AddWhiteRouterResult{}
 }
 
-type CheckPermissionArgs struct {
-	Req *rule.CheckPermissionReq
+type AddWhiteRouterArgs struct {
+	Req *rule.AddWhiteRouterReq
 }
 
-func (p *CheckPermissionArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *AddWhiteRouterArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetReq() {
-		p.Req = new(rule.CheckPermissionReq)
+		p.Req = new(rule.AddWhiteRouterReq)
 	}
 	return p.Req.FastRead(buf, _type, number)
 }
 
-func (p *CheckPermissionArgs) FastWrite(buf []byte) (n int) {
+func (p *AddWhiteRouterArgs) FastWrite(buf []byte) (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.FastWrite(buf)
 }
 
-func (p *CheckPermissionArgs) Size() (n int) {
+func (p *AddWhiteRouterArgs) Size() (n int) {
 	if !p.IsSetReq() {
 		return 0
 	}
 	return p.Req.Size()
 }
 
-func (p *CheckPermissionArgs) Marshal(out []byte) ([]byte, error) {
+func (p *AddWhiteRouterArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
 		return out, nil
 	}
 	return proto.Marshal(p.Req)
 }
 
-func (p *CheckPermissionArgs) Unmarshal(in []byte) error {
-	msg := new(rule.CheckPermissionReq)
+func (p *AddWhiteRouterArgs) Unmarshal(in []byte) error {
+	msg := new(rule.AddWhiteRouterReq)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -962,59 +976,59 @@ func (p *CheckPermissionArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-var CheckPermissionArgs_Req_DEFAULT *rule.CheckPermissionReq
+var AddWhiteRouterArgs_Req_DEFAULT *rule.AddWhiteRouterReq
 
-func (p *CheckPermissionArgs) GetReq() *rule.CheckPermissionReq {
+func (p *AddWhiteRouterArgs) GetReq() *rule.AddWhiteRouterReq {
 	if !p.IsSetReq() {
-		return CheckPermissionArgs_Req_DEFAULT
+		return AddWhiteRouterArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *CheckPermissionArgs) IsSetReq() bool {
+func (p *AddWhiteRouterArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *CheckPermissionArgs) GetFirstArgument() interface{} {
+func (p *AddWhiteRouterArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-type CheckPermissionResult struct {
-	Success *rule.CheckPermissionResp
+type AddWhiteRouterResult struct {
+	Success *rule.AddWhiteRouterResp
 }
 
-var CheckPermissionResult_Success_DEFAULT *rule.CheckPermissionResp
+var AddWhiteRouterResult_Success_DEFAULT *rule.AddWhiteRouterResp
 
-func (p *CheckPermissionResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+func (p *AddWhiteRouterResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetSuccess() {
-		p.Success = new(rule.CheckPermissionResp)
+		p.Success = new(rule.AddWhiteRouterResp)
 	}
 	return p.Success.FastRead(buf, _type, number)
 }
 
-func (p *CheckPermissionResult) FastWrite(buf []byte) (n int) {
+func (p *AddWhiteRouterResult) FastWrite(buf []byte) (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.FastWrite(buf)
 }
 
-func (p *CheckPermissionResult) Size() (n int) {
+func (p *AddWhiteRouterResult) Size() (n int) {
 	if !p.IsSetSuccess() {
 		return 0
 	}
 	return p.Success.Size()
 }
 
-func (p *CheckPermissionResult) Marshal(out []byte) ([]byte, error) {
+func (p *AddWhiteRouterResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
 		return out, nil
 	}
 	return proto.Marshal(p.Success)
 }
 
-func (p *CheckPermissionResult) Unmarshal(in []byte) error {
-	msg := new(rule.CheckPermissionResp)
+func (p *AddWhiteRouterResult) Unmarshal(in []byte) error {
+	msg := new(rule.AddWhiteRouterResp)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -1022,22 +1036,328 @@ func (p *CheckPermissionResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *CheckPermissionResult) GetSuccess() *rule.CheckPermissionResp {
+func (p *AddWhiteRouterResult) GetSuccess() *rule.AddWhiteRouterResp {
 	if !p.IsSetSuccess() {
-		return CheckPermissionResult_Success_DEFAULT
+		return AddWhiteRouterResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *CheckPermissionResult) SetSuccess(x interface{}) {
-	p.Success = x.(*rule.CheckPermissionResp)
+func (p *AddWhiteRouterResult) SetSuccess(x interface{}) {
+	p.Success = x.(*rule.AddWhiteRouterResp)
 }
 
-func (p *CheckPermissionResult) IsSetSuccess() bool {
+func (p *AddWhiteRouterResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *CheckPermissionResult) GetResult() interface{} {
+func (p *AddWhiteRouterResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getWhiteListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(rule.GetWhiteListReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(rule.RuleService).GetWhiteList(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetWhiteListArgs:
+		success, err := handler.(rule.RuleService).GetWhiteList(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetWhiteListResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newGetWhiteListArgs() interface{} {
+	return &GetWhiteListArgs{}
+}
+
+func newGetWhiteListResult() interface{} {
+	return &GetWhiteListResult{}
+}
+
+type GetWhiteListArgs struct {
+	Req *rule.GetWhiteListReq
+}
+
+func (p *GetWhiteListArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(rule.GetWhiteListReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *GetWhiteListArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *GetWhiteListArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *GetWhiteListArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetWhiteListArgs) Unmarshal(in []byte) error {
+	msg := new(rule.GetWhiteListReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetWhiteListArgs_Req_DEFAULT *rule.GetWhiteListReq
+
+func (p *GetWhiteListArgs) GetReq() *rule.GetWhiteListReq {
+	if !p.IsSetReq() {
+		return GetWhiteListArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetWhiteListArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetWhiteListArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetWhiteListResult struct {
+	Success *rule.GetWhiteListResp
+}
+
+var GetWhiteListResult_Success_DEFAULT *rule.GetWhiteListResp
+
+func (p *GetWhiteListResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(rule.GetWhiteListResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *GetWhiteListResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *GetWhiteListResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *GetWhiteListResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetWhiteListResult) Unmarshal(in []byte) error {
+	msg := new(rule.GetWhiteListResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetWhiteListResult) GetSuccess() *rule.GetWhiteListResp {
+	if !p.IsSetSuccess() {
+		return GetWhiteListResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetWhiteListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*rule.GetWhiteListResp)
+}
+
+func (p *GetWhiteListResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetWhiteListResult) GetResult() interface{} {
+	return p.Success
+}
+
+func deleteWhiteRouterHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(rule.DeleteWhiteRouterReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(rule.RuleService).DeleteWhiteRouter(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteWhiteRouterArgs:
+		success, err := handler.(rule.RuleService).DeleteWhiteRouter(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteWhiteRouterResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteWhiteRouterArgs() interface{} {
+	return &DeleteWhiteRouterArgs{}
+}
+
+func newDeleteWhiteRouterResult() interface{} {
+	return &DeleteWhiteRouterResult{}
+}
+
+type DeleteWhiteRouterArgs struct {
+	Req *rule.DeleteWhiteRouterReq
+}
+
+func (p *DeleteWhiteRouterArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(rule.DeleteWhiteRouterReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *DeleteWhiteRouterArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *DeleteWhiteRouterArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *DeleteWhiteRouterArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteWhiteRouterArgs) Unmarshal(in []byte) error {
+	msg := new(rule.DeleteWhiteRouterReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DeleteWhiteRouterArgs_Req_DEFAULT *rule.DeleteWhiteRouterReq
+
+func (p *DeleteWhiteRouterArgs) GetReq() *rule.DeleteWhiteRouterReq {
+	if !p.IsSetReq() {
+		return DeleteWhiteRouterArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DeleteWhiteRouterArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteWhiteRouterArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteWhiteRouterResult struct {
+	Success *rule.DeleteWhiteRouterResp
+}
+
+var DeleteWhiteRouterResult_Success_DEFAULT *rule.DeleteWhiteRouterResp
+
+func (p *DeleteWhiteRouterResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(rule.DeleteWhiteRouterResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *DeleteWhiteRouterResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *DeleteWhiteRouterResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *DeleteWhiteRouterResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteWhiteRouterResult) Unmarshal(in []byte) error {
+	msg := new(rule.DeleteWhiteRouterResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteWhiteRouterResult) GetSuccess() *rule.DeleteWhiteRouterResp {
+	if !p.IsSetSuccess() {
+		return DeleteWhiteRouterResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteWhiteRouterResult) SetSuccess(x interface{}) {
+	p.Success = x.(*rule.DeleteWhiteRouterResp)
+}
+
+func (p *DeleteWhiteRouterResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteWhiteRouterResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -1101,11 +1421,31 @@ func (p *kClient) Update(ctx context.Context, Req *rule.UpdateReq) (r *rule.Upda
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq) (r *rule.CheckPermissionResp, err error) {
-	var _args CheckPermissionArgs
+func (p *kClient) AddWhiteRouter(ctx context.Context, Req *rule.AddWhiteRouterReq) (r *rule.AddWhiteRouterResp, err error) {
+	var _args AddWhiteRouterArgs
 	_args.Req = Req
-	var _result CheckPermissionResult
-	if err = p.c.Call(ctx, "CheckPermission", &_args, &_result); err != nil {
+	var _result AddWhiteRouterResult
+	if err = p.c.Call(ctx, "AddWhiteRouter", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetWhiteList(ctx context.Context, Req *rule.GetWhiteListReq) (r *rule.GetWhiteListResp, err error) {
+	var _args GetWhiteListArgs
+	_args.Req = Req
+	var _result GetWhiteListResult
+	if err = p.c.Call(ctx, "GetWhiteList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteWhiteRouter(ctx context.Context, Req *rule.DeleteWhiteRouterReq) (r *rule.DeleteWhiteRouterResp, err error) {
+	var _args DeleteWhiteRouterArgs
+	_args.Req = Req
+	var _result DeleteWhiteRouterResult
+	if err = p.c.Call(ctx, "DeleteWhiteRouter", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

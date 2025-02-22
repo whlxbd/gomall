@@ -31,9 +31,30 @@ func (s *AuthServiceImpl) GetPayload(ctx context.Context, req *auth.GetPayloadRe
 	return resp, err
 }
 
-// Authenticate implements the AuthServiceImpl interface.
-func (s *AuthServiceImpl) Authenticate(ctx context.Context, req *auth.AuthenticateReq) (resp *auth.AuthenticateResp, err error) {
-	resp, err = service.NewAuthenticateService(ctx).Run(req)
+// CheckPermission implements the AuthServiceImpl interface.
+func (s *AuthServiceImpl) CheckPermission(ctx context.Context, req *auth.CheckPermissionReq) (resp *auth.CheckPermissionResp, err error) {
+	resp, err = service.NewCheckPermissionService(ctx).Run(req)
+
+	return resp, err
+}
+
+// CheckWhite implements the AuthServiceImpl interface.
+func (s *AuthServiceImpl) CheckWhite(ctx context.Context, req *auth.CheckWhiteReq) (resp *auth.CheckWhiteResp, err error) {
+	resp, err = service.NewCheckWhiteService(ctx).Run(req)
+
+	return resp, err
+}
+
+// LoadPolicy implements the AuthServiceImpl interface.
+func (s *AuthServiceImpl) LoadPolicy(ctx context.Context, req *auth.LoadPolicyReq) (resp *auth.LoadPolicyResp, err error) {
+	resp, err = service.NewLoadPolicyService(ctx).Run(req)
+
+	return resp, err
+}
+
+// RemovePolicy implements the AuthServiceImpl interface.
+func (s *AuthServiceImpl) RemovePolicy(ctx context.Context, req *auth.RemovePolicyReq) (resp *auth.RemovePolicyResp, err error) {
+	resp, err = service.NewRemovePolicyService(ctx).Run(req)
 
 	return resp, err
 }

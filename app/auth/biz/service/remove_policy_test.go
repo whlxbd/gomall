@@ -6,12 +6,12 @@ import (
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 )
 
-func TestAuthenticate_Run(t *testing.T) {
+func TestRemovePolicy_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewAuthenticateService(ctx)
+	s := NewRemovePolicyService(ctx)
 	// init req and assert value
 
-	req := &auth.AuthenticateReq{}
+	req := &auth.RemovePolicyReq{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)

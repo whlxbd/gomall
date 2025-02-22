@@ -11,9 +11,9 @@ import (
 	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
-	"github.com/whlxbd/gomall/app/rule/biz/cas"
 	"github.com/whlxbd/gomall/app/rule/biz/dal"
 	"github.com/whlxbd/gomall/app/rule/conf"
+	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule/ruleservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -23,7 +23,6 @@ func main() {
 	_ = godotenv.Load()
 	opts := kitexInit()
 	dal.Init()
-	cas.Init()
 
 	svr := ruleservice.NewServer(new(RuleServiceImpl), opts...)
 
@@ -70,5 +69,7 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return
 }

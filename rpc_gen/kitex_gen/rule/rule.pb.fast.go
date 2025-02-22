@@ -57,6 +57,41 @@ func (x *Rule) fastReadField3(buf []byte, _type int8) (offset int, err error) {
 	return offset, err
 }
 
+func (x *WhiteRouter) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_WhiteRouter[number], err)
+}
+
+func (x *WhiteRouter) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Id, offset, err = fastpb.ReadInt32(buf, _type)
+	return offset, err
+}
+
+func (x *WhiteRouter) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.Router, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
 func (x *CreateReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
@@ -306,7 +341,45 @@ SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 }
 
-func (x *CheckPermissionReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *AddWhiteRouterReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_AddWhiteRouterReq[number], err)
+}
+
+func (x *AddWhiteRouterReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Router, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *AddWhiteRouterResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+}
+
+func (x *GetWhiteListReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -328,20 +401,20 @@ func (x *CheckPermissionReq) FastRead(buf []byte, _type int8, number int32) (off
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_CheckPermissionReq[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetWhiteListReq[number], err)
 }
 
-func (x *CheckPermissionReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.Role, offset, err = fastpb.ReadString(buf, _type)
+func (x *GetWhiteListReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Page, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
-func (x *CheckPermissionReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	x.Router, offset, err = fastpb.ReadString(buf, _type)
+func (x *GetWhiteListReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.PageSize, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
-func (x *CheckPermissionResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *GetWhiteListResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -358,12 +431,55 @@ func (x *CheckPermissionResp) FastRead(buf []byte, _type int8, number int32) (of
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_CheckPermissionResp[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetWhiteListResp[number], err)
 }
 
-func (x *CheckPermissionResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.Ok, offset, err = fastpb.ReadBool(buf, _type)
+func (x *GetWhiteListResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	var v WhiteRouter
+	offset, err = fastpb.ReadMessage(buf, _type, &v)
+	if err != nil {
+		return offset, err
+	}
+	x.List = append(x.List, &v)
+	return offset, nil
+}
+
+func (x *DeleteWhiteRouterReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_DeleteWhiteRouterReq[number], err)
+}
+
+func (x *DeleteWhiteRouterReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Id, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
+}
+
+func (x *DeleteWhiteRouterResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 }
 
 func (x *Rule) FastWrite(buf []byte) (offset int) {
@@ -397,6 +513,31 @@ func (x *Rule) fastWriteField3(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 3, x.GetRouter())
+	return offset
+}
+
+func (x *WhiteRouter) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	return offset
+}
+
+func (x *WhiteRouter) fastWriteField1(buf []byte) (offset int) {
+	if x.Id == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt32(buf[offset:], 1, x.GetId())
+	return offset
+}
+
+func (x *WhiteRouter) fastWriteField2(buf []byte) (offset int) {
+	if x.Router == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetRouter())
 	return offset
 }
 
@@ -553,7 +694,30 @@ func (x *UpdateResp) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *CheckPermissionReq) FastWrite(buf []byte) (offset int) {
+func (x *AddWhiteRouterReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *AddWhiteRouterReq) fastWriteField1(buf []byte) (offset int) {
+	if x.Router == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetRouter())
+	return offset
+}
+
+func (x *AddWhiteRouterResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	return offset
+}
+
+func (x *GetWhiteListReq) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -562,23 +726,23 @@ func (x *CheckPermissionReq) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *CheckPermissionReq) fastWriteField1(buf []byte) (offset int) {
-	if x.Role == "" {
+func (x *GetWhiteListReq) fastWriteField1(buf []byte) (offset int) {
+	if x.Page == 0 {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 1, x.GetRole())
+	offset += fastpb.WriteInt32(buf[offset:], 1, x.GetPage())
 	return offset
 }
 
-func (x *CheckPermissionReq) fastWriteField2(buf []byte) (offset int) {
-	if x.Router == "" {
+func (x *GetWhiteListReq) fastWriteField2(buf []byte) (offset int) {
+	if x.PageSize == 0 {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 2, x.GetRouter())
+	offset += fastpb.WriteInt32(buf[offset:], 2, x.GetPageSize())
 	return offset
 }
 
-func (x *CheckPermissionResp) FastWrite(buf []byte) (offset int) {
+func (x *GetWhiteListResp) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -586,11 +750,36 @@ func (x *CheckPermissionResp) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *CheckPermissionResp) fastWriteField1(buf []byte) (offset int) {
-	if !x.Ok {
+func (x *GetWhiteListResp) fastWriteField1(buf []byte) (offset int) {
+	if x.List == nil {
 		return offset
 	}
-	offset += fastpb.WriteBool(buf[offset:], 1, x.GetOk())
+	for i := range x.GetList() {
+		offset += fastpb.WriteMessage(buf[offset:], 1, x.GetList()[i])
+	}
+	return offset
+}
+
+func (x *DeleteWhiteRouterReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *DeleteWhiteRouterReq) fastWriteField1(buf []byte) (offset int) {
+	if x.Id == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt32(buf[offset:], 1, x.GetId())
+	return offset
+}
+
+func (x *DeleteWhiteRouterResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
 	return offset
 }
 
@@ -625,6 +814,31 @@ func (x *Rule) sizeField3() (n int) {
 		return n
 	}
 	n += fastpb.SizeString(3, x.GetRouter())
+	return n
+}
+
+func (x *WhiteRouter) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	return n
+}
+
+func (x *WhiteRouter) sizeField1() (n int) {
+	if x.Id == 0 {
+		return n
+	}
+	n += fastpb.SizeInt32(1, x.GetId())
+	return n
+}
+
+func (x *WhiteRouter) sizeField2() (n int) {
+	if x.Router == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetRouter())
 	return n
 }
 
@@ -781,7 +995,30 @@ func (x *UpdateResp) Size() (n int) {
 	return n
 }
 
-func (x *CheckPermissionReq) Size() (n int) {
+func (x *AddWhiteRouterReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *AddWhiteRouterReq) sizeField1() (n int) {
+	if x.Router == "" {
+		return n
+	}
+	n += fastpb.SizeString(1, x.GetRouter())
+	return n
+}
+
+func (x *AddWhiteRouterResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	return n
+}
+
+func (x *GetWhiteListReq) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -790,23 +1027,23 @@ func (x *CheckPermissionReq) Size() (n int) {
 	return n
 }
 
-func (x *CheckPermissionReq) sizeField1() (n int) {
-	if x.Role == "" {
+func (x *GetWhiteListReq) sizeField1() (n int) {
+	if x.Page == 0 {
 		return n
 	}
-	n += fastpb.SizeString(1, x.GetRole())
+	n += fastpb.SizeInt32(1, x.GetPage())
 	return n
 }
 
-func (x *CheckPermissionReq) sizeField2() (n int) {
-	if x.Router == "" {
+func (x *GetWhiteListReq) sizeField2() (n int) {
+	if x.PageSize == 0 {
 		return n
 	}
-	n += fastpb.SizeString(2, x.GetRouter())
+	n += fastpb.SizeInt32(2, x.GetPageSize())
 	return n
 }
 
-func (x *CheckPermissionResp) Size() (n int) {
+func (x *GetWhiteListResp) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -814,11 +1051,36 @@ func (x *CheckPermissionResp) Size() (n int) {
 	return n
 }
 
-func (x *CheckPermissionResp) sizeField1() (n int) {
-	if !x.Ok {
+func (x *GetWhiteListResp) sizeField1() (n int) {
+	if x.List == nil {
 		return n
 	}
-	n += fastpb.SizeBool(1, x.GetOk())
+	for i := range x.GetList() {
+		n += fastpb.SizeMessage(1, x.GetList()[i])
+	}
+	return n
+}
+
+func (x *DeleteWhiteRouterReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *DeleteWhiteRouterReq) sizeField1() (n int) {
+	if x.Id == 0 {
+		return n
+	}
+	n += fastpb.SizeInt32(1, x.GetId())
+	return n
+}
+
+func (x *DeleteWhiteRouterResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
 	return n
 }
 
@@ -826,6 +1088,11 @@ var fieldIDToName_Rule = map[int32]string{
 	1: "Id",
 	2: "Role",
 	3: "Router",
+}
+
+var fieldIDToName_WhiteRouter = map[int32]string{
+	1: "Id",
+	2: "Router",
 }
 
 var fieldIDToName_CreateReq = map[int32]string{
@@ -864,11 +1131,23 @@ var fieldIDToName_UpdateReq = map[int32]string{
 
 var fieldIDToName_UpdateResp = map[int32]string{}
 
-var fieldIDToName_CheckPermissionReq = map[int32]string{
-	1: "Role",
-	2: "Router",
+var fieldIDToName_AddWhiteRouterReq = map[int32]string{
+	1: "Router",
 }
 
-var fieldIDToName_CheckPermissionResp = map[int32]string{
-	1: "Ok",
+var fieldIDToName_AddWhiteRouterResp = map[int32]string{}
+
+var fieldIDToName_GetWhiteListReq = map[int32]string{
+	1: "Page",
+	2: "PageSize",
 }
+
+var fieldIDToName_GetWhiteListResp = map[int32]string{
+	1: "List",
+}
+
+var fieldIDToName_DeleteWhiteRouterReq = map[int32]string{
+	1: "Id",
+}
+
+var fieldIDToName_DeleteWhiteRouterResp = map[int32]string{}

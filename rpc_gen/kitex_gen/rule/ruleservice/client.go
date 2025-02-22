@@ -16,7 +16,9 @@ type Client interface {
 	Delete(ctx context.Context, Req *rule.DeleteReq, callOptions ...callopt.Option) (r *rule.DeleteResp, err error)
 	Get(ctx context.Context, Req *rule.GetReq, callOptions ...callopt.Option) (r *rule.GetResp, err error)
 	Update(ctx context.Context, Req *rule.UpdateReq, callOptions ...callopt.Option) (r *rule.UpdateResp, err error)
-	CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq, callOptions ...callopt.Option) (r *rule.CheckPermissionResp, err error)
+	AddWhiteRouter(ctx context.Context, Req *rule.AddWhiteRouterReq, callOptions ...callopt.Option) (r *rule.AddWhiteRouterResp, err error)
+	GetWhiteList(ctx context.Context, Req *rule.GetWhiteListReq, callOptions ...callopt.Option) (r *rule.GetWhiteListResp, err error)
+	DeleteWhiteRouter(ctx context.Context, Req *rule.DeleteWhiteRouterReq, callOptions ...callopt.Option) (r *rule.DeleteWhiteRouterResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -73,7 +75,17 @@ func (p *kRuleServiceClient) Update(ctx context.Context, Req *rule.UpdateReq, ca
 	return p.kClient.Update(ctx, Req)
 }
 
-func (p *kRuleServiceClient) CheckPermission(ctx context.Context, Req *rule.CheckPermissionReq, callOptions ...callopt.Option) (r *rule.CheckPermissionResp, err error) {
+func (p *kRuleServiceClient) AddWhiteRouter(ctx context.Context, Req *rule.AddWhiteRouterReq, callOptions ...callopt.Option) (r *rule.AddWhiteRouterResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CheckPermission(ctx, Req)
+	return p.kClient.AddWhiteRouter(ctx, Req)
+}
+
+func (p *kRuleServiceClient) GetWhiteList(ctx context.Context, Req *rule.GetWhiteListReq, callOptions ...callopt.Option) (r *rule.GetWhiteListResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetWhiteList(ctx, Req)
+}
+
+func (p *kRuleServiceClient) DeleteWhiteRouter(ctx context.Context, Req *rule.DeleteWhiteRouterReq, callOptions ...callopt.Option) (r *rule.DeleteWhiteRouterResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteWhiteRouter(ctx, Req)
 }

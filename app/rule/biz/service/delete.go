@@ -5,11 +5,12 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/whlxbd/gomall/app/rule/biz/cas"
-	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
+	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model/rule"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
-	"github.com/whlxbd/gomall/common/utils/authpayload"
+	"github.com/whlxbd/gomall/app/rule/infra/rpc"
+	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
+	"gorm.io/gorm"
 )
 
 type DeleteService struct {
@@ -22,23 +23,32 @@ func NewDeleteService(ctx context.Context) *DeleteService {
 // Run create note info
 func (s *DeleteService) Run(req *rule.DeleteReq) (resp *rule.DeleteResp, err error) {
 	// Finish your business logic.
-	payload, err := authpayload.Get(s.ctx)
+	ruleRow, err := rulemodel.GetByID(mysql.DB, s.ctx, req.Id)
 	if err != nil {
-		klog.Warnf("get auth payload failed: %v", err)
-		return nil, kerrors.NewBizStatusError(400, "get auth payload failed")
+		klog.Errorf("get rule failed: %v", err)
+		return nil, kerrors.NewBizStatusError(500, "get rule failed")
 	}
 
-	if payload.Type != "admin" {
-		klog.Warnf("only admin can delete rule")
-		return nil, kerrors.NewBizStatusError(400, "only admin can delete rule")
-	}
+	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
+		err = rulemodel.Delete(tx, s.ctx, req.Id)
+		if err != nil {
+			klog.Errorf("delete rule failed: %v", err)
+			return kerrors.NewBizStatusError(500, "delete rule failed")
+		}
 
-	ruleRow, err := model.GetByID(mysql.DB, s.ctx, req.Id)
+		_, err = rpc.AuthClient.RemovePolicy(s.ctx, &auth.RemovePolicyReq{
+			Role:   ruleRow.Role,
+			Router: ruleRow.Router,
+		})
+		if err != nil {
+			klog.Errorf("remove policy failed: %v", err)
+			return kerrors.NewBizStatusError(500, "remove policy failed")
+		}
 
-	err = cas.RemovePolicy(ruleRow.Role, ruleRow.Router)
+		return nil
+	})
 	if err != nil {
-		klog.Errorf("delete rule failed: %v", err)
-		return nil, kerrors.NewBizStatusError(500, "delete rule failed")
+		return nil, err
 	}
 	return
 }

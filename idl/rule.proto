@@ -10,13 +10,22 @@ service RuleService {
     rpc Delete(DeleteReq) returns (DeleteResp) {}
     rpc Get(GetReq) returns (GetResp) {}
     rpc Update(UpdateReq) returns (UpdateResp) {}
-    rpc CheckPermission(CheckPermissionReq) returns (CheckPermissionResp) {}
+
+    rpc AddWhiteRouter(AddWhiteRouterReq) returns (AddWhiteRouterResp) {}
+    rpc GetWhiteList(GetWhiteListReq) returns (GetWhiteListResp) {}
+    
+    rpc DeleteWhiteRouter(DeleteWhiteRouterReq) returns (DeleteWhiteRouterResp) {}
 }
 
 message Rule {
     int32 id = 1;
     string role = 2;
     string router = 3;
+}
+
+message WhiteRouter {
+    int32 id = 1;
+    string router = 2;
 }
 
 message CreateReq {
@@ -55,11 +64,25 @@ message UpdateReq {
 
 message UpdateResp {}
 
-message CheckPermissionReq {
-    string role = 1;
-    string router = 2;
+
+
+message AddWhiteRouterReq {
+    string router = 1;
 }
 
-message CheckPermissionResp {
-    bool ok = 1;
+message AddWhiteRouterResp {}
+
+message GetWhiteListReq {
+    int32 page = 1;
+    int32 page_size = 2;
 }
+
+message GetWhiteListResp {
+    repeated WhiteRouter list = 1;
+}
+
+message DeleteWhiteRouterReq {
+    int32 id = 1;
+}
+
+message DeleteWhiteRouterResp {}

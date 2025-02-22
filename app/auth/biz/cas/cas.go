@@ -11,9 +11,8 @@ import (
 	redisadapter "github.com/casbin/redis-adapter/v3"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
-	"gorm.io/gorm"
 
-	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model"
+	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model/rule"
 )
 
 var (
@@ -47,14 +46,14 @@ func Init() {
 			panic(err)
 		}
 
-		err = ReadPolicyFromDB()
+		err = readPolicyFromDB()
 		if err != nil {
 			panic(err)
 		}
 	})
 }
 
-func ReadPolicyFromDB() error {
+func readPolicyFromDB() error {
 	rules, err := rulemodel.GetAll(mysql.DB, context.Background())
 	if err != nil {
 		return err
@@ -75,53 +74,26 @@ func ReadPolicyFromDB() error {
 
 func AddPolicy(sub string, act string) error {
 	Init()
-	return mysql.DB.Transaction(func(tx *gorm.DB) error {
-		rule := &rulemodel.Rule{
-			Role:   sub,
-			Router: act,
-		}
-		err := rulemodel.Create(tx, context.Background(), rule)
-		if err != nil {
-			return err
-		}
-
-		ok, err := casbinEnf.AddPolicy(sub, act)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			return errors.New("add policy failed")
-		}
-		return nil
-	})
+	ok, err := casbinEnf.AddPolicy(sub, act)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New("add policy failed")
+	}
+	return nil
 }
 
 func RemovePolicy(sub string, act string) error {
 	Init()
-	return mysql.DB.Transaction(func(tx *gorm.DB) error {
-		rule, err := rulemodel.GetByRoleAndRouter(mysql.DB, context.Background(), sub, act)
-		if err != nil {
-			return err
-		}
-
-		if rule.Router != act {
-			return errors.New("rule not found")
-		}
-
-		err = rulemodel.Delete(tx, context.Background(), int32(rule.ID))
-		if err != nil {
-			return err
-		}
-
-		ok, err := casbinEnf.RemovePolicy(sub, act)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			return errors.New("remove policy failed")
-		}
-		return nil
-	})
+	ok, err := casbinEnf.RemovePolicy(sub, act)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New("remove policy failed")
+	}
+	return nil
 }
 
 func CheckPolicy(sub string, act string) error {

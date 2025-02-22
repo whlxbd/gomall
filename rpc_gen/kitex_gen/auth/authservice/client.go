@@ -14,7 +14,10 @@ type Client interface {
 	DeliverTokenByRPC(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryResp, err error)
 	VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyResp, err error)
 	GetPayload(ctx context.Context, Req *auth.GetPayloadReq, callOptions ...callopt.Option) (r *auth.GetPayloadResp, err error)
-	Authenticate(ctx context.Context, Req *auth.AuthenticateReq, callOptions ...callopt.Option) (r *auth.AuthenticateResp, err error)
+	CheckPermission(ctx context.Context, Req *auth.CheckPermissionReq, callOptions ...callopt.Option) (r *auth.CheckPermissionResp, err error)
+	CheckWhite(ctx context.Context, Req *auth.CheckWhiteReq, callOptions ...callopt.Option) (r *auth.CheckWhiteResp, err error)
+	LoadPolicy(ctx context.Context, Req *auth.LoadPolicyReq, callOptions ...callopt.Option) (r *auth.LoadPolicyResp, err error)
+	RemovePolicy(ctx context.Context, Req *auth.RemovePolicyReq, callOptions ...callopt.Option) (r *auth.RemovePolicyResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -61,7 +64,22 @@ func (p *kAuthServiceClient) GetPayload(ctx context.Context, Req *auth.GetPayloa
 	return p.kClient.GetPayload(ctx, Req)
 }
 
-func (p *kAuthServiceClient) Authenticate(ctx context.Context, Req *auth.AuthenticateReq, callOptions ...callopt.Option) (r *auth.AuthenticateResp, err error) {
+func (p *kAuthServiceClient) CheckPermission(ctx context.Context, Req *auth.CheckPermissionReq, callOptions ...callopt.Option) (r *auth.CheckPermissionResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.Authenticate(ctx, Req)
+	return p.kClient.CheckPermission(ctx, Req)
+}
+
+func (p *kAuthServiceClient) CheckWhite(ctx context.Context, Req *auth.CheckWhiteReq, callOptions ...callopt.Option) (r *auth.CheckWhiteResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CheckWhite(ctx, Req)
+}
+
+func (p *kAuthServiceClient) LoadPolicy(ctx context.Context, Req *auth.LoadPolicyReq, callOptions ...callopt.Option) (r *auth.LoadPolicyResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.LoadPolicy(ctx, Req)
+}
+
+func (p *kAuthServiceClient) RemovePolicy(ctx context.Context, Req *auth.RemovePolicyReq, callOptions ...callopt.Option) (r *auth.RemovePolicyResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RemovePolicy(ctx, Req)
 }

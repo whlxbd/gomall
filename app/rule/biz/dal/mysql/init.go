@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/whlxbd/gomall/app/rule/biz/dal/model"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/model/rule"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/model/whitelist"
 	"github.com/whlxbd/gomall/app/rule/conf"
 
 	"gorm.io/driver/mysql"
@@ -29,5 +30,6 @@ func Init() {
 		panic(err)
 	}
 
-	DB.AutoMigrate(&model.Rule{})
+	DB.AutoMigrate(&rule.Rule{})
+	DB.AutoMigrate(&whitelist.WhiteRouter{})
 }

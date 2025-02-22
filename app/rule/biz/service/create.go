@@ -5,9 +5,13 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/whlxbd/gomall/app/rule/biz/cas"
-	"github.com/whlxbd/gomall/common/utils/authpayload"
+	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model/rule"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
+	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
+	"gorm.io/gorm"
+
+	"github.com/whlxbd/gomall/app/rule/infra/rpc"
 )
 
 type CreateService struct {
@@ -20,21 +24,31 @@ func NewCreateService(ctx context.Context) *CreateService {
 // Run create note info
 func (s *CreateService) Run(req *rule.CreateReq) (resp *rule.CreateResp, err error) {
 	// Finish your business logic.
-	payload, err := authpayload.Get(s.ctx)
-	if err != nil {
-		klog.Warnf("get auth payload failed: %v", err)
-		return nil, kerrors.NewBizStatusError(400, "get auth payload failed")
-	}
+	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
+		err = rulemodel.Create(tx, s.ctx, &rulemodel.Rule{
+			Role:   req.Role,
+			Router: req.Router,
+		})
+		if err != nil {
+			klog.Errorf("create rule failed: %v", err)
+			return kerrors.NewBizStatusError(500, "create rule failed")
+		}
 
-	if payload.Type != "admin" {
-		klog.Warnf("only admin can create note")
-		return nil, kerrors.NewBizStatusError(400, "only admin can create rule")
-	}
+		_, err = rpc.AuthClient.LoadPolicy(s.ctx, &auth.LoadPolicyReq{
+			Role:   req.Role,
+			Router: req.Router,
+		})
+		if err != nil {
+			klog.Errorf("load policy failed: %v", err)
+			return kerrors.NewBizStatusError(500, "load policy failed")
+		}
 
-	err = cas.AddPolicy(req.Role, req.Router)
+		return nil
+	})
+
 	if err != nil {
-		klog.Errorf("create rule failed: %v", err)
-		return nil, kerrors.NewBizStatusError(500, "create rule failed")
+		return nil, err
 	}
+	
 	return
 }
