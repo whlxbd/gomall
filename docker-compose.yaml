@@ -36,15 +36,17 @@ services:
     networks:
       - gomall
 
-  rmqnamesrv: # rocketMq namesrv
+  rmqnamesrv:
+    # rocketMq namesrv
     image: apache/rocketmq:5.3.1
     ports:
       - 9876:9876
     command: sh mqnamesrv
     networks:
       - gomall
-      
-  rmqbroker: # rocketMq broker
+
+  rmqbroker:
+    # rocketMq broker
     image: apache/rocketmq:5.3.1
     ports:
       - 10909:10909
@@ -53,14 +55,15 @@ services:
     volumes:
       - ./deploy/config/rmqbroker.conf:/home/rocketmq/rocketmq-5.3.1/conf/broker.conf
     environment:
-        - JAVA_OPTS= -Xms1g -Xmx1g -Xmn512M
+      - JAVA_OPTS= -Xms1g -Xmx1g -Xmn512M
     depends_on:
       - rmqnamesrv
     command: sh mqbroker -c /home/rocketmq/rocketmq-5.3.1/conf/broker.conf
     networks:
       - gomall
 
-  rmqproxy: # rocketMq proxy
+  rmqproxy:
+    # rocketMq proxy
     image: apache/rocketmq:5.3.1
     depends_on:
       - rmqbroker
@@ -71,13 +74,14 @@ services:
     restart: on-failure
     volumes:
       - ./deploy/config/rmqproxy.json:/home/rocketmq/rocketmq-5.3.1/conf/rmq-proxy.json
-    # environment:
+      # environment:
       # - NAMESRV_ADDR=rmqnamesrv:9876
     command: sh mqproxy -pc /home/rocketmq/rocketmq-5.3.1/conf/rmq-proxy.json
     networks:
       - gomall
 
-  rmqconsole: # rocketMq console
+  rmqconsole:
+    # rocketMq console
     image: apacherocketmq/rocketmq-dashboard:latest
     ports:
       - 9898:8080
@@ -88,6 +92,39 @@ services:
       - rmqbroker
     networks:
       - gomall
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
+
+  loki:
+    image: grafana/loki:2.9.2
+    volumes:
+      - ./deploy/config/loki.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    volumes:
+      - ./deploy/config/promtail.yml:/etc/promtail/config.yml
+      - ./app/frontend/log:/logs/frontend
+      - ./app/auth/log:/logs/auth
+      - ./app/rule/log:/logs/rule
+      - ./app/user/log:/logs/user
+      - ./app/payment/log:/logs/payment
+      - ./app/checkout/log:/logs/checkout
+      - ./app/aiorder/log:/logs/aiorder
+      - ./app/order/log:/logs/order
+      - ./app/product/log:/logs/product
+      - ./app/cart/log:/logs/cart
+    command: -config.file=/etc/promtail/config.yml
 
 networks:
   gomall:

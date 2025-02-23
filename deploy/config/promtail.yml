@@ -1,0 +1,144 @@
+# config.yml
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: hertz
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: frontend
+          __path__: /logs/frontend/hertz.log
+  - job_name: auth
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: auth
+          __path__: /logs/auth/*.log
+  - job_name: rule
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: rule
+          __path__: /logs/rule/*.log
+  - job_name: user
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: user
+          __path__: /logs/user/*.log
+  - job_name: payment
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: payment
+          __path__: /logs/payment/*.log
+  - job_name: checkout
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: checkout
+          __path__: /logs/checkout/*.log
+  - job_name: order
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: order
+          __path__: /logs/order/*.log
+  - job_name: aiorder
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: aiorder
+          __path__: /logs/aiorder/*.log
+  - job_name: product
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: product
+          __path__: /logs/product/*.log
+  - job_name: cart
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: cart
+          __path__: /logs/cart/*.log
+
+          
