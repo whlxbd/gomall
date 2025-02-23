@@ -30,5 +30,12 @@ func (s *GetWhiteListService) Run(req *rule.GetWhiteListReq) (resp *rule.GetWhit
 		List: make([]*rule.WhiteRouter, 0, len(whiteRouterRows)),
 	}
 
+	for _, whiteRouterRow := range whiteRouterRows {
+		resp.List = append(resp.List, &rule.WhiteRouter{
+			Id:     int32(whiteRouterRow.ID),
+			Router: whiteRouterRow.Router,
+		})
+	}
+
 	return
 }
