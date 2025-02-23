@@ -17,6 +17,7 @@ import (
 	"github.com/whlxbd/gomall/app/aiorder/biz/dal"
 	"github.com/whlxbd/gomall/app/aiorder/conf"
 	"github.com/whlxbd/gomall/app/aiorder/infra/rpc"
+	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/aiorder/aiorderservice"
 	"go.uber.org/zap/zapcore"
@@ -81,5 +82,7 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return
 }

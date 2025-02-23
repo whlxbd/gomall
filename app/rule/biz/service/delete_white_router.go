@@ -5,9 +5,11 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/cache"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/model/whitelist"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
+	"gorm.io/gorm"
 )
 
 type DeleteWhiteRouterService struct {
@@ -20,10 +22,27 @@ func NewDeleteWhiteRouterService(ctx context.Context) *DeleteWhiteRouterService 
 // Run create note info
 func (s *DeleteWhiteRouterService) Run(req *rule.DeleteWhiteRouterReq) (resp *rule.DeleteWhiteRouterResp, err error) {
 	// Finish your business logic.
-	err = whitelist.Delete(mysql.DB, s.ctx, req.Id)
+	routerRow, err := whitelist.GetByID(mysql.DB, s.ctx, req.Id)
 	if err != nil {
-		klog.Errorf("delete white router failed: %v", err)
-		return nil, kerrors.NewBizStatusError(500, "delete white router failed")
+		return nil, err
+	}
+	err = mysql.DB.Transaction(func(fc *gorm.DB) (err error) {
+		err = whitelist.Delete(mysql.DB, s.ctx, req.Id)
+		if err != nil {
+			klog.Errorf("delete white router failed: %v", err)
+			return kerrors.NewBizStatusError(500, "delete white router failed")
+		}
+
+		err = cache.DeleteWhiteRouter(s.ctx, routerRow.Router)
+		if err != nil {
+			klog.Errorf("delete white router failed: %v", err)
+			return kerrors.NewBizStatusError(500, "delete white router failed")
+		}
+
+		return
+	})
+	if err != nil {
+		return nil, err
 	}
 	return
 }

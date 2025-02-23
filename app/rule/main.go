@@ -13,6 +13,7 @@ import (
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/rule/biz/dal"
 	"github.com/whlxbd/gomall/app/rule/conf"
+	"github.com/whlxbd/gomall/app/rule/infra/rpc"
 	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule/ruleservice"
 	"go.uber.org/zap/zapcore"
@@ -23,6 +24,7 @@ func main() {
 	_ = godotenv.Load()
 	opts := kitexInit()
 	dal.Init()
+	rpc.InitClient()
 
 	svr := ruleservice.NewServer(new(RuleServiceImpl), opts...)
 

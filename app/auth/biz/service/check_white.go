@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
-	"github.com/rule/"
+
+	rulecache "github.com/whlxbd/gomall/app/rule/biz/dal/cache"
 )
 
 type CheckWhiteService struct {
@@ -16,6 +18,14 @@ func NewCheckWhiteService(ctx context.Context) *CheckWhiteService {
 // Run create note info
 func (s *CheckWhiteService) Run(req *auth.CheckWhiteReq) (resp *auth.CheckWhiteResp, err error) {
 	// Finish your business logic.
+	whiteRouterRow, err := rulecache.GetWhiteRouter(s.ctx, req.Router)
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	if whiteRouterRow == nil || whiteRouterRow.Router != req.Router {
+		return &auth.CheckWhiteResp{Ok: false}, nil
+	} else {
+		return &auth.CheckWhiteResp{Ok: true}, nil
+	}
 }

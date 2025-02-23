@@ -10,15 +10,16 @@ import (
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 
+	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	consul "github.com/kitex-contrib/registry-consul"
-	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 	"github.com/whlxbd/gomall/app/product/biz/dal"
 	"github.com/whlxbd/gomall/app/product/conf"
+	"github.com/whlxbd/gomall/common/middleware/authenticator"
+	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
-	"github.com/whlxbd/gomall/common/mtl"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -64,7 +65,7 @@ func kitexInit() (opts []server.Option) {
 	}
 	opts = append(opts, server.WithRegistry(r))
 
-	//gzip
+	// gzip
 
 	// klog
 	logger := kitexlogrus.NewLogger()
@@ -86,5 +87,6 @@ func kitexInit() (opts []server.Option) {
 
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
+	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return
 }

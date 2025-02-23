@@ -10,9 +10,9 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	redisadapter "github.com/casbin/redis-adapter/v3"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
+	"github.com/whlxbd/gomall/app/auth/biz/dal/mysql"
 
-	rulemodel "github.com/whlxbd/gomall/app/rule/biz/dal/model/rule"
+	rulemodel "github.com/whlxbd/gomall/app/auth/biz/dal/model/rule"
 )
 
 var (

@@ -74,6 +74,7 @@ func GetPayload(ctx context.Context, token string) (payload *Payload, err error)
 }
 
 func AuthenticatorMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
+	rpc.InitClient()
 	return func(ctx context.Context, req, resp interface{}) (err error) {
 		// Finish your business logic.
 		// Get Router
@@ -86,9 +87,8 @@ func AuthenticatorMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 		})
 		if err != nil {
 			klog.Errorf("check white failed: %v", err)
-			return err
 		}
-		if checkWhiteResp.Ok {
+		if checkWhiteResp != nil && checkWhiteResp.Ok {
 			return next(ctx, req, resp)
 		}
 

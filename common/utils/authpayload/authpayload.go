@@ -19,7 +19,6 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/common/utils/authpayload/rpc"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
-	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 
 	"github.com/cloudwego/kitex/pkg/utils/kitexutil"
 )
@@ -51,7 +50,7 @@ func Get(ctx context.Context) (payload *auth.GetPayloadResp, err error) {
 	serviceName, _ := kitexutil.GetIDLServiceName(ctx)
 	methodName, _ := kitexutil.GetMethod(ctx)
 	klog.Infof("service: %s, method: %s, payload: %v", serviceName, methodName, payload)
-	checkPermissionResp, err := rpc.RuleClient.CheckPermission(ctx, &rule.CheckPermissionReq{
+	checkPermissionResp, err := rpc.AuthClient.CheckPermission(ctx, &auth.CheckPermissionReq{
 		Role:   payload.Type,
 		Router: serviceName + "." + methodName,
 	})

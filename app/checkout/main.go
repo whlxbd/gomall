@@ -13,6 +13,7 @@ import (
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/checkout/conf"
 	"github.com/whlxbd/gomall/app/checkout/infra/rpc"
+	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -68,5 +69,7 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return
 }

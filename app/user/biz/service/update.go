@@ -4,9 +4,8 @@ import (
 	"context"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
-	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
 	"github.com/whlxbd/gomall/app/user/biz/dal/model"
-	"github.com/whlxbd/gomall/common/utils/authpayload"
+	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 )
 
@@ -20,13 +19,6 @@ func NewUpdateService(ctx context.Context) *UpdateService {
 // Run create note info
 func (s *UpdateService) Run(req *user.UpdateReq) (resp *user.UpdateResp, err error) {
 	// Finish your business logic.
-	payload, err := authpayload.Get(s.ctx)
-	if err != nil {
-		return nil, kerrors.NewBizStatusError(400, "get payload failed")
-	}
-	if payload.Type != "admin" || payload.UserId != req.UserId {
-		return nil, kerrors.NewBizStatusError(400, "permission denied")
-	}
 	resp = &user.UpdateResp{
 		Success: false,
 	}

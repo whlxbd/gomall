@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/whlxbd/gomall/app/user/biz/dal"
 	"github.com/whlxbd/gomall/app/user/infra/rpc"
+	"github.com/whlxbd/gomall/common/middleware/authenticator"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -74,5 +75,7 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return
 }

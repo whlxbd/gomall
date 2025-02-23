@@ -7,7 +7,6 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/whlxbd/gomall/app/user/biz/dal/model"
 	"github.com/whlxbd/gomall/app/user/biz/dal/mysql"
-	"github.com/whlxbd/gomall/common/utils/authpayload"
 	user "github.com/whlxbd/gomall/rpc_gen/kitex_gen/user"
 )
 
@@ -21,14 +20,6 @@ func NewDeleteService(ctx context.Context) *DeleteService {
 // Run create note info
 func (s *DeleteService) Run(req *user.DeleteReq) (resp *user.DeleteResp, err error) {
 	// Finish your business logic.
-	payload, err := authpayload.Get(s.ctx)
-	if err != nil {
-		klog.Errorf("get payload failed: %v", err)
-		return nil, kerrors.NewBizStatusError(400, "get payload failed")
-	}
-	if payload.Type != "admin" {
-		return nil, kerrors.NewBizStatusError(400, "permission denied")
-	}
 	resp = &user.DeleteResp{
 		Success: false,
 	}

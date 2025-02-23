@@ -14,6 +14,7 @@ import (
 	"github.com/whlxbd/gomall/app/payment/biz/dal"
 	"github.com/whlxbd/gomall/app/payment/conf"
 	"github.com/whlxbd/gomall/app/payment/infra/rpc"
+	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/payment/paymentservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -72,5 +73,7 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return
 }

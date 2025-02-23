@@ -6,17 +6,19 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
+	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/cart/biz/dal"
+
 	// "github.com/whlxbd/gomall/app/cart/biz/dal/mq"
 	"github.com/whlxbd/gomall/app/cart/conf"
 	"github.com/whlxbd/gomall/app/cart/infra/rpc"
+	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/cart/cartservice"
@@ -83,5 +85,6 @@ func kitexInit() (opts []server.Option) {
 
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
+	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return
 }
