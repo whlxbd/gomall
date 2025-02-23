@@ -188,6 +188,8 @@ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnr
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+github.com/kitex-contrib/obs-opentelemetry v0.2.6 h1:MuMA5pgDielcaWLYElv1sBBGnSQaEcCu8GulBdtPgk8=
+github.com/kitex-contrib/obs-opentelemetry v0.2.6/go.mod h1:QyvKnBxTCeGKMg2CrqS+eMDpZfqo4Z2ZmdgWT4iPUh8=
 github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241120035129-55da83caab1b h1:PUdDbnTeBtUOiA+KiEwnECD5qECWvWCD68XTYPIWfEI=
 github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241120035129-55da83caab1b/go.mod h1:RyQpX16txMOmC2a4yykhF1P50nzbHVnKnI/T0jA1ZOg=
 github.com/kitex-contrib/obs-opentelemetry/logging/zap v0.0.0-20240305123358-828863cc5853 h1:zBa62iI4Ke4GCq9Wln3evFOYlQLh0zPYq1lHf8y3lAM=
@@ -319,9 +321,15 @@ github.com/tidwall/pretty v1.2.1/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhso
 github.com/tv42/httpunix v0.0.0-20150427012821-b75d8614f926/go.mod h1:9ESjWnEqriFuLhtthL60Sar/7RFoluCcXsuvEwTV5KM=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
+github.com/whlxbd/gomall/app/checkout v0.0.0-20250223154024-6e42255fb774 h1:FLqD/5DLeh3sfGh4Fk/ggAJxmlZqzC1KBrKi6zhyExc=
+github.com/whlxbd/gomall/app/checkout v0.0.0-20250223154024-6e42255fb774/go.mod h1:4sCA+IuBVpHm7xO1Qzs9o4i2nt0vnNz+8nqK/9y9D84=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
+go.opentelemetry.io/contrib/propagators/b3 v1.20.0 h1:Yty9Vs4F3D6/liF1o6FNt0PvN85h/BJJ6DQKJ3nrcM0=
+go.opentelemetry.io/contrib/propagators/b3 v1.20.0/go.mod h1:On4VgbkqYL18kbJlWsa18+cMNe6rYpBnPi1ARI/BrsU=
+go.opentelemetry.io/contrib/propagators/ot v1.20.0 h1:duH7mgL6VGQH7e7QEAVOFkCQXWpCb4PjTtrhdrYrJRQ=
+go.opentelemetry.io/contrib/propagators/ot v1.20.0/go.mod h1:gijQzxOq0JLj9lyZhTvqjDddGV/zaNagpPIn+2r8CEI=
 go.opentelemetry.io/otel v1.31.0 h1:NsJcKPIW0D0H3NgzPDHmo0WW6SptzPdqg/L1zsIm2hY=
 go.opentelemetry.io/otel v1.31.0/go.mod h1:O0C14Yl9FgkjqcCZAsE053C13OaddMYr/hz6clDkEJE=
 go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.25.0 h1:dT33yIHtmsqpixFsSQPwNeY5drM9wTcoL8h0FWF4oGM=

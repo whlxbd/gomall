@@ -16,10 +16,11 @@ import (
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/product/biz/dal"
 	"github.com/whlxbd/gomall/app/product/conf"
-	"github.com/whlxbd/gomall/common/middleware/authenticator"
+	// "github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
+	"github.com/whlxbd/gomall/common/limiter"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -32,7 +33,7 @@ func main() {
 	dal.Init()
 	defer pool.Release()
 
-	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort, os.Getenv("REGISTRY_ADDR"))
+	mtl.InitMetric(conf.GetConf().Kitex.Service, os.Getenv("METRICS_PORT"), os.Getenv("REGISTRY_ADDR"))
 
 	opts := kitexInit()
 
@@ -91,8 +92,13 @@ func kitexInit() (opts []server.Option) {
 		asyncWriter.Sync()
 	})
 
+	// 限流器
+	qpsLimiter := limiter.NewDynamicMethodQPSLimiter(100)
+	qpsLimiter.UpdateMethodLimit("GetProduct", 200)
+
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
-	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
+	// opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
+	opts = append(opts, server.WithQPSLimiter(qpsLimiter))
 	return
 }
