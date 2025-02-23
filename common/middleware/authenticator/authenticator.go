@@ -20,6 +20,7 @@ type Payload struct {
 func GetToken(ctx context.Context) (token string, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
+		klog.Errorf("metadata not found")
 		return "", kerrors.NewBizStatusError(400, "metadata not found")
 	}
 	tokens := md.Get("Authorization")
@@ -103,6 +104,8 @@ func AuthenticatorMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 			klog.Errorf("get payload failed: %v", err)
 			return err
 		}
+
+		// ctx = metadata.AppendToOutgoingContext(ctx, "Authentication", "Bearer "+token)
 
 		// Check Permission
 		checkPermissionResp, err := rpc.AuthClient.CheckPermission(ctx, &auth.CheckPermissionReq{

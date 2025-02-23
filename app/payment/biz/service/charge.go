@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/metadata"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
 	"github.com/whlxbd/gomall/app/payment/biz/dal/model"
@@ -29,6 +30,11 @@ func NewChargeService(ctx context.Context) *ChargeService {
 // Run create note info
 func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, err error) {
 	// Finish your business logic.
+	token, err := authpayload.Token(s.ctx)
+	if err != nil {
+		klog.Errorf("get token failed: %v", err)
+		return nil, kerrors.NewBizStatusError(400, "get token failed")
+	}
 	payload, err := authpayload.Get(s.ctx)
 	if err != nil {
 		klog.Errorf("get payload failed: %v", err)
@@ -38,6 +44,8 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 		klog.Errorf("permission denied, user id: %v, req user id: %v", payload.UserId, req.UserId)
 		return nil, kerrors.NewBizStatusError(400, "permission denied")
 	}
+
+	s.ctx = metadata.AppendToOutgoingContext(s.ctx, "Authorization", "Bearer "+token)
 	cardInfo := creditcard.Card{
 		Number: req.CreditCard.CreditCardNumber,
 		Cvv:    strconv.Itoa(int(req.CreditCard.CreditCardCvv)),
