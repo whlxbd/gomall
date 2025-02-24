@@ -16,24 +16,31 @@ import (
 	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/product/biz/dal"
 	"github.com/whlxbd/gomall/app/product/conf"
+
 	// "github.com/whlxbd/gomall/common/middleware/authenticator"
+	"github.com/whlxbd/gomall/common/limiter"
 	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
-	"github.com/whlxbd/gomall/common/limiter"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-// var serviceName = conf.GetConf().Kitex.Service
+var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	_ = godotenv.Load()
 	pool.Init()
 	dal.Init()
 	defer pool.Release()
-
-	mtl.InitMetric(conf.GetConf().Kitex.Service, os.Getenv("METRICS_PORT"), os.Getenv("REGISTRY_ADDR"))
+	mtl.InitLog(&lumberjack.Logger{
+		Filename:   conf.GetConf().Kitex.LogFileName,
+		MaxSize:    conf.GetConf().Kitex.LogMaxSize,
+		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
+		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
+	})
+	mtl.InitTracing(serviceName)
+	mtl.InitMetric(serviceName, os.Getenv("METRICS_PORT"), os.Getenv("REGISTRY_ADDR"))
 
 	opts := kitexInit()
 
