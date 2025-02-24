@@ -16,11 +16,14 @@ import (
 	"github.com/whlxbd/gomall/app/order/biz/dal/mq"
 	"github.com/whlxbd/gomall/app/order/conf"
 	"github.com/whlxbd/gomall/common/middleware/authenticator"
+	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/order/orderservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	_ = godotenv.Load()
@@ -28,7 +31,16 @@ func main() {
 	pool.Init()
 	dal.Init()
 	defer pool.Release()
-
+	
+	mtl.InitLog(&lumberjack.Logger{
+		Filename:   conf.GetConf().Kitex.LogFileName,
+		MaxSize:    conf.GetConf().Kitex.LogMaxSize,
+		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
+		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
+	})
+	mtl.InitTracing(serviceName)
+	mtl.InitMetric(serviceName, os.Getenv("METRICS_PORT"), os.Getenv("REGISTRY_ADDR"))
+	
 	// 初始化MQ
 	if err := mq.Init(os.Getenv("RMQENDPOINT")); err != nil {
 		klog.Fatalf("init mq failed: %v", err)
