@@ -9,12 +9,12 @@ import (
 	"github.com/whlxbd/gomall/app/user/biz/dal"
 	"github.com/whlxbd/gomall/app/user/infra/rpc"
 	"github.com/whlxbd/gomall/common/middleware/authenticator"
+	"github.com/whlxbd/gomall/common/mtl"
+	"github.com/whlxbd/gomall/common/serversuite"
 
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	consul "github.com/kitex-contrib/registry-consul"
 	"github.com/whlxbd/gomall/app/user/conf"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/user/userservice"
 	"go.uber.org/zap/zapcore"
@@ -23,8 +23,16 @@ import (
 	_ "github.com/cloudwego/kitex/pkg/remote/codec/protobuf/encoding/gzip"
 )
 
+var (
+	ServiceName  = conf.GetConf().Kitex.Service
+	RegistryAddr = conf.GetConf().Registry.RegistryAddress[0]
+	MetricsPort  = conf.GetConf().Kitex.MetricsPort
+)
+
 func main() {
 	_ = godotenv.Load()
+	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
+
 	opts := kitexInit()
 
 	dal.Init()
@@ -44,19 +52,13 @@ func kitexInit() (opts []server.Option) {
 	if err != nil {
 		panic(err)
 	}
+
 	opts = append(opts, server.WithServiceAddr(addr))
 
-	// service info
-	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
-		ServiceName: conf.GetConf().Kitex.Service,
+	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{
+		CurrentServiceName: ServiceName,
+		RegistryAddr:       RegistryAddr,
 	}))
-
-	// consul
-	r, err := consul.NewConsulRegister(os.Getenv("REGISTRY_ADDR")) // 使用配置中的 Consul 地址
-	if err != nil {
-		klog.Fatal(err)
-	}
-	opts = append(opts, server.WithRegistry(r))
 
 	// klog
 	var flushInterval time.Duration

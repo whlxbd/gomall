@@ -24,6 +24,8 @@ var (
 	CartClient    cartservice.Client
 	once          sync.Once
 	err           error
+	ServiceName   = conf.GetConf().Kitex.Service
+	RegistryAddr  = os.Getenv("REGISTRY_ADDR")
 )
 
 func InitClient() {
@@ -39,8 +41,8 @@ func InitClient() {
 func initProductClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
+			CurrentServiceName: ServiceName,
+			RegistryAddr:       RegistryAddr,
 		}),
 	}
 
@@ -53,8 +55,8 @@ func initProductClient() {
 func initAuthClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
+			CurrentServiceName: ServiceName,
+			RegistryAddr:       RegistryAddr,
 		}),
 	}
 
@@ -67,8 +69,8 @@ func initAuthClient() {
 func initOrderClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
+			CurrentServiceName: ServiceName,
+			RegistryAddr:       RegistryAddr,
 		}),
 	}
 
@@ -81,8 +83,8 @@ func initOrderClient() {
 func initPaymentClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
+			CurrentServiceName: ServiceName,
+			RegistryAddr:       RegistryAddr,
 		}),
 	}
 
@@ -95,8 +97,8 @@ func initPaymentClient() {
 func initCartClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
+			CurrentServiceName: ServiceName,
+			RegistryAddr:       RegistryAddr,
 		}),
 	}
 

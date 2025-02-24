@@ -13,9 +13,11 @@ import (
 )
 
 var (
-	AuthClient    authservice.Client
-	once          sync.Once
-	err           error
+	AuthClient   authservice.Client
+	once         sync.Once
+	err          error
+	ServiceName  = conf.GetConf().Kitex.Service
+	RegistryAddr = os.Getenv("REGISTRY_ADDR")
 )
 
 func InitClient() {
@@ -27,8 +29,8 @@ func InitClient() {
 func initAuthClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			CurrentServiceName: conf.GetConf().Kitex.Service,
-			RegistryAddr:       os.Getenv("REGISTRY_ADDR"),
+			CurrentServiceName: ServiceName,
+			RegistryAddr:       RegistryAddr,
 		}),
 	}
 
@@ -37,4 +39,3 @@ func initAuthClient() {
 		klog.Errorf("failed to init client: %v", err)
 	}
 }
-
