@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"time"
+	"context"
 
 	"github.com/joho/godotenv"
 
@@ -17,11 +18,13 @@ import (
 	"github.com/whlxbd/gomall/app/aiorder/biz/dal"
 	"github.com/whlxbd/gomall/app/aiorder/conf"
 	"github.com/whlxbd/gomall/app/aiorder/infra/rpc"
+	"github.com/whlxbd/gomall/common/limiter"
 	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/common/utils/pool"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/aiorder/aiorderservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"github.com/cloudwego/kitex/pkg/endpoint"
 )
 
 func main() {
@@ -88,6 +91,21 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	// 创建限流器
+	qpsLimiter := limiter.NewDynamicMethodQPSLimiter(100)
+	klog.Infof("Limiter initialized: %+v", qpsLimiter)
+
+	// 显式注册中间件
+	opts = append(opts, server.WithMiddleware(func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, req, resp interface{}) (err error) {
+			if !qpsLimiter.Acquire(ctx) {
+				klog.Warnf("Request limited by QPS limiter")
+				panic("Request limited by QPS limiter")
+			}
+			return next(ctx, req, resp)
+		}
+	}))
 
 	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return

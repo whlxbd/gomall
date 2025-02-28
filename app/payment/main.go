@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"net"
 	"os"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/endpoint"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/server"
 	"github.com/joho/godotenv"
@@ -12,6 +14,7 @@ import (
 	"github.com/whlxbd/gomall/app/payment/biz/dal"
 	"github.com/whlxbd/gomall/app/payment/conf"
 	"github.com/whlxbd/gomall/app/payment/infra/rpc"
+	"github.com/whlxbd/gomall/common/limiter"
 	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/serversuite"
@@ -81,6 +84,21 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	// 创建限流器
+	qpsLimiter := limiter.NewDynamicMethodQPSLimiter(1000)
+	klog.Infof("Limiter initialized: %+v", qpsLimiter)
+
+	// 显式注册中间件
+	opts = append(opts, server.WithMiddleware(func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, req, resp interface{}) (err error) {
+			if !qpsLimiter.Acquire(ctx) {
+				klog.Warnf("Request limited by QPS limiter")
+				panic("Request limited by QPS limiter")
+			}
+			return next(ctx, req, resp)
+		}
+	}))
 
 	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return

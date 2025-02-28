@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/endpoint"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
@@ -15,6 +16,7 @@ import (
 	"github.com/whlxbd/gomall/app/order/biz/dal"
 	"github.com/whlxbd/gomall/app/order/biz/dal/mq"
 	"github.com/whlxbd/gomall/app/order/conf"
+	"github.com/whlxbd/gomall/common/limiter"
 	"github.com/whlxbd/gomall/common/middleware/authenticator"
 	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/utils/pool"
@@ -31,7 +33,7 @@ func main() {
 	pool.Init()
 	dal.Init()
 	defer pool.Release()
-	
+
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
 		MaxSize:    conf.GetConf().Kitex.LogMaxSize,
@@ -40,7 +42,7 @@ func main() {
 	})
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, os.Getenv("METRICS_PORT"), os.Getenv("REGISTRY_ADDR"))
-	
+
 	// 初始化MQ
 	if err := mq.Init(os.Getenv("RMQENDPOINT")); err != nil {
 		klog.Fatalf("init mq failed: %v", err)
@@ -105,6 +107,21 @@ func kitexInit() (opts []server.Option) {
 	server.RegisterShutdownHook(func() {
 		asyncWriter.Sync()
 	})
+
+	// 创建限流器
+	qpsLimiter := limiter.NewDynamicMethodQPSLimiter(1000)
+	klog.Infof("Limiter initialized: %+v", qpsLimiter)
+
+	// 显式注册中间件
+	opts = append(opts, server.WithMiddleware(func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, req, resp interface{}) (err error) {
+			if !qpsLimiter.Acquire(ctx) {
+				klog.Warnf("Request limited by QPS limiter")
+				panic("Request limited by QPS limiter")
+			}
+			return next(ctx, req, resp)
+		}
+	}))
 
 	opts = append(opts, server.WithMiddleware(authenticator.AuthenticatorMiddleware))
 	return

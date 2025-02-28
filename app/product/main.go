@@ -4,7 +4,9 @@ import (
 	"net"
 	"os"
 	"time"
+	"context"
 
+	"github.com/cloudwego/kitex/pkg/endpoint"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
@@ -99,9 +101,20 @@ func kitexInit() (opts []server.Option) {
 		asyncWriter.Sync()
 	})
 
-	// 限流器
-	qpsLimiter := limiter.NewDynamicMethodQPSLimiter(100)
-	qpsLimiter.UpdateMethodLimit("GetProduct", 200)
+	// 创建限流器
+    qpsLimiter := limiter.NewDynamicMethodQPSLimiter(1000)
+    klog.Infof("Limiter initialized: %+v", qpsLimiter)
+    
+    // 显式注册中间件
+    opts = append(opts, server.WithMiddleware(func(next endpoint.Endpoint) endpoint.Endpoint {
+        return func(ctx context.Context, req, resp interface{}) (err error) {
+            if !qpsLimiter.Acquire(ctx) {
+                klog.Warnf("Request limited by QPS limiter")
+                panic("Request limited by QPS limiter")
+            }
+            return next(ctx, req, resp)
+        }
+    }))
 
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerHTTP2Handler))
 	opts = append(opts, server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
