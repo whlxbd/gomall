@@ -28,7 +28,7 @@
         "trace_id": "{{.RequestNumber}}",
         "timestamp": "{{.TimestampUnix}}"
     },
-    "max-duration": "10s",
+    "max-duration": "30s",
     "format": "html",
     "output": "ghz_Checkout.html",
     "insecure": true,

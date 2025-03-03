@@ -33,11 +33,13 @@ var (
 
 func main() {
 	_ = godotenv.Load()
-	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
-
-	opts := kitexInit()
 	dal.Init()
+	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
+	mtl.InitTracing(ServiceName)
+
+
 	rpc.InitClient()
+	opts := kitexInit()
 
 	svr := paymentservice.NewServer(new(PaymentServiceImpl), opts...)
 

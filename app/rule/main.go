@@ -28,8 +28,10 @@ var (
 
 func main() {
 	_ = godotenv.Load()
-	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
 	dal.Init()
+	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
+	mtl.InitTracing(ServiceName)
+
 	rpc.InitClient()
 	opts := kitexInit()
 

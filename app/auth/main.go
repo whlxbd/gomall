@@ -15,8 +15,6 @@ import (
 	"github.com/whlxbd/gomall/app/auth/biz/dal"
 	"github.com/whlxbd/gomall/app/auth/conf"
 	"github.com/whlxbd/gomall/app/auth/infra/rpc"
-	ruledal "github.com/whlxbd/gomall/app/rule/biz/dal"
-	"github.com/whlxbd/gomall/common/limiter"
 	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/serversuite"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth/authservice"
@@ -32,9 +30,10 @@ var (
 
 func main() {
 	_ = godotenv.Load()
-	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
 	dal.Init()
-	ruledal.Init()
+	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
+	mtl.InitTracing(ServiceName)
+
 	cas.Init()
 	rpc.InitClient()
 	opts := kitexInit()

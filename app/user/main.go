@@ -34,12 +34,15 @@ var (
 
 func main() {
 	_ = godotenv.Load()
+	dal.Init()
 	mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
-
+	mtl.InitTracing(ServiceName)
+	
+	rpc.InitClient()
 	opts := kitexInit()
 
-	dal.Init()
-	rpc.InitClient()
+
+	
 
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
 

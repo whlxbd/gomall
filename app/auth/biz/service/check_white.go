@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"github.com/whlxbd/gomall/app/auth/biz/dal/redis"
 	auth "github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth"
 
 	rulecache "github.com/whlxbd/gomall/app/rule/biz/dal/cache"
@@ -18,7 +19,8 @@ func NewCheckWhiteService(ctx context.Context) *CheckWhiteService {
 // Run create note info
 func (s *CheckWhiteService) Run(req *auth.CheckWhiteReq) (resp *auth.CheckWhiteResp, err error) {
 	// Finish your business logic.
-	whiteRouterRow, err := rulecache.GetWhiteRouter(s.ctx, req.Router)
+	whiteRouterRow, err := rulecache.GetWhiteRouter(s.ctx, redis.RedisClient, req.Router)
+	
 	if err != nil {
 		return nil, err
 	}

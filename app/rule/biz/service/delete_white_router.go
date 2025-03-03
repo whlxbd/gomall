@@ -8,6 +8,7 @@ import (
 	"github.com/whlxbd/gomall/app/rule/biz/dal/cache"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/model/whitelist"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/redis"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 	"gorm.io/gorm"
 )
@@ -33,7 +34,7 @@ func (s *DeleteWhiteRouterService) Run(req *rule.DeleteWhiteRouterReq) (resp *ru
 			return kerrors.NewBizStatusError(500, "delete white router failed")
 		}
 
-		err = cache.DeleteWhiteRouter(s.ctx, routerRow.Router)
+		err = cache.DeleteWhiteRouter(s.ctx, redis.RedisClient, routerRow.Router)
 		if err != nil {
 			klog.Errorf("delete white router failed: %v", err)
 			return kerrors.NewBizStatusError(500, "delete white router failed")

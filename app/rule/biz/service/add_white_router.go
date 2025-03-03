@@ -8,6 +8,7 @@ import (
 	"github.com/whlxbd/gomall/app/rule/biz/dal/cache"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/model/whitelist"
 	"github.com/whlxbd/gomall/app/rule/biz/dal/mysql"
+	"github.com/whlxbd/gomall/app/rule/biz/dal/redis"
 	rule "github.com/whlxbd/gomall/rpc_gen/kitex_gen/rule"
 	"gorm.io/gorm"
 )
@@ -31,7 +32,7 @@ func (s *AddWhiteRouterService) Run(req *rule.AddWhiteRouterReq) (resp *rule.Add
 			return kerrors.NewBizStatusError(500, "create white router failed")
 		}
 
-		err = cache.SetWhiteRouter(s.ctx, req.Router)
+		err = cache.SetWhiteRouter(s.ctx, redis.RedisClient, req.Router)
 		if err != nil {
 			klog.Errorf("set white router failed: %v", err)
 			return kerrors.NewBizStatusError(500, "set white router failed")
