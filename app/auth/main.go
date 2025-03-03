@@ -15,6 +15,7 @@ import (
 	"github.com/whlxbd/gomall/app/auth/biz/dal"
 	"github.com/whlxbd/gomall/app/auth/conf"
 	"github.com/whlxbd/gomall/app/auth/infra/rpc"
+	"github.com/whlxbd/gomall/common/limiter"
 	"github.com/whlxbd/gomall/common/mtl"
 	"github.com/whlxbd/gomall/common/serversuite"
 	"github.com/whlxbd/gomall/rpc_gen/kitex_gen/auth/authservice"
